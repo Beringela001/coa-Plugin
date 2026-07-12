@@ -1,0 +1,76 @@
+<?php
+/** COA-2 compound-management tests and integration scaffolding. */
+class PepSelect_COA_Archive_Compound_Management_Test extends WP_UnitTestCase {
+	/** @var PepSelect\COAArchive\Compound_Validation */
+	private $validator;
+
+	public function set_up() { parent::set_up(); $this->validator = new PepSelect\COAArchive\Compound_Validation(); }
+
+	public function test_stable_field_keys_are_declared() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-compound-fields.php' );
+		foreach ( array( 'field_ps_compound_display_name', 'field_ps_compound_name', 'field_ps_compound_strength_value', 'field_ps_compound_strength_unit', 'field_ps_compound_internal_notes' ) as $key ) { $this->assertStringContainsString( $key, $source ); }
+	}
+
+	public function test_required_and_enum_validation() {
+		$this->assertNotTrue( $this->validate( '', 'display_name' ) );
+		$this->assertNotTrue( $this->validate( '', 'compound_name' ) );
+		$this->assertNotTrue( $this->validate( 'invalid', 'strength_unit' ) );
+		$this->assertNotTrue( $this->validate( 'invalid', 'compound_category' ) );
+	}
+
+	public function test_numeric_validation() {
+		$this->assertNotTrue( $this->validate( 0, 'strength_value' ) );
+		$this->assertNotTrue( $this->validate( -2, 'strength_value' ) );
+		$this->assertNotTrue( $this->validate( -1, 'display_order' ) );
+		$this->assertTrue( $this->validate( 5.5, 'strength_value' ) );
+	}
+
+	public function test_title_is_initialized_but_not_overwritten() {
+		PepSelect\COAArchive\Capabilities::grant_to_administrators();
+		$user = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $user );
+		$id = self::factory()->post->create( array( 'post_type' => 'ps_compound', 'post_title' => '' ) );
+		update_post_meta( $id, 'display_name', 'Retatrutide 30mg' ); $this->validator->populate_empty_title( $id );
+		$this->assertSame( 'Retatrutide 30mg', get_post( $id )->post_title );
+		update_post_meta( $id, 'display_name', 'Changed' ); $this->validator->populate_empty_title( $id );
+		$this->assertSame( 'Retatrutide 30mg', get_post( $id )->post_title );
+	}
+
+	public function test_internal_notes_are_not_registered_for_rest() {
+		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_compound' );
+		$this->assertArrayNotHasKey( 'internal_notes', $keys );
+		$this->assertArrayHasKey( 'display_name', $keys );
+	}
+
+	public function test_optional_dependencies_are_safe() {
+		$dependencies = new PepSelect\COAArchive\Dependencies();
+		$this->assertIsBool( $dependencies->has_acf() );
+		$this->assertIsBool( $dependencies->has_woocommerce_products() );
+	}
+
+	public function test_acf_group_registers_when_api_is_available() {
+		if ( ! function_exists( 'acf_get_local_field_group' ) ) { $this->markTestSkipped( 'ACF test utilities are unavailable.' ); }
+		do_action( 'init' );
+		$this->assertNotFalse( acf_get_local_field_group( 'group_ps_compound_details' ) );
+	}
+
+	public function test_duplicate_detection_blocks_other_post_but_excludes_current_post() {
+		$existing = self::factory()->post->create( array( 'post_type' => 'ps_compound', 'post_title' => 'Retatrutide 30mg' ) );
+		update_post_meta( $existing, 'compound_name', 'Retatrutide' ); update_post_meta( $existing, 'strength_value', 30 ); update_post_meta( $existing, 'strength_unit', 'mg' );
+		$_POST['acf'] = array( 'field_ps_compound_name' => ' retatrutide ', 'field_ps_compound_strength_value' => '30' );
+		$_POST['post_ID'] = 0;
+		$result = $this->validator->validate_duplicate( true, 'mg', array(), '' );
+		$this->assertNotTrue( $result );
+		$_POST['post_ID'] = $existing;
+		$this->assertTrue( $this->validator->validate_duplicate( true, 'mg', array(), '' ) );
+		unset( $_POST['acf'], $_POST['post_ID'] );
+	}
+
+	public function test_admin_columns_are_compound_specific() {
+		$admin = new PepSelect\COAArchive\Compound_Admin();
+		$columns = $admin->columns( array( 'cb' => 'cb', 'title' => 'Title', 'date' => 'Date' ) );
+		$this->assertArrayHasKey( 'strength', $columns );
+		$this->assertFalse( has_filter( 'manage_ps_coa_test_posts_columns', array( $admin, 'columns' ) ) );
+	}
+
+	private function validate( $value, $name ) { return $this->validator->validate( true, $value, array( 'name' => $name ), '' ); }
+}
