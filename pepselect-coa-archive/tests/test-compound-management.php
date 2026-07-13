@@ -49,8 +49,29 @@ class PepSelect_COA_Archive_Compound_Management_Test extends WP_UnitTestCase {
 
 	public function test_acf_group_registers_when_api_is_available() {
 		if ( ! function_exists( 'acf_get_local_field_group' ) ) { $this->markTestSkipped( 'ACF test utilities are unavailable.' ); }
-		do_action( 'init' );
+		do_action( 'acf/init' );
 		$this->assertNotFalse( acf_get_local_field_group( 'group_ps_compound_details' ) );
+	}
+
+	public function test_field_group_registration_uses_acf_init() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-plugin.php' );
+		$this->assertStringContainsString( "add_action( 'acf/init', array( \$this->compound_fields, 'register' ), 5 )", $source );
+		$this->assertStringNotContainsString( "add_action( 'init', array( \$this->compound_fields, 'register' )", $source );
+	}
+
+	public function test_field_group_location_and_key_are_stable() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-compound-fields.php' );
+		$this->assertStringContainsString( "'key' => 'group_ps_compound_details'", $source );
+		$this->assertStringContainsString( "'param' => 'post_type'", $source );
+		$this->assertStringContainsString( "'value' => Post_Types::COMPOUND", $source );
+	}
+
+	public function test_local_field_group_is_not_registered_twice() {
+		if ( ! function_exists( 'acf_get_local_field_groups' ) ) { $this->markTestSkipped( 'ACF test utilities are unavailable.' ); }
+		do_action( 'acf/init' );
+		do_action( 'acf/init' );
+		$matches = array_filter( acf_get_local_field_groups(), static function ( $group ) { return isset( $group['key'] ) && 'group_ps_compound_details' === $group['key']; } );
+		$this->assertCount( 1, $matches );
 	}
 
 	public function test_duplicate_detection_blocks_other_post_but_excludes_current_post() {

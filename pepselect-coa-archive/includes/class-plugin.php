@@ -46,8 +46,8 @@ final class Plugin {
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this->post_types, 'register' ), 5 );
 		add_action( 'init', array( $this->compound_fields, 'register_rest_meta' ), 20 );
-		add_action( 'init', array( $this->compound_fields, 'register' ), 20 );
-		add_action( 'init', array( $this->compound_validation, 'register_hooks' ), 21 );
+		add_action( 'acf/init', array( $this->compound_fields, 'register' ), 5 );
+		add_action( 'acf/init', array( $this->compound_validation, 'register_hooks' ), 10 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );
 		add_action( 'admin_menu', array( $this->post_types, 'register_admin_menu' ), 5 );

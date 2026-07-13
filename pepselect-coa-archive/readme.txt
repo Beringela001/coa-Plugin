@@ -4,7 +4,7 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.2.2 =
+* Registered the PHP-defined Compound Details group on ACF's native initialization hook.
 
 = 0.2.1 =
 * Corrected custom post-type meta-capability mapping and completed Administrator primitive capability grants.

@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.2.1 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. It corrects post-type capability mapping and ensures Administrators receive every generated primitive capability. The plugin remains dependency-free at bootstrap and preserves all COA-1 behavior.
+Version 0.2.2 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. It registers the PHP-defined Compound Details group on ACF's native `acf/init` lifecycle while preserving the 0.2.1 capability correction and all existing data.
 
 ## Architecture
 
