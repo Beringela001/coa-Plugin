@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.2.5 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. WooCommerce availability is now detected independently of product post-type registration timing, so the optional product selector is reliably included during `acf/init`.
+Version 0.3.0 adds the COA-3 laboratory-test administration workflow while preserving the compound-management foundation.
 
 ## Architecture
 
@@ -83,4 +83,29 @@ Upload `pepselect-coa-archive.zip` in WordPress or copy the folder into `wp-cont
 
 ## Deferred work
 
-COA-3 and later work—including test fields, batch data, PDFs, galleries, frontend archives/cards, Elementor, product-page output, search, imports, analytics, and laboratory verification—is not implemented.
+COA-4 frontend work—including public archives, history/detail pages, viewers, Elementor, product-page output, search, imports, and analytics—is not implemented.
+
+## COA-3 test management
+
+The PHP-defined `group_ps_coa_test_details` group contains 45 stable fields under Test Identification, Sample Information, Test Results, Certificate Documents, and Notes tabs. Its explicit keys use the `field_ps_coa_test_*` prefix and cover `compound_id`, batch/date/lab/status fields, sample quantities, standardized result statuses, certificate media/URLs, and public/report/internal notes. Records link to one compound and capture batch/date/lab data, manual scientific results, certificate PDF/page images, verification URLs, status, and current-record state. The `ps_coa_test` block editor is hidden; existing `post_content` remains untouched.
+
+Validation requires a valid compound, batch, date, laboratory, and at least one vial tested. It validates controlled choices, numeric ranges, content bounds, URLs, PDF/image attachments, other-lab names, and exact compound/batch duplicates. Approved records require a PDF and at least one page image and cannot contain a failed result status. Scientific status is never inferred from numeric values.
+
+When a valid test is saved as Current, every other test for that compound is set non-current without deletion or status changes. Other compounds are unaffected. Unchecking Current does not select a replacement. A blank initial title becomes `{Compound Display Name} — Batch {Batch Number}`; manual titles are preserved.
+
+The COA Tests list includes compound, batch, test date, lab, purity, vials, overall status, current state, PDF availability, and date. Compound, status, current, laboratory, and test-year filters are scoped to this list. Safe structured metadata is registered on the existing REST endpoint. `internal_notes` and `internal_batch_id` are excluded; WordPress protects unpublished records.
+
+ACF Pro is required only for structured editing: if unavailable, the post type and stored data remain accessible and a scoped notice appears. WooCommerce and Elementor are not required for COA Test management. Attachments are referenced by ID and are never deleted automatically by deactivation or uninstall.
+
+### COA-3 manual QA
+
+1. Open COA Archive → Add New Test and confirm no large block editor appears.
+2. Confirm COA Test Details appears near the title; select Retatrutide 30mg.
+3. Enter batch `RT30-0726-A`, a valid test date, ILS Labs, 3 vials tested, and 99.79 purity.
+4. Mark identity, endotoxin, heavy-metals, and sterility results Pass.
+5. Upload a PDF and two ordered page images; add an ILS verification URL.
+6. Set Approved and Current, publish, refresh, and confirm persistence and list columns.
+7. Create a second test for the compound, mark it Current, and confirm the first is no longer Current.
+8. Confirm an exact duplicate batch, purity over 100, zero vials, and Approved with a failed result are blocked.
+9. Confirm filters and sorting work.
+10. Deactivate/reactivate and confirm tests and attachments remain intact.

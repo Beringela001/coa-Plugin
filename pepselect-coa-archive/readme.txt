@@ -4,15 +4,15 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.2.5
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Structured compound administration for the Pep Select COA archive.
+Structured compound and laboratory COA administration for Pep Select.
 
 == Description ==
 
-COA-2 adds a deterministic PHP-registered ACF Compound Details group, validation, duplicate protection, optional WooCommerce product linking, secure REST metadata, and compound-only admin columns, sorting, and filters. ACF Pro is required for structured editing but not for plugin activation or post access. WooCommerce is optional. Internal notes are excluded from REST.
+COA-3 adds a deterministic PHP-registered COA Test Details group, compound/batch duplicate protection, quantitative and pass/fail results, certificate documents, current-test enforcement, safe REST metadata, and scoped administration controls. ACF Pro is required for structured editing but not plugin activation. Private notes and internal batch IDs are excluded from REST.
 
 No frontend, COA-test fields, PDF/gallery, Elementor, product-page output, or import/export functionality is included.
 
@@ -41,6 +41,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.3.0 =
+* Added complete COA Test administration, validation, current-test behavior, certificate media, REST metadata, and list controls.
 
 = 0.2.5 =
 * Fixed optional WooCommerce product-selector registration timing.

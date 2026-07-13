@@ -90,7 +90,7 @@ final class Post_Types {
 				'labels' => $this->labels( __( 'COA Test', 'pepselect-coa-archive' ), __( 'COA Tests', 'pepselect-coa-archive' ), __( 'Add New Test', 'pepselect-coa-archive' ) ),
 				'public' => true, 'show_ui' => true, 'show_in_rest' => true,
 				'show_in_menu' => 'pepselect-coa-archive',
-				'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields', 'revisions' ),
+				'supports' => array( 'title', 'thumbnail', 'custom-fields', 'revisions' ),
 				'has_archive' => false, 'rewrite' => array( 'slug' => 'coa-test', 'with_front' => false ),
 				'capability_type' => array( 'ps_coa', 'ps_coas' ), 'map_meta_cap' => true,
 				'capabilities' => Capabilities::post_type_map(),

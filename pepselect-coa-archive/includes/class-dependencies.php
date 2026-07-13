@@ -29,6 +29,6 @@ final class Dependencies {
 	/** Determines whether the current admin request belongs to the COA plugin. @return bool */
 	private function is_relevant_screen() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		return $screen && ( Post_Types::COMPOUND === $screen->post_type || 0 === strpos( (string) $screen->id, 'pepselect-coa-archive' ) );
+		return $screen && ( in_array( $screen->post_type, array( Post_Types::COMPOUND, Post_Types::COA_TEST ), true ) || 0 === strpos( (string) $screen->id, 'pepselect-coa-archive' ) );
 	}
 }
