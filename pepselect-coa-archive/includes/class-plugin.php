@@ -49,6 +49,7 @@ final class Plugin {
 		add_action( 'init', array( $this->compound_fields, 'register' ), 20 );
 		add_action( 'init', array( $this->compound_validation, 'register_hooks' ), 21 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
+		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );
 		add_action( 'admin_menu', array( $this->post_types, 'register_admin_menu' ), 5 );
 		add_action( 'admin_menu', array( $this->post_types, 'remove_duplicate_parent_submenu' ), 99 );
 		add_action( 'admin_notices', array( $this->post_types, 'render_conflict_notices' ) );

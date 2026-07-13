@@ -73,7 +73,7 @@ final class Post_Types {
 				'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields', 'revisions' ),
 				'has_archive' => 'testing', 'rewrite' => array( 'slug' => 'testing', 'with_front' => false ),
 				'capability_type' => array( 'ps_coa', 'ps_coas' ), 'map_meta_cap' => true,
-				'capabilities' => $this->capabilities(),
+				'capabilities' => Capabilities::post_type_map(),
 				'menu_position' => 25,
 			)
 		);
@@ -93,7 +93,7 @@ final class Post_Types {
 				'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields', 'revisions' ),
 				'has_archive' => false, 'rewrite' => array( 'slug' => 'coa-test', 'with_front' => false ),
 				'capability_type' => array( 'ps_coa', 'ps_coas' ), 'map_meta_cap' => true,
-				'capabilities' => $this->capabilities(),
+				'capabilities' => Capabilities::post_type_map(),
 			)
 		);
 	}
@@ -110,10 +110,5 @@ final class Post_Types {
 	/** Returns labels. @param string $singular Singular. @param string $plural Plural. @param string $add_new Add-new label. @return array */
 	private function labels( $singular, $plural, $add_new ) {
 		return array( 'name' => $plural, 'singular_name' => $singular, 'menu_name' => $plural, 'add_new' => __( 'Add New', 'pepselect-coa-archive' ), 'add_new_item' => $add_new, 'edit_item' => sprintf( __( 'Edit %s', 'pepselect-coa-archive' ), $singular ), 'view_item' => sprintf( __( 'View %s', 'pepselect-coa-archive' ), $singular ), 'search_items' => sprintf( __( 'Search %s', 'pepselect-coa-archive' ), $plural ), 'not_found' => __( 'No records found.', 'pepselect-coa-archive' ) );
-	}
-
-	/** Maps post-type operations to plugin capabilities. @return array */
-	private function capabilities() {
-		return array( 'edit_post' => 'edit_ps_coas', 'read_post' => 'read', 'delete_post' => 'delete_ps_coas', 'edit_posts' => 'edit_ps_coas', 'edit_others_posts' => 'edit_others_ps_coas', 'publish_posts' => 'publish_ps_coas', 'read_private_posts' => 'read_private_ps_coas', 'delete_posts' => 'delete_ps_coas', 'delete_private_posts' => 'delete_ps_coas', 'delete_published_posts' => 'delete_ps_coas', 'delete_others_posts' => 'delete_others_ps_coas', 'edit_private_posts' => 'edit_ps_coas', 'edit_published_posts' => 'edit_ps_coas', 'create_posts' => 'edit_ps_coas' );
 	}
 }
