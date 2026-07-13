@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.2.4 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. The compound post type now uses its structured ACF Archive Description instead of displaying the WordPress content editor; existing post content remains stored and untouched.
+Version 0.2.5 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. WooCommerce availability is now detected independently of product post-type registration timing, so the optional product selector is reliably included during `acf/init`.
 
 ## Architecture
 
@@ -65,6 +65,21 @@ Upload `pepselect-coa-archive.zip` in WordPress or copy the folder into `wp-cont
 11. Request a compound through REST; confirm safe metadata appears and `internal_notes` does not.
 12. Deactivate/reactivate; confirm compounds remain intact.
 13. Confirm `ps_coa_test` remains registered and unchanged.
+
+### WooCommerce product-selector QA
+
+1. Activate WooCommerce.
+2. Confirm at least one WooCommerce product exists.
+3. Open COA Archive → Add New Compound.
+4. Confirm Related WooCommerce Product appears between Compound Category and Archive Description.
+5. Search for and select a WooCommerce product.
+6. Save the compound.
+7. Refresh the edit page.
+8. Confirm the selected product remains selected.
+9. Temporarily disable WooCommerce.
+10. Confirm the COA plugin remains active and existing compound data remains intact.
+11. Re-enable WooCommerce.
+12. Confirm the product selector returns and the saved relationship remains selected.
 
 ## Deferred work
 

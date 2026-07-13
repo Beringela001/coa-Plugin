@@ -22,7 +22,7 @@ final class Compound_Fields {
 		if ( $this->group_registered || ! $this->dependencies->has_acf() ) { return; }
 		$this->group_registered = true;
 		$fields = $this->base_fields();
-		if ( $this->dependencies->has_woocommerce_products() ) {
+		if ( $this->dependencies->has_woocommerce() ) {
 			array_splice( $fields, 6, 0, array( $this->product_field() ) );
 		}
 		acf_add_local_field_group( array( 'key' => 'group_ps_compound_details', 'title' => __( 'Compound Details', 'pepselect-coa-archive' ), 'fields' => $fields, 'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => Post_Types::COMPOUND ) ) ), 'position' => 'normal', 'style' => 'default', 'active' => true, 'show_in_rest' => 0 ) );

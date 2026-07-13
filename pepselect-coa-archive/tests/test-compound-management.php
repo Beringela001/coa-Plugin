@@ -44,7 +44,44 @@ class PepSelect_COA_Archive_Compound_Management_Test extends WP_UnitTestCase {
 	public function test_optional_dependencies_are_safe() {
 		$dependencies = new PepSelect\COAArchive\Dependencies();
 		$this->assertIsBool( $dependencies->has_acf() );
-		$this->assertIsBool( $dependencies->has_woocommerce_products() );
+		$this->assertIsBool( $dependencies->has_woocommerce() );
+	}
+
+	public function test_woocommerce_detection_does_not_require_product_post_type() {
+		if ( ! defined( 'WC_VERSION' ) ) { define( 'WC_VERSION', 'test' ); }
+		$dependencies = new PepSelect\COAArchive\Dependencies();
+		$this->assertTrue( $dependencies->has_woocommerce() );
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-dependencies.php' );
+		$this->assertStringNotContainsString( "post_type_exists( 'product' )", $source );
+	}
+
+	public function test_product_field_definition_and_position_are_stable() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-compound-fields.php' );
+		$this->assertStringContainsString( "array_splice( \$fields, 6, 0", $source );
+		$this->assertStringContainsString( "'field_ps_compound_woocommerce_product_id'", $source );
+		$this->assertStringContainsString( "'woocommerce_product_id'", $source );
+		$this->assertStringContainsString( "'post_object'", $source );
+		$this->assertStringContainsString( "'post_type' => array( 'product' )", $source );
+		$this->assertStringContainsString( "'return_format' => 'id'", $source );
+		$this->assertStringContainsString( "'allow_null' => 1", $source );
+		$this->assertStringContainsString( "'multiple' => 0", $source );
+	}
+
+	public function test_product_field_is_included_when_woocommerce_is_available() {
+		if ( ! function_exists( 'acf_get_local_field_group' ) ) { $this->markTestSkipped( 'ACF test utilities are unavailable.' ); }
+		if ( ! defined( 'WC_VERSION' ) ) { define( 'WC_VERSION', 'test' ); }
+		$fields = new PepSelect\COAArchive\Compound_Fields( new PepSelect\COAArchive\Dependencies() );
+		$fields->register();
+		$group = acf_get_local_field_group( 'group_ps_compound_details' );
+		$keys = wp_list_pluck( acf_get_fields( $group ), 'key' );
+		$this->assertContains( 'field_ps_compound_woocommerce_product_id', $keys );
+	}
+
+	public function test_dependency_check_does_not_delete_saved_product_id() {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'ps_compound' ) );
+		update_post_meta( $post_id, 'woocommerce_product_id', 123 );
+		( new PepSelect\COAArchive\Dependencies() )->has_woocommerce();
+		$this->assertSame( '123', get_post_meta( $post_id, 'woocommerce_product_id', true ) );
 	}
 
 	public function test_acf_group_registers_when_api_is_available() {

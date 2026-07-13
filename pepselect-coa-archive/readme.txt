@@ -4,7 +4,7 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.2.4
+Stable tag: 0.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.2.5 =
+* Fixed optional WooCommerce product-selector registration timing.
 
 = 0.2.4 =
 * Removed block-editor support from compounds so structured details remain near the top of the edit screen.

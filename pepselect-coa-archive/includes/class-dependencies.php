@@ -10,9 +10,9 @@ final class Dependencies {
 		return function_exists( 'acf_add_local_field_group' );
 	}
 
-	/** Reports whether WooCommerce's product post type is registered. @return bool */
-	public function has_woocommerce_products() {
-		return class_exists( 'WooCommerce' ) && post_type_exists( 'product' );
+	/** Reports whether the WooCommerce plugin runtime is available. @return bool */
+	public function has_woocommerce() {
+		return class_exists( 'WooCommerce' ) || defined( 'WC_VERSION' ) || function_exists( 'WC' );
 	}
 
 	/** Renders dependency notices only on plugin-relevant administration screens. @return void */
@@ -21,7 +21,7 @@ final class Dependencies {
 		if ( ! $this->has_acf() ) {
 			echo '<div class="notice notice-error"><p><strong>' . esc_html__( 'ACF Pro is required to edit Pep Select compound details.', 'pepselect-coa-archive' ) . '</strong> ' . esc_html__( 'The COA Archive remains active and existing compounds remain stored, but structured field editing is unavailable until ACF Pro is restored.', 'pepselect-coa-archive' ) . '</p></div>';
 		}
-		if ( ! $this->has_woocommerce_products() ) {
+		if ( ! $this->has_woocommerce() ) {
 			echo '<div class="notice notice-info"><p>' . esc_html__( 'WooCommerce product linking is temporarily unavailable. Compound records can still be managed and saved product links are preserved.', 'pepselect-coa-archive' ) . '</p></div>';
 		}
 	}
