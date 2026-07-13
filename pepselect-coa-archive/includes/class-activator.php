@@ -11,5 +11,6 @@ final class Activator {
 		( new Rewrites() )->register();
 		Capabilities::grant_to_administrators();
 		flush_rewrite_rules();
+		Upgrade::mark_current();
 	}
 }

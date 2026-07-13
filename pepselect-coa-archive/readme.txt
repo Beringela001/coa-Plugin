@@ -4,17 +4,15 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.3.2
+Stable tag: 0.4.0-alpha.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Structured compound and laboratory COA administration for Pep Select.
+Structured Pep Select COA administration with a secure public archive data layer.
 
 == Description ==
 
-COA-3 adds a deterministic PHP-registered COA Test Details group, compound/batch duplicate protection, quantitative and pass/fail results, certificate documents, current-test enforcement, safe REST metadata, and scoped administration controls. ACF Pro is required for structured editing but not plugin activation. Private notes and internal batch IDs are excluded from REST.
-
-No frontend, COA-test fields, PDF/gallery, Elementor, product-page output, or import/export functionality is included.
+COA-4A adds server-rendered `/testing/`, compound-history, and individual-report routes with centralized public visibility, minimal theme-safe templates, shortcodes, true 404 handling, validated document links, and theme overrides. ACF Pro, WooCommerce, and Elementor are not required for public rendering. Final COA-4B design and COA-5 product cards are not included.
 
 == Installation ==
 
@@ -41,6 +39,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.4.0-alpha.1 =
+* Added COA-4A public routing, repositories, visibility rules, normalized view models, minimal templates, shortcodes, canonical handling, and versioned rewrite upgrades.
 
 = 0.3.2 =
 * Added a client-side single-test CSV importer, Direct Lab Report URL, and scoped list-table readability improvements.

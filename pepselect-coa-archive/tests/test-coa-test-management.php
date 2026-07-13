@@ -83,9 +83,11 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 
 	public function test_hidden_legacy_fields_are_not_in_active_group_or_rest() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
-		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result', 'lab_report_url' ) as $name ) { $this->assertStringNotContainsString( "'" . $name . "'", $source ); }
+		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result' ) as $name ) { $this->assertStringNotContainsString( "'" . $name . "'", $source ); }
+		$this->assertStringContainsString( "'lab_report_url'", $source );
 		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
-		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result', 'lab_report_url' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
+		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
+		$this->assertArrayHasKey( 'lab_report_url', $keys );
 	}
 
 	public function test_hidden_legacy_metadata_is_not_deleted() {

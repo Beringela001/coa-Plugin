@@ -43,6 +43,12 @@ final class Plugin {
 	/** @var COA_Test_Importer|null */
 	private $coa_test_importer;
 
+	/** @var Frontend_Router */
+	private $frontend_router;
+
+	/** @var Frontend_Template_Loader */
+	private $frontend_templates;
+
 	/** Returns the shared plugin instance. @return Plugin */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -61,6 +67,12 @@ final class Plugin {
 		$this->coa_test_fields      = new COA_Test_Fields( $this->dependencies );
 		$this->coa_test_validation  = new COA_Test_Validation();
 		$this->coa_test_service     = new COA_Test_Service();
+		$frontend_visibility        = new Frontend_Visibility();
+		$compound_repository        = new Compound_Repository( $frontend_visibility );
+		$coa_test_repository        = new COA_Test_Repository( $frontend_visibility );
+		$frontend_view_model        = new Frontend_View_Model();
+		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
+		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this->post_types, 'register' ), 5 );
 		if ( false === has_action( 'init', array( $this->compound_fields, 'register_rest_meta' ) ) ) {
@@ -76,6 +88,11 @@ final class Plugin {
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_save' ), 30 );
 		add_filter( 'acf/load_value/key=field_ps_coa_test_lab_verification_url', array( $this->coa_test_service, 'load_verification_url' ), 10, 3 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
+		add_filter( 'query_vars', array( $this->rewrites, 'register_query_vars' ) );
+		add_action( 'init', array( 'PepSelect\\COAArchive\\Upgrade', 'maybe_upgrade' ), 99 );
+		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
+		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
+		$this->frontend_templates->register_hooks();
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );
 		add_action( 'admin_menu', array( $this->post_types, 'register_admin_menu' ), 5 );
 		add_action( 'admin_menu', array( $this->post_types, 'remove_duplicate_parent_submenu' ), 99 );
