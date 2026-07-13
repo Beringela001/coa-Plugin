@@ -55,7 +55,7 @@ class PepSelect_COA_Archive_Compound_Management_Test extends WP_UnitTestCase {
 
 	public function test_field_group_registration_uses_acf_init() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-plugin.php' );
-		$this->assertStringContainsString( "add_action( 'acf/init', array( \$this->compound_fields, 'register' ), 5 )", $source );
+		$this->assertStringContainsString( "add_action( 'acf/init', array( \$this->compound_fields, 'register' ) )", $source );
 		$this->assertStringNotContainsString( "add_action( 'init', array( \$this->compound_fields, 'register' )", $source );
 	}
 

@@ -1,7 +1,7 @@
 <?php
 /** Foundation integration tests. */
 class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
-	public function test_plugin_bootstraps() { $this->assertSame( '0.2.2', pepselect_coa_archive_version() ); }
+	public function test_plugin_bootstraps() { $this->assertSame( '0.2.4', pepselect_coa_archive_version() ); }
 	public function test_post_types_and_rest_are_registered() {
 		do_action( 'init' );
 		foreach ( array( 'ps_compound', 'ps_coa_test' ) as $name ) { $object = get_post_type_object( $name ); $this->assertNotNull( $object ); $this->assertTrue( $object->show_in_rest ); }
@@ -10,6 +10,20 @@ class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
 		PepSelect\COAArchive\Activator::activate();
 		$role = get_role( 'administrator' );
 		foreach ( PepSelect\COAArchive\Capabilities::all() as $capability ) { $this->assertTrue( $role->has_cap( $capability ) ); }
+	}
+	public function test_compound_supports_structured_editor_features_without_content_editor() {
+		do_action( 'init' );
+		$this->assertTrue( post_type_supports( 'ps_compound', 'title' ) );
+		$this->assertFalse( post_type_supports( 'ps_compound', 'editor' ) );
+		$this->assertTrue( post_type_supports( 'ps_compound', 'thumbnail' ) );
+		$this->assertTrue( post_type_supports( 'ps_compound', 'custom-fields' ) );
+		$this->assertTrue( post_type_supports( 'ps_compound', 'revisions' ) );
+	}
+	public function test_coa_test_supports_remain_unchanged() {
+		do_action( 'init' );
+		foreach ( array( 'title', 'editor', 'thumbnail', 'custom-fields', 'revisions' ) as $feature ) {
+			$this->assertTrue( post_type_supports( 'ps_coa_test', $feature ) );
+		}
 	}
 	public function test_administrator_can_manage_both_post_types() {
 		PepSelect\COAArchive\Activator::activate();

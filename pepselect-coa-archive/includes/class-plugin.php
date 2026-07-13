@@ -45,8 +45,12 @@ final class Plugin {
 		$this->compound_validation = new Compound_Validation();
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this->post_types, 'register' ), 5 );
-		add_action( 'init', array( $this->compound_fields, 'register_rest_meta' ), 20 );
-		add_action( 'acf/init', array( $this->compound_fields, 'register' ), 5 );
+		if ( false === has_action( 'init', array( $this->compound_fields, 'register_rest_meta' ) ) ) {
+			add_action( 'init', array( $this->compound_fields, 'register_rest_meta' ), 20 );
+		}
+		if ( false === has_action( 'acf/init', array( $this->compound_fields, 'register' ) ) ) {
+			add_action( 'acf/init', array( $this->compound_fields, 'register' ) );
+		}
 		add_action( 'acf/init', array( $this->compound_validation, 'register_hooks' ), 10 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );

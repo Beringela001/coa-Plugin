@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.2.2 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. It registers the PHP-defined Compound Details group on ACF's native `acf/init` lifecycle while preserving the 0.2.1 capability correction and all existing data.
+Version 0.2.4 is the COA-2 compound-management maintenance release for Pep Select's certificate-of-analysis archive. The compound post type now uses its structured ACF Archive Description instead of displaying the WordPress content editor; existing post content remains stored and untouched.
 
 ## Architecture
 
