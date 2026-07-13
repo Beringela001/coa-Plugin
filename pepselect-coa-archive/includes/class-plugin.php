@@ -71,6 +71,7 @@ final class Plugin {
 		add_action( 'acf/init', array( $this->coa_test_fields, 'register' ) );
 		add_action( 'acf/init', array( $this->coa_test_validation, 'register_hooks' ), 10 );
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_save' ), 30 );
+		add_filter( 'acf/load_value/key=field_ps_coa_test_lab_verification_url', array( $this->coa_test_service, 'load_verification_url' ), 10, 3 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );
 		add_action( 'admin_menu', array( $this->post_types, 'register_admin_menu' ), 5 );

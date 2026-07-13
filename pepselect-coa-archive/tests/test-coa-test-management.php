@@ -49,12 +49,66 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 
 	public function test_numeric_and_date_validation() {
 		$this->assertNotTrue( $this->validate( '2026-02-30', 'test_date' ) );
+		$this->assertNotTrue( $this->validate( '20260230', 'date_received' ) );
+		$this->assertTrue( $this->validate( '20260710', 'test_date' ) );
 		$this->assertTrue( $this->validate( '2026-07-08', 'test_date' ) );
+		$this->assertTrue( $this->validate( '20260710', 'date_received' ) );
+		$this->assertTrue( $this->validate( '2026-07-10', 'date_received' ) );
 		$this->assertNotTrue( $this->validate( 0, 'vials_tested' ) );
 		$this->assertNotTrue( $this->validate( 1.5, 'vials_tested' ) );
 		$this->assertTrue( $this->validate( 3, 'vials_tested' ) );
 		$this->assertNotTrue( $this->validate( 100.01, 'purity_percentage' ) );
 		$this->assertTrue( $this->validate( 99.79, 'purity_percentage' ) );
+	}
+
+	public function test_ils_defaults_and_result_choice_are_declared() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
+		$this->assertStringContainsString( "'default_value' => 'White lyophilized powder'", $source );
+		$this->assertStringContainsString( "'default_value' => 'EU/mL'", $source );
+		$this->assertStringContainsString( "'endotoxin_status', 'Endotoxin Status', 'reported'", $source );
+		$this->assertStringContainsString( "'reported' => 'Reported'", $source );
+		$this->assertStringContainsString( "Arsenic, cadmium, chromium, mercury, and lead were not detected.", $source );
+		$this->assertStringContainsString( "'default_value' => 'No Growth'", $source );
+	}
+
+	public function test_saved_ils_text_values_are_not_overwritten() {
+		PepSelect\COAArchive\Capabilities::grant_to_administrators(); $user = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $user );
+		$post_id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test' ) );
+		update_post_meta( $post_id, 'sample_appearance', 'Clear solution' ); update_post_meta( $post_id, 'heavy_metals_summary', 'Manual summary' ); update_post_meta( $post_id, 'sterility_result', 'Manual result' );
+		( new PepSelect\COAArchive\COA_Test_Service() )->after_save( $post_id );
+		$this->assertSame( 'Clear solution', get_post_meta( $post_id, 'sample_appearance', true ) );
+		$this->assertSame( 'Manual summary', get_post_meta( $post_id, 'heavy_metals_summary', true ) );
+		$this->assertSame( 'Manual result', get_post_meta( $post_id, 'sterility_result', true ) );
+	}
+
+	public function test_hidden_legacy_fields_are_not_in_active_group_or_rest() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
+		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result', 'lab_report_url' ) as $name ) { $this->assertStringNotContainsString( "'" . $name . "'", $source ); }
+		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
+		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result', 'lab_report_url' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
+	}
+
+	public function test_hidden_legacy_metadata_is_not_deleted() {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test' ) );
+		foreach ( array( 'bioburden_status' => 'pass', 'residual_solvents_result' => 'legacy', 'lab_report_url' => 'https://example.com/report' ) as $key => $value ) { update_post_meta( $post_id, $key, $value ); }
+		( new PepSelect\COAArchive\COA_Test_Service() )->load_verification_url( '', $post_id, array() );
+		$this->assertSame( 'pass', get_post_meta( $post_id, 'bioburden_status', true ) );
+		$this->assertSame( 'legacy', get_post_meta( $post_id, 'residual_solvents_result', true ) );
+		$this->assertSame( 'https://example.com/report', get_post_meta( $post_id, 'lab_report_url', true ) );
+	}
+
+	public function test_verification_fields_are_backward_compatible() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
+		$this->assertStringContainsString( "'coa_number', 'COA Number'", $source );
+		$this->assertStringContainsString( "field_ps_coa_test_coa_number", file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' ) );
+		$this->assertStringContainsString( "'verification_code', 'Access Code'", $source );
+	}
+
+	public function test_ils_verification_url_defaults_without_overwriting_manual_value() {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test' ) ); update_post_meta( $post_id, 'testing_lab', 'ils-labs' );
+		$service = new PepSelect\COAArchive\COA_Test_Service();
+		$this->assertSame( 'https://lab.ils-lab.com', $service->load_verification_url( '', $post_id, array() ) );
+		$this->assertSame( 'https://manual.example/verify', $service->load_verification_url( 'https://manual.example/verify', $post_id, array() ) );
 	}
 
 	public function test_duplicate_is_blocked_and_current_post_excluded() {

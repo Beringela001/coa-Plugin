@@ -14,9 +14,18 @@ final class COA_Test_Service {
 		if ( ! $post_id || $this->running || Post_Types::COA_TEST !== get_post_type( $post_id ) || wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) { return; }
 		$this->running = true;
 		$this->initialize_title( $post_id );
+		$this->apply_ils_verification_default( $post_id );
 		if ( get_post_meta( $post_id, 'is_current', true ) ) { $this->clear_other_current_tests( $post_id, absint( get_post_meta( $post_id, 'compound_id', true ) ) ); }
 		$this->flag_future_date( $post_id );
 		$this->running = false;
+	}
+
+	/** Supplies the ILS portal only when no saved/manual URL exists. @param mixed $value Current value. @param int|string $post_id Post ID. @param array $field ACF field. @return mixed */
+	public function load_verification_url( $value, $post_id, $field ) {
+		unset( $field );
+		if ( '' !== trim( (string) $value ) ) { return $value; }
+		$post_id = absint( $post_id );
+		return $post_id && 'ils-labs' === get_post_meta( $post_id, 'testing_lab', true ) ? 'https://lab.ils-lab.com' : $value;
 	}
 
 	/** Displays a one-time non-blocking warning for a clearly future test date. @return void */
@@ -49,7 +58,13 @@ final class COA_Test_Service {
 	/** Records a short-lived future-date warning for the saving administrator. @param int $post_id Test ID. @return void */
 	private function flag_future_date( $post_id ) {
 		$date = get_post_meta( $post_id, 'test_date', true );
-		$test_date = $date ? \DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() ) : false;
+		$format = preg_match( '/^\d{8}$/', (string) $date ) ? '!Ymd' : '!Y-m-d';
+		$test_date = $date ? \DateTimeImmutable::createFromFormat( $format, $date, wp_timezone() ) : false;
 		if ( $test_date && $test_date > current_datetime()->modify( '+1 day' ) ) { set_transient( 'ps_coa_future_date_' . get_current_user_id(), $post_id, MINUTE_IN_SECONDS ); }
+	}
+
+	/** Stores the general ILS portal on first save without replacing a manual URL. @param int $post_id Test ID. @return void */
+	private function apply_ils_verification_default( $post_id ) {
+		if ( 'ils-labs' === get_post_meta( $post_id, 'testing_lab', true ) && '' === trim( (string) get_post_meta( $post_id, 'lab_verification_url', true ) ) ) { update_post_meta( $post_id, 'lab_verification_url', 'https://lab.ils-lab.com' ); }
 	}
 }

@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.3.0 adds the COA-3 laboratory-test administration workflow while preserving the compound-management foundation.
+Version 0.3.1 refines COA-3 fields and date validation around actual ILS Laboratories Full QC reports.
 
 ## Architecture
 
@@ -87,7 +87,9 @@ COA-4 frontend work—including public archives, history/detail pages, viewers, 
 
 ## COA-3 test management
 
-The PHP-defined `group_ps_coa_test_details` group contains 45 stable fields under Test Identification, Sample Information, Test Results, Certificate Documents, and Notes tabs. Its explicit keys use the `field_ps_coa_test_*` prefix and cover `compound_id`, batch/date/lab/status fields, sample quantities, standardized result statuses, certificate media/URLs, and public/report/internal notes. Records link to one compound and capture batch/date/lab data, manual scientific results, certificate PDF/page images, verification URLs, status, and current-record state. The `ps_coa_test` block editor is hidden; existing `post_content` remains untouched.
+The PHP-defined `group_ps_coa_test_details` group uses stable `field_ps_coa_test_*` keys under Test Identification, Sample Information, Test Results, Certificate Documents, and Notes tabs. Date validation accepts ACF's raw `Ymd` and normalized `Y-m-d` formats. ILS-oriented editable defaults cover appearance, endotoxin reporting/unit, heavy-metals summary, and sterility result.
+
+Certificate Documents are ordered as COA Number, Access Code (stored under the backward-compatible `verification_code` name), Lab Verification URL, Certificate Version, PDF, and page images. ILS records receive `https://lab.ils-lab.com` only when the URL is empty. Bioburden, residual-solvents, and Lab Report URL fields are currently hidden from the form/REST schema; their historical metadata is intentionally retained.
 
 Validation requires a valid compound, batch, date, laboratory, and at least one vial tested. It validates controlled choices, numeric ranges, content bounds, URLs, PDF/image attachments, other-lab names, and exact compound/batch duplicates. Approved records require a PDF and at least one page image and cannot contain a failed result status. Scientific status is never inferred from numeric values.
 
@@ -109,3 +111,18 @@ ACF Pro is required only for structured editing: if unavailable, the post type a
 8. Confirm an exact duplicate batch, purity over 100, zero vials, and Approved with a failed result are blocked.
 9. Confirm filters and sorting work.
 10. Deactivate/reactivate and confirm tests and attachments remain intact.
+
+### COA-3.1 ILS refinement QA
+
+1. Open Add New COA Test.
+2. Select a Test Date using the calendar and confirm it saves without “Enter a valid date.”
+3. Select Date Received using the calendar.
+4. Confirm Sample Appearance defaults to White lyophilized powder.
+5. Confirm Endotoxin Unit defaults to EU/mL and Endotoxin Status defaults to Reported.
+6. Confirm the heavy-metals summary is prefilled and Sterility Result is No Growth.
+7. Confirm bioburden and residual-solvents fields are absent.
+8. Confirm COA Number and Access Code appear.
+9. Select ILS Labs and confirm an empty verification URL becomes `https://lab.ils-lab.com` after saving.
+10. Confirm Lab Report URL is absent.
+11. Confirm PDF and page-image upload fields still work.
+12. Save, refresh, and confirm all entered and manually replaced values persist.
