@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.3.1 refines COA-3 fields and date validation around actual ILS Laboratories Full QC reports.
+Version 0.3.2 adds a client-side, single-test CSV importer, restores the primary Direct Lab Report URL, and improves the COA Test list layout.
 
 ## Architecture
 
@@ -89,7 +89,25 @@ COA-4 frontend work—including public archives, history/detail pages, viewers, 
 
 The PHP-defined `group_ps_coa_test_details` group uses stable `field_ps_coa_test_*` keys under Test Identification, Sample Information, Test Results, Certificate Documents, and Notes tabs. Date validation accepts ACF's raw `Ymd` and normalized `Y-m-d` formats. ILS-oriented editable defaults cover appearance, endotoxin reporting/unit, heavy-metals summary, and sterility result.
 
-Certificate Documents are ordered as COA Number, Access Code (stored under the backward-compatible `verification_code` name), Lab Verification URL, Certificate Version, PDF, and page images. ILS records receive `https://lab.ils-lab.com` only when the URL is empty. Bioburden, residual-solvents, and Lab Report URL fields are currently hidden from the form/REST schema; their historical metadata is intentionally retained.
+ILS records receive `https://lab.ils-lab.com` only when the URL is empty. Bioburden and residual-solvents fields remain hidden from the form/REST schema; their historical metadata is intentionally retained.
+
+In 0.3.2, `lab_report_url` returns as **Direct Lab Report URL** and is the primary future external report link. Certificate Documents are ordered COA Number, Direct Lab Report URL, Access Code, Lab Verification URL, Certificate Version, PDF, and page images. Verification fields remain optional fallbacks.
+
+### Single-test CSV importer
+
+The Import Test CSV panel appears only on authorized COA Test Add/Edit screens. It reads at most 1 MB locally in the browser, requires one header row and exactly one non-empty data row, previews changes, confirms replacements, and snapshots prior form values for Clear Imported Values. It never uploads the CSV, saves a draft, creates a post, publishes, or makes an external request. PDF and gallery values are intentionally excluded.
+
+Supported columns are the structured COA fields documented above, excluding `coa_pdf_id` and `coa_page_images`. Compound matching tries `compound_id`, then `compound_slug`, then `compound_display_name`; ambiguous or missing matches are never guessed. Dates accept `YYYY-MM-DD`, `YYYYMMDD`, or `MM/DD/YYYY`. Booleans accept `1/0`, `true/false`, `yes/no`, and `on/off`. Status/lab labels are normalized case-insensitively.
+
+### COA-3.2 importer QA
+
+1. Open COA Archive → Add New Test, choose a one-row CSV, and click Preview CSV.
+2. Review values/warnings, click Apply CSV to Form, and confirm no post was created or saved.
+3. Review imported values, upload PDF/page images manually, and confirm Direct Lab Report URL populated.
+4. Publish manually, refresh, and confirm persistence.
+5. Confirm two-row CSVs, invalid dates, and invalid purity are rejected.
+6. Confirm replacements require approval and Clear Imported Values restores pre-import values.
+7. Confirm the COA Test list remains readable and columns can still be hidden through Screen Options.
 
 Validation requires a valid compound, batch, date, laboratory, and at least one vial tested. It validates controlled choices, numeric ranges, content bounds, URLs, PDF/image attachments, other-lab names, and exact compound/batch duplicates. Approved records require a PDF and at least one page image and cannot contain a failed result status. Scientific status is never inferred from numeric values.
 

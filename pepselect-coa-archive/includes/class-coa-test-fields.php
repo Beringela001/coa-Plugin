@@ -29,7 +29,7 @@ final class COA_Test_Fields {
 		$integer = array( 'compound_id', 'vials_submitted', 'vials_tested', 'coa_pdf_id' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
 		$boolean = array( 'is_current' );
-		$safe = array( 'compound_id', 'batch_number', 'test_date', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'coa_status', 'is_current', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'coa_number', 'coa_pdf_id', 'lab_verification_url', 'verification_code', 'certificate_version', 'public_notes', 'report_notes' );
+		$safe = array( 'compound_id', 'batch_number', 'test_date', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'coa_status', 'is_current', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'coa_number', 'lab_report_url', 'coa_pdf_id', 'lab_verification_url', 'verification_code', 'certificate_version', 'public_notes', 'report_notes' );
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
 			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
@@ -82,6 +82,7 @@ final class COA_Test_Fields {
 			$this->f( 'sterility_result', 'Sterility Result', 'text', array( 'maxlength' => 200, 'default_value' => 'No Growth' ) ),
 			$this->tab( 'documents', __( 'Certificate Documents', 'pepselect-coa-archive' ) ),
 			$this->f( 'coa_number', 'COA Number', 'text', array( 'maxlength' => 120 ) ),
+			$this->f( 'lab_report_url', 'Direct Lab Report URL', 'url' ),
 			$this->f( 'verification_code', 'Access Code', 'text', array( 'maxlength' => 200 ) ),
 			$this->f( 'lab_verification_url', 'Lab Verification URL', 'url' ),
 			$this->f( 'certificate_version', 'Certificate Version', 'text', array( 'maxlength' => 50 ) ),

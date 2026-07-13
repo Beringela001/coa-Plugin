@@ -1,0 +1,20 @@
+.post-type-ps_coa_test .wp-list-table {
+	table-layout: auto;
+}
+
+.post-type-ps_coa_test .wp-list-table th,
+.post-type-ps_coa_test .wp-list-table td {
+	word-break: normal;
+	overflow-wrap: normal;
+}
+
+.post-type-ps_coa_test .column-title { min-width: 220px; }
+.post-type-ps_coa_test .column-compound_id { min-width: 145px; }
+.post-type-ps_coa_test .column-batch_number { min-width: 115px; }
+.post-type-ps_coa_test .column-test_date,
+.post-type-ps_coa_test .column-testing_lab,
+.post-type-ps_coa_test .column-purity_percentage,
+.post-type-ps_coa_test .column-vials_tested,
+.post-type-ps_coa_test .column-coa_status,
+.post-type-ps_coa_test .column-is_current,
+.post-type-ps_coa_test .column-coa_pdf_id { white-space: nowrap; }

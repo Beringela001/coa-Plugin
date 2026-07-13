@@ -4,7 +4,7 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.3.2 =
+* Added a client-side single-test CSV importer, Direct Lab Report URL, and scoped list-table readability improvements.
 
 = 0.3.1 =
 * Accepted ACF raw dates and refined COA fields/defaults for ILS Full QC reports without deleting legacy metadata.

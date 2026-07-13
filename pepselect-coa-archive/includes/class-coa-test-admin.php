@@ -16,7 +16,7 @@ final class COA_Test_Admin {
 
 	/** Defines COA Test columns. @param array $columns Existing columns. @return array */
 	public function columns( $columns ) {
-		return array( 'cb' => $columns['cb'], 'title' => __( 'COA Test / Title', 'pepselect-coa-archive' ), 'compound_id' => __( 'Compound', 'pepselect-coa-archive' ), 'batch_number' => __( 'Batch Number', 'pepselect-coa-archive' ), 'test_date' => __( 'Test Date', 'pepselect-coa-archive' ), 'testing_lab' => __( 'Testing Laboratory', 'pepselect-coa-archive' ), 'purity_percentage' => __( 'Purity', 'pepselect-coa-archive' ), 'vials_tested' => __( 'Vials Tested', 'pepselect-coa-archive' ), 'coa_status' => __( 'Overall Status', 'pepselect-coa-archive' ), 'is_current' => __( 'Current', 'pepselect-coa-archive' ), 'coa_pdf_id' => __( 'PDF', 'pepselect-coa-archive' ), 'date' => isset( $columns['date'] ) ? $columns['date'] : __( 'Date', 'pepselect-coa-archive' ) );
+		return array( 'cb' => $columns['cb'], 'title' => __( 'COA Test / Title', 'pepselect-coa-archive' ), 'compound_id' => __( 'Compound', 'pepselect-coa-archive' ), 'batch_number' => __( 'Batch', 'pepselect-coa-archive' ), 'test_date' => __( 'Test Date', 'pepselect-coa-archive' ), 'testing_lab' => __( 'Lab', 'pepselect-coa-archive' ), 'purity_percentage' => __( 'Purity', 'pepselect-coa-archive' ), 'vials_tested' => __( 'Vials', 'pepselect-coa-archive' ), 'coa_status' => __( 'Status', 'pepselect-coa-archive' ), 'is_current' => __( 'Current', 'pepselect-coa-archive' ), 'coa_pdf_id' => __( 'PDF', 'pepselect-coa-archive' ), 'date' => isset( $columns['date'] ) ? $columns['date'] : __( 'Date', 'pepselect-coa-archive' ) );
 	}
 
 	/** Renders one custom column. @param string $column Column. @param int $post_id Test ID. @return void */

@@ -40,6 +40,9 @@ final class Plugin {
 	/** @var COA_Test_Admin|null */
 	private $coa_test_admin;
 
+	/** @var COA_Test_Importer|null */
+	private $coa_test_importer;
+
 	/** Returns the shared plugin instance. @return Plugin */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -84,6 +87,8 @@ final class Plugin {
 			$this->compound_admin->register_hooks();
 			$this->coa_test_admin = new COA_Test_Admin();
 			$this->coa_test_admin->register_hooks();
+			$this->coa_test_importer = new COA_Test_Importer();
+			$this->coa_test_importer->register_hooks();
 		}
 	}
 
