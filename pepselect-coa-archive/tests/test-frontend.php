@@ -1,5 +1,5 @@
 <?php
-/** COA-4A public routing, visibility, repository, and view-model tests. */
+/** COA-4 public routing, visibility, presentation, and view-model tests. */
 class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	private $visibility;
 	private $tests;
@@ -106,6 +106,26 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertContains( $with, $ids ); $this->assertNotContains( $without, $ids );
 	}
 
+	public function test_archive_searches_public_compound_names_and_sanitizes_input() {
+		$display = $this->compound( 'Display Match' ); update_post_meta( $display, 'display_name', 'Retatrutide' );
+		$compound_name = $this->compound( 'Compound Match' ); update_post_meta( $compound_name, 'compound_name', 'Tesamorelin' );
+		$short = $this->compound( 'Short Match' ); update_post_meta( $short, 'short_name', 'BPC' );
+		foreach ( array( $display, $compound_name, $short ) as $id ) { $this->test_record( $id, 'approved', 'publish', 'VISIBLE-' . $id ); }
+		$this->assertSame( array( $display ), wp_list_pluck( $this->router()->build_archive( 1, 'Retatrutide' )['compounds'], 'compound_id' ) );
+		$this->assertSame( array( $compound_name ), wp_list_pluck( $this->router()->build_archive( 1, 'Tesamorelin' )['compounds'], 'compound_id' ) );
+		$this->assertSame( array( $short ), wp_list_pluck( $this->router()->build_archive( 1, '<b>BPC</b>' )['compounds'], 'compound_id' ) );
+	}
+
+	public function test_compound_cards_preview_only_three_newest_batches_and_count_all_reports() {
+		$compound = $this->compound();
+		for ( $number = 1; $number <= 5; $number++ ) { $this->test_record( $compound, 'approved', 'publish', 'BATCH-' . $number, '2026070' . $number ); }
+		$model = $this->router()->build_archive( 1 )['compounds'][0];
+		$this->assertCount( 3, $model['recent_batches'] );
+		$this->assertSame( 5, $model['approved_test_count'] );
+		$this->assertSame( array( 'BATCH-5', 'BATCH-4', 'BATCH-3' ), wp_list_pluck( $model['recent_batches'], 'batch_number' ) );
+		$this->assertSame( $model['url'], $this->view_model->compound( get_post( $compound ) )['url'] );
+	}
+
 	public function test_laboratory_and_status_values_are_not_reinterpreted() {
 		$this->assertSame( 'ILS Labs', $this->view_model->laboratory_name( 'ils-labs' ) );
 		$this->assertSame( 'Janoshik Analytical', $this->view_model->laboratory_name( 'janoshik' ) );
@@ -122,7 +142,33 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$model = $this->view_model->report( get_post( $test ), get_post( $compound ) );
 		$this->assertArrayNotHasKey( 'internal_notes', $model );
 		$this->assertArrayNotHasKey( 'internal_batch_id', $model );
+		$this->assertArrayNotHasKey( 'verification_code', $model );
+		$this->assertArrayNotHasKey( 'lab_verification_url', $model );
 		$this->assertStringNotContainsString( 'secret', wp_json_encode( $model ) );
+	}
+
+	public function test_access_codes_and_verification_urls_are_not_registered_as_public_rest_meta() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
+		preg_match( '/\$safe = array\( (.*?) \);/s', $source, $matches );
+		$this->assertNotEmpty( $matches );
+		$this->assertStringNotContainsString( 'verification_code', $matches[1] );
+		$this->assertStringNotContainsString( 'lab_verification_url', $matches[1] );
+	}
+
+	public function test_public_documentation_uses_exact_report_url_and_hides_verification_metadata() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'approved', 'publish', 'LINKS' );
+		$url = 'https://lab.example/reports/exact?id=42';
+		update_post_meta( $test, 'lab_report_url', $url );
+		update_post_meta( $test, 'lab_verification_url', 'https://lab.example/verify' );
+		update_post_meta( $test, 'verification_code', 'PRIVATE-CODE' );
+		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
+		$this->assertStringContainsString( 'View Lab Report', $html );
+		$this->assertStringContainsString( esc_url( $url ), $html );
+		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
+		$this->assertStringNotContainsString( 'lab.example/verify', $html );
+		$this->assertStringNotContainsString( 'PRIVATE-CODE', $html );
+		$this->assertStringNotContainsString( 'Verify with Laboratory', $html );
+		$this->assertStringNotContainsString( 'Access Code', $html );
 	}
 
 	public function test_pdf_must_be_a_valid_pdf_and_gallery_order_is_preserved() {
@@ -170,13 +216,31 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_templates_assets_and_deferred_integrations_are_scoped() {
-		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
+		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php', 'partials/compound-card.php', 'partials/latest-report-card.php', 'partials/previous-report-card.php', 'partials/status-indicator.php', 'partials/report-metrics.php', 'partials/report-results.php', 'partials/report-documentation.php', 'partials/certificate-gallery.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
 		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $this->router() );
 		$this->assertStringEndsWith( 'templates/archive-testing.php', str_replace( '\\', '/', $loader->locate( 'archive-testing.php' ) ) );
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
 		$this->assertStringContainsString( "if ( ! \$this->router->is_route() && ! \$shortcode )", $source );
+		$this->assertStringContainsString( 'assets/css/pepselect-coa-frontend.css', $source );
+		$this->assertStringContainsString( 'context_has_gallery', $source );
+		$this->assertFileExists( dirname( __DIR__ ) . '/assets/js/pepselect-coa-lightbox.js' );
 		$this->assertStringNotContainsString( 'elementor/widgets', strtolower( $source ) );
 		$this->assertStringNotContainsString( 'woocommerce_single_product', strtolower( $source ) );
+	}
+
+	public function test_templates_render_compact_cards_metrics_statuses_and_accessible_gallery_controls() {
+		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/partials/compound-card.php' );
+		$report = file_get_contents( dirname( __DIR__ ) . '/templates/single-coa-report.php' );
+		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-gallery.php' );
+		$status = file_get_contents( dirname( __DIR__ ) . '/templates/partials/status-indicator.php' );
+		$this->assertStringContainsString( 'array_slice( $compound[\'recent_batches\'], 0, 3 )', $archive );
+		$this->assertStringContainsString( 'View all %s reports', $archive );
+		$this->assertStringContainsString( 'report-metrics.php', $report );
+		$this->assertStringContainsString( 'report-results.php', $report );
+		$this->assertStringContainsString( 'medium_large', file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' ) );
+		foreach ( array( 'data-ps-coa-close', 'data-ps-coa-prev', 'data-ps-coa-next', 'aria-modal="true"', 'loading="lazy"' ) as $needle ) { $this->assertStringContainsString( $needle, $gallery ); }
+		$this->assertStringContainsString( "'reported' === \$value", $status );
+		$this->assertStringNotContainsString( 'emoji', strtolower( $status ) );
 	}
 
 	private function router() {

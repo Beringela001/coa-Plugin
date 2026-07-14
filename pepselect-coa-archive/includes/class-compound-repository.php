@@ -23,13 +23,24 @@ final class Compound_Repository {
 		return $this->visibility->is_compound_public( $post ) ? $post : null;
 	}
 
-	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @return array */
-	public function archive_page( $eligible_ids, $page = 1, $per_page = 24 ) {
+	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @param string $search Search term. @return array */
+	public function archive_page( $eligible_ids, $page = 1, $per_page = 24, $search = '' ) {
 		$ids = array_values( array_unique( array_filter( array_map( 'absint', $eligible_ids ) ) ) );
 		if ( ! $ids ) { return array( 'posts' => array(), 'total' => 0, 'pages' => 0, 'page' => 1 ); }
 		$posts = get_posts( array( 'post_type' => Post_Types::COMPOUND, 'post_status' => 'publish', 'post__in' => $ids, 'posts_per_page' => -1, 'no_found_rows' => true, 'suppress_filters' => false ) );
 		$posts = array_values( array_filter( $posts, array( $this->visibility, 'is_compound_public' ) ) );
 		if ( $posts ) { update_meta_cache( 'post', wp_list_pluck( $posts, 'ID' ) ); }
+		$search = trim( sanitize_text_field( (string) $search ) );
+		if ( '' !== $search ) {
+			$posts = array_values( array_filter( $posts, static function ( $post ) use ( $search ) {
+				$haystack = implode( ' ', array(
+					(string) get_post_meta( $post->ID, 'display_name', true ),
+					(string) get_post_meta( $post->ID, 'compound_name', true ),
+					(string) get_post_meta( $post->ID, 'short_name', true ),
+				) );
+				return false !== stripos( $haystack, $search );
+			} ) );
+		}
 		usort( $posts, array( $this, 'compare_compounds' ) );
 		$total = count( $posts ); $pages = (int) ceil( $total / $per_page ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
 		return array( 'posts' => array_slice( $posts, ( $page - 1 ) * $per_page, $per_page ), 'total' => $total, 'pages' => $pages, 'page' => $page );

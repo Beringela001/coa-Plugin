@@ -19,4 +19,9 @@ final class Frontend_Query {
 
 	/** Returns the current public page number. @return int */
 	public function page() { return max( 1, absint( get_query_var( 'paged', 1 ) ) ); }
+
+	/** Returns the sanitized archive search term. @return string */
+	public function search() {
+		return isset( $_GET['coa_search'] ) ? sanitize_text_field( wp_unslash( $_GET['coa_search'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
 }

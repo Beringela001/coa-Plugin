@@ -7,7 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class Frontend_View_Model {
 	/** Returns a main-archive compound model. @param \WP_Post $compound Compound. @param \WP_Post[] $tests Eligible tests. @return array */
 	public function archive_compound( $compound, $tests ) {
-		$latest = $tests ? $tests[0] : null;
+		$recent = array_values( $tests );
+		usort( $recent, array( $this, 'compare_by_test_date' ) );
+		$latest = $recent ? $recent[0] : null;
 		$summary = $latest ? $this->test_summary( $latest, $compound ) : array();
 		return array_merge( $this->compound( $compound ), array(
 			'approved_test_count' => count( $tests ),
@@ -19,6 +21,7 @@ final class Frontend_View_Model {
 			'latest_laboratory_display_name' => $summary ? $summary['laboratory'] : '',
 			'latest_coa_status' => $summary ? $summary['coa_status'] : '',
 			'latest_test_url' => $summary ? $summary['detail_url'] : '',
+			'recent_batches' => array_map( function ( $test ) use ( $compound ) { return $this->test_summary( $test, $compound ); }, array_slice( $recent, 0, 3 ) ),
 			'has_current_approved_test' => (bool) array_filter( $tests, static function ( $test ) { return (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ); } ),
 		) );
 	}
@@ -40,6 +43,8 @@ final class Frontend_View_Model {
 			'archive_description' => (string) get_post_meta( $compound->ID, 'archive_description', true ),
 			'compound_image_id' => $image_id,
 			'compound_image_url' => $this->image_url( $image_id, 'medium' ),
+			'compound_image_srcset' => $this->image_srcset( $image_id, 'medium' ),
+			'compound_image_sizes' => $this->image_sizes( $image_id, 'medium' ),
 			'compound_image_alt' => $this->image_alt( $image_id, $compound->post_title ),
 			'display_order' => absint( get_post_meta( $compound->ID, 'display_order', true ) ),
 			'is_featured' => (bool) absint( get_post_meta( $compound->ID, 'is_featured', true ) ),
@@ -76,8 +81,6 @@ final class Frontend_View_Model {
 			'sterility_status' => $this->status( get_post_meta( $test->ID, 'sterility_status', true ) ),
 			'coa_number' => (string) get_post_meta( $test->ID, 'coa_number', true ),
 			'lab_report_url' => $this->http_url( get_post_meta( $test->ID, 'lab_report_url', true ) ),
-			'verification_code' => (string) get_post_meta( $test->ID, 'verification_code', true ),
-			'lab_verification_url' => $this->http_url( get_post_meta( $test->ID, 'lab_verification_url', true ) ),
 			'detail_url' => $compound ? $this->test_url( $compound, $test ) : '',
 			'public_notes' => (string) get_post_meta( $test->ID, 'public_notes', true ),
 		);
@@ -111,7 +114,7 @@ final class Frontend_View_Model {
 		$stored = sanitize_key( str_replace( '_', '-', (string) $stored ) );
 		$labels = array( 'approved' => 'Approved', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
 		$value = isset( $labels[ $stored ] ) ? $stored : '';
-		return array( 'value' => $value, 'label' => $value ? $labels[ $value ] : 'Not Reported', 'class' => $value ? 'ps-status-' . $value : 'ps-status-empty', 'icon' => $value ?: 'empty', 'public' => true );
+		return array( 'value' => $value, 'label' => $value ? $labels[ $value ] : 'Not Reported', 'class' => $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty', 'icon' => $value ?: 'empty', 'public' => true );
 	}
 
 	public function archive_url() { return home_url( user_trailingslashit( 'testing' ) ); }
@@ -129,15 +132,25 @@ final class Frontend_View_Model {
 	private function http_url( $url ) { $url = trim( (string) $url ); return $url && wp_http_validate_url( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : ''; }
 	private function product_url( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'product' === $post->post_type && 'publish' === $post->post_status ? get_permalink( $post ) : ''; }
 	private function image_url( $id, $size ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && wp_attachment_is_image( $id ) ? (string) wp_get_attachment_image_url( $id, $size ) : ''; }
+	private function image_srcset( $id, $size ) { return $this->image_url( $id, $size ) ? (string) wp_get_attachment_image_srcset( $id, $size ) : ''; }
+	private function image_sizes( $id, $size ) { return $this->image_url( $id, $size ) ? (string) wp_get_attachment_image_sizes( $id, $size ) : ''; }
 	private function image_alt( $id, $fallback ) { $alt = $id ? trim( (string) get_post_meta( $id, '_wp_attachment_image_alt', true ) ) : ''; return $alt ?: $fallback; }
 	private function pdf_url( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && 'application/pdf' === get_post_mime_type( $id ) ? (string) wp_get_attachment_url( $id ) : ''; }
 	private function gallery( $value, $fallback ) {
 		$images = array(); $ids = is_array( $value ) ? array_map( 'absint', $value ) : array_filter( array_map( 'absint', explode( ',', (string) $value ) ) );
 		if ( $ids ) { _prime_post_caches( $ids, false, false ); update_meta_cache( 'post', $ids ); }
 		foreach ( $ids as $id ) {
-			$id = absint( $id ); $url = $this->image_url( $id, 'large' );
-			if ( $url ) { $images[] = array( 'attachment_id' => $id, 'url' => $url, 'alt' => $this->image_alt( $id, sprintf( __( '%s certificate page', 'pepselect-coa-archive' ), $fallback ) ) ); }
+			$id = absint( $id ); $thumbnail_url = $this->image_url( $id, 'medium_large' ); $full_url = $this->image_url( $id, 'full' );
+			if ( $thumbnail_url && $full_url ) { $images[] = array( 'attachment_id' => $id, 'thumbnail_url' => $thumbnail_url, 'full_url' => $full_url, 'srcset' => $this->image_srcset( $id, 'medium_large' ), 'sizes' => $this->image_sizes( $id, 'medium_large' ), 'alt' => $this->image_alt( $id, sprintf( __( '%s certificate page', 'pepselect-coa-archive' ), $fallback ) ) ); }
 		}
 		return $images;
+	}
+
+	/** Sorts archive previews by test date and publish date descending. @return int */
+	private function compare_by_test_date( $left, $right ) {
+		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) );
+		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
+		$date = strcmp( $right_date, $left_date );
+		return 0 !== $date ? $date : strcmp( $right->post_date_gmt, $left->post_date_gmt );
 	}
 }

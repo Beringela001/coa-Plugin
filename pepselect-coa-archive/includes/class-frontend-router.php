@@ -17,7 +17,7 @@ final class Frontend_Router {
 		if ( $this->resolved || is_admin() || wp_doing_ajax() || wp_doing_cron() ) { return; }
 		$this->resolved = true; $view = $this->query->view();
 		if ( ! $view ) { return; }
-		if ( 'archive' === $view ) { $this->context = $this->build_archive( $this->query->page() ); }
+		if ( 'archive' === $view ) { $this->context = $this->build_archive( $this->query->page(), $this->query->search() ); }
 		elseif ( 'compound' === $view ) { $this->context = $this->build_compound( $this->query->compound_slug(), 0, $this->query->page() ); }
 		elseif ( 'report' === $view ) { $this->context = $this->build_report( $this->query->compound_slug(), $this->query->batch_slug() ); }
 		if ( ! $this->context ) { $this->mark_404(); return; }
@@ -31,14 +31,17 @@ final class Frontend_Router {
 		if ( is_post_type_archive( Post_Types::COMPOUND ) || is_singular( array( Post_Types::COMPOUND, Post_Types::COA_TEST ) ) ) { $this->mark_404(); }
 	}
 
-	/** Builds the public archive context. @param int $page Page. @return array */
-	public function build_archive( $page = 1 ) {
-		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests(), $page, 24 );
+	/** Builds the public archive context. @param int $page Page. @param string $search Search term. @return array */
+	public function build_archive( $page = 1, $search = '' ) {
+		$search = sanitize_text_field( (string) $search );
+		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests(), $page, 24, $search );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();
 		foreach ( $result['posts'] as $compound ) { $items[] = $this->view_model->archive_compound( $compound, isset( $grouped[ $compound->ID ] ) ? $grouped[ $compound->ID ] : array() ); }
-		$archive_url = $this->view_model->archive_url(); $canonical = $result['page'] > 1 ? add_query_arg( 'paged', $result['page'], $archive_url ) : $archive_url;
-		return array( 'view' => 'archive', 'template' => 'archive-testing.php', 'canonical' => $canonical, 'archive_url' => $archive_url, 'compounds' => $items, 'pagination' => array( 'page' => $result['page'], 'pages' => $result['pages'], 'total' => $result['total'] ) );
+		$archive_url = $this->view_model->archive_url();
+		$canonical_args = array_filter( array( 'coa_search' => $search, 'paged' => $result['page'] > 1 ? $result['page'] : null ) );
+		$canonical = $canonical_args ? add_query_arg( $canonical_args, $archive_url ) : $archive_url;
+		return array( 'view' => 'archive', 'template' => 'archive-testing.php', 'canonical' => $canonical, 'archive_url' => $archive_url, 'search' => $search, 'compounds' => $items, 'pagination' => array( 'page' => $result['page'], 'pages' => $result['pages'], 'total' => $result['total'] ) );
 	}
 
 	/** Builds a visible compound history by slug or ID. @param string $slug Slug. @param int $id ID. @param int $page Page. @return array */
