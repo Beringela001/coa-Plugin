@@ -56,6 +56,9 @@ assert.strictEqual( api.normalizeValue( 'purity_percentage', '99.8' ).value, '99
 assert.strictEqual( api.normalizeValue( 'purity_percentage', '101' ).valid, false );
 assert.strictEqual( api.normalizeValue( 'lab_report_url', 'https://lab.example/report' ).valid, true );
 assert.strictEqual( api.normalizeValue( 'lab_report_url', 'javascript:alert(1)' ).valid, false );
+assert.strictEqual( api.normalizeValue( 'pending_lab_url', 'https://lab.example/progress' ).valid, true );
+assert.strictEqual( api.normalizeValue( 'expected_coa_date', '2026-07-30' ).value, '20260730' );
+assert.strictEqual( api.normalizeValue( 'coa_status', 'Vendor Vetting' ).value, 'vendor-vetting' );
 assert.strictEqual( api.matchCompound( { compound_id: '1', compound_slug: 'reta-20' } ).match.id, 1 );
 assert.strictEqual( api.matchCompound( { compound_id: '999', compound_slug: 'reta-30' } ).match.id, 1 );
 assert.ok( api.matchCompound( { compound_display_name: 'Retatrutide 20mg' } ).error );

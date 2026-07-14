@@ -18,6 +18,17 @@ final class COA_Test_Repository {
 		return $posts;
 	}
 
+	/** Returns classified public tests for one compound. @return array */
+	public function classified_for_compound( $compound_id ) {
+		$result = array( 'approved' => array(), 'incoming' => array(), 'failed' => array() );
+		foreach ( $this->all_for_compound( $compound_id ) as $test ) {
+			if ( $this->visibility->is_approved( $test ) ) { $result['approved'][] = $test; }
+			elseif ( $this->visibility->is_incoming( $test ) ) { $result['incoming'][] = $test; }
+			elseif ( $this->visibility->is_failed( $test ) ) { $result['failed'][] = $test; }
+		}
+		return $result;
+	}
+
 	/** Returns eligible tests grouped by compound ID. @param int[] $compound_ids Compound IDs. @return array */
 	public function grouped_for_compounds( $compound_ids ) {
 		$grouped = array();
@@ -69,7 +80,7 @@ final class COA_Test_Repository {
 
 	/** Returns eligible IDs after centralized visibility filtering and cache priming. @param int[] $compound_ids Optional compounds. @return int[] */
 	private function eligible_ids( $compound_ids = array() ) {
-		$meta_query = array( array( 'key' => 'coa_status', 'value' => 'approved', 'compare' => '=' ) );
+		$meta_query = array( array( 'key' => 'coa_status', 'value' => array( 'approved', 'failed', 'pending', 'in-testing', 'vendor-vetting' ), 'compare' => 'IN' ) );
 		if ( $compound_ids ) { $meta_query[] = array( 'key' => 'compound_id', 'value' => array_map( 'absint', $compound_ids ), 'compare' => 'IN', 'type' => 'NUMERIC' ); }
 		$ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'date', 'order' => 'DESC', 'meta_query' => $meta_query, 'no_found_rows' => true, 'suppress_filters' => false ) );
 		$ids = array_map( 'absint', $ids );

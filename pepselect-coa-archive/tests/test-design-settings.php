@@ -1,5 +1,5 @@
 <?php
-/** COA-4C scientific display and design-settings tests. */
+/** COA-4 scientific display and design-settings tests. */
 class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 	private $view_model;
 
@@ -81,6 +81,13 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 		$css = PepSelect\COAArchive\Design_Settings::inline_css();
 		$this->assertStringStartsWith( '.ps-coa-app{', $css ); $this->assertStringContainsString( '--ps-coa-accent:', $css ); $this->assertStringNotContainsString( ':root', $css );
 		$this->assertSame( 'manage_ps_coas', $admin->settings_capability() );
+	}
+
+	public function test_settings_screen_has_helper_copy_and_linked_previews() {
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-design-settings-admin.php' );
+		$this->assertStringContainsString( 'Preview example', $source );
+		$this->assertStringContainsString( 'What this changes', $source );
+		foreach ( array( 'colors', 'typography', 'corners', 'buttons', 'lightbox', 'copy' ) as $section ) { $this->assertStringContainsString( 'id="ps-coa-preview-' . $section . '"', $source ); }
 	}
 
 	public function test_reset_assets_search_and_lightbox_are_scoped_and_safe() {

@@ -9,10 +9,16 @@ final class Frontend_View_Model {
 	public function archive_compound( $compound, $tests ) {
 		$recent = array_values( $tests );
 		usort( $recent, array( $this, 'compare_by_test_date' ) );
-		$latest = $recent ? $recent[0] : null;
+		$approved = array_values( array_filter( $recent, static function ( $test ) { return 'approved' === get_post_meta( $test->ID, 'coa_status', true ); } ) );
+		$incoming = array_values( array_filter( $recent, static function ( $test ) { return in_array( get_post_meta( $test->ID, 'coa_status', true ), array( 'pending', 'in-testing', 'vendor-vetting' ), true ); } ) );
+		$failed = array_values( array_filter( $recent, static function ( $test ) { return 'failed' === get_post_meta( $test->ID, 'coa_status', true ); } ) );
+		$latest = $approved ? $approved[0] : null;
 		$summary = $latest ? $this->test_summary( $latest, $compound ) : array();
+		$status_test = $incoming ? $incoming[0] : ( $latest ?: ( $failed ? $failed[0] : null ) );
+		$status_summary = $status_test ? $this->test_summary( $status_test, $compound ) : array();
 		return array_merge( $this->compound( $compound ), array(
-			'approved_test_count' => count( $tests ),
+			'approved_test_count' => count( $approved ),
+			'public_report_count' => count( $recent ),
 			'latest_approved_test_date' => $summary ? $summary['test_date'] : '',
 			'latest_approved_test_date_label' => $summary ? $summary['test_date_label'] : '',
 			'latest_approved_batch_number' => $summary ? $summary['batch_number'] : '',
@@ -23,8 +29,11 @@ final class Frontend_View_Model {
 			'latest_coa_status' => $summary ? $summary['coa_status'] : '',
 			'latest_test_url' => $summary ? $summary['detail_url'] : '',
 			'is_full_qc_documented' => $summary ? $summary['is_full_qc_documented'] : false,
+			'public_status_label' => $status_summary ? $status_summary['public_status_label'] : '',
+			'public_status_copy' => $status_summary ? $status_summary['public_status_copy'] : '',
+			'public_status_tone' => $status_summary ? $status_summary['public_status_tone'] : 'neutral',
 			'recent_batches' => array_map( function ( $test ) use ( $compound ) { return $this->test_summary( $test, $compound ); }, array_slice( $recent, 0, 3 ) ),
-			'has_current_approved_test' => (bool) array_filter( $tests, static function ( $test ) { return (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ); } ),
+			'has_current_approved_test' => (bool) array_filter( $tests, static function ( $test ) { return 'approved' === get_post_meta( $test->ID, 'coa_status', true ) && (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ); } ),
 		) );
 	}
 
@@ -79,14 +88,19 @@ final class Frontend_View_Model {
 		$endotoxin_value = (string) get_post_meta( $test->ID, 'endotoxin_status', true );
 		$reported_success = 'publish' === $test->post_status && 'approved' === $coa_status && 'reported' === $endotoxin_value && '' !== $endotoxin_result;
 		$full_qc = $this->is_full_qc_documented( $test );
+		$public_status = $this->public_status( $coa_status, $full_qc, $this->date_label( get_post_meta( $test->ID, 'expected_coa_date', true ) ) );
+		$image_id = get_post_thumbnail_id( $test->ID );
 		return array(
 			'test_id' => $test->ID, 'title' => $test->post_title, 'slug' => $test->post_name,
 			'batch_number' => (string) get_post_meta( $test->ID, 'batch_number', true ),
 			'test_date' => $date, 'test_date_label' => $this->date_label( $date ),
+			'expected_coa_date' => (string) get_post_meta( $test->ID, 'expected_coa_date', true ),
+			'expected_coa_date_label' => $this->date_label( get_post_meta( $test->ID, 'expected_coa_date', true ) ),
 			'date_received' => (string) get_post_meta( $test->ID, 'date_received', true ),
 			'date_received_label' => $this->date_label( get_post_meta( $test->ID, 'date_received', true ) ),
 			'laboratory' => $this->laboratory_name( get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ),
 			'coa_status' => $coa_status, 'coa_status_data' => $this->status( $coa_status ),
+			'public_status_label' => $public_status['label'], 'public_status_copy' => $public_status['copy'], 'public_status_tone' => $public_status['tone'],
 			'is_current' => (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ),
 			'claimed_content' => $claimed, 'claimed_content_display' => pepselect_coa_format_number( $claimed ),
 			'content_unit' => (string) get_post_meta( $test->ID, 'content_unit', true ),
@@ -106,6 +120,13 @@ final class Frontend_View_Model {
 			'assurance_label' => $full_qc ? Design_Settings::copy( 'full_qc_label' ) : Design_Settings::copy( 'neutral_label' ),
 			'coa_number' => (string) get_post_meta( $test->ID, 'coa_number', true ),
 			'lab_report_url' => $this->http_url( get_post_meta( $test->ID, 'lab_report_url', true ) ),
+			'pending_lab_url' => $this->http_url( get_post_meta( $test->ID, 'pending_lab_url', true ) ),
+			'vial_crimp_color' => $this->vial_color( get_post_meta( $test->ID, 'vial_crimp_color', true ), get_post_meta( $test->ID, 'vial_crimp_color_other', true ) ),
+			'vial_cap_color' => $this->vial_color( get_post_meta( $test->ID, 'vial_cap_color', true ), get_post_meta( $test->ID, 'vial_cap_color_other', true ) ),
+			'vial_image_url' => $this->image_url( $image_id, 'medium' ),
+			'vial_image_srcset' => $this->image_srcset( $image_id, 'medium' ),
+			'vial_image_sizes' => $this->image_sizes( $image_id, 'medium' ),
+			'vial_image_alt' => $this->image_alt( $image_id, sprintf( __( 'Batch %s vial', 'pepselect-coa-archive' ), get_post_meta( $test->ID, 'batch_number', true ) ) ),
 			'detail_url' => $compound ? $this->test_url( $compound, $test ) : '',
 			'public_notes' => (string) get_post_meta( $test->ID, 'public_notes', true ),
 		);
@@ -135,7 +156,7 @@ final class Frontend_View_Model {
 	/** Returns semantic status data with an explicit approved-report success override. @param string $stored Stored value. @param bool $success_override Green icon without relabeling. @return array */
 	public function status( $stored, $success_override = false ) {
 		$stored = sanitize_key( str_replace( '_', '-', (string) $stored ) );
-		$labels = array( 'approved' => 'Approved', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
+		$labels = array( 'approved' => 'Approved', 'failed' => 'Failed', 'in-testing' => 'In Testing', 'vendor-vetting' => 'Vendor Vetting', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
 		$value = isset( $labels[ $stored ] ) ? $stored : '';
 		$class = $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty';
 		if ( $success_override ) { $class .= ' ps-coa-status--success-reported'; }
@@ -150,6 +171,17 @@ final class Frontend_View_Model {
 		if ( ! in_array( $endotoxin, array( 'pass', 'reported' ), true ) ) { return false; }
 		return 'reported' !== $endotoxin || '' !== trim( (string) get_post_meta( $test->ID, 'endotoxin_result', true ) );
 	}
+
+	/** Returns mission-aligned public status copy without changing stored status. @return array */
+	private function public_status( $status, $full_qc, $expected = '' ) {
+		if ( 'approved' === $status ) { return array( 'label' => $full_qc ? Design_Settings::copy( 'full_qc_label' ) : Design_Settings::copy( 'neutral_label' ), 'copy' => __( 'Independent report published', 'pepselect-coa-archive' ), 'tone' => 'success' ); }
+		if ( 'vendor-vetting' === $status ) { return array( 'label' => __( 'Vendor Vetting in Progress', 'pepselect-coa-archive' ), 'copy' => __( 'Batch under supplier verification', 'pepselect-coa-archive' ), 'tone' => 'progress' ); }
+		if ( in_array( $status, array( 'pending', 'in-testing' ), true ) ) { return array( 'label' => __( 'Verification in Progress', 'pepselect-coa-archive' ), 'copy' => $expected ? sprintf( __( 'COA expected on %s', 'pepselect-coa-archive' ), $expected ) : __( 'Independent testing underway', 'pepselect-coa-archive' ), 'tone' => 'progress' ); }
+		if ( 'failed' === $status ) { return array( 'label' => __( 'Did Not Pass Release Review', 'pepselect-coa-archive' ), 'copy' => __( 'Not released for sale', 'pepselect-coa-archive' ), 'tone' => 'failed' ); }
+		return array( 'label' => __( 'Report Published', 'pepselect-coa-archive' ), 'copy' => '', 'tone' => 'neutral' );
+	}
+
+	private function vial_color( $stored, $other ) { $choices = COA_Test_Fields::vial_colors(); return 'other' === $stored ? trim( (string) $other ) : ( isset( $choices[ $stored ] ) ? $choices[ $stored ] : '' ); }
 
 	public function archive_url() { return home_url( user_trailingslashit( 'testing' ) ); }
 	public function compound_url( $compound ) { return home_url( user_trailingslashit( 'testing/' . $compound->post_name ) ); }
@@ -182,6 +214,8 @@ final class Frontend_View_Model {
 
 	/** Sorts archive previews by test date and publish date descending. @return int */
 	private function compare_by_test_date( $left, $right ) {
+		$current = absint( get_post_meta( $right->ID, 'is_current', true ) ) <=> absint( get_post_meta( $left->ID, 'is_current', true ) );
+		if ( 0 !== $current ) { return $current; }
 		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) );
 		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
 		$date = strcmp( $right_date, $left_date );

@@ -64,11 +64,12 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertSame( 'single-coa-report.php', $router->build_report_by_ids( $compound, $test )['template'] );
 	}
 
-	public function test_visibility_allows_only_active_compounds_and_approved_published_tests() {
+	public function test_visibility_allows_public_release_states_but_not_archived_or_unpublished_tests() {
 		$compound = $this->compound(); $this->assertTrue( $this->visibility->is_compound_public( $compound ) );
 		$approved = $this->test_record( $compound, 'approved', 'publish', 'A-1' );
 		$this->assertTrue( $this->visibility->is_test_public( $approved, $compound ) );
-		foreach ( array( 'pending', 'failed', 'archived', 'superseded' ) as $status ) { $this->assertFalse( $this->visibility->is_test_public( $this->test_record( $compound, $status, 'publish', $status ), $compound ) ); }
+		foreach ( array( 'pending', 'in-testing', 'vendor-vetting', 'failed' ) as $status ) { $this->assertTrue( $this->visibility->is_test_public( $this->test_record( $compound, $status, 'publish', $status ), $compound ) ); }
+		foreach ( array( 'archived', 'superseded' ) as $status ) { $this->assertFalse( $this->visibility->is_test_public( $this->test_record( $compound, $status, 'publish', $status ), $compound ) ); }
 		foreach ( array( 'draft', 'private', 'trash' ) as $post_status ) { $this->assertFalse( $this->visibility->is_test_public( $this->test_record( $compound, 'approved', $post_status, $post_status ), $compound ) ); }
 		update_post_meta( $compound, 'is_active', 0 );
 		$this->assertFalse( $this->visibility->is_compound_public( $compound ) );
@@ -91,6 +92,18 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertSame( $newest, $this->router()->build_compound( '', $compound, 1 )['latest_report']['test_id'] );
 	}
 
+	public function test_compound_history_separates_incoming_and_keeps_failed_in_previous_reports() {
+		$compound = $this->compound();
+		$approved = $this->test_record( $compound, 'approved', 'publish', 'APPROVED', '20260701' );
+		$incoming = $this->test_record( $compound, 'in-testing', 'publish', 'INCOMING', '' );
+		$failed = $this->test_record( $compound, 'failed', 'publish', 'FAILED', '20260601' );
+		update_post_meta( $incoming, 'expected_coa_date', '20260730' );
+		$context = $this->router()->build_compound( '', $compound, 1 );
+		$this->assertSame( $approved, $context['latest_report']['test_id'] );
+		$this->assertSame( array( $incoming ), wp_list_pluck( $context['incoming_reports'], 'test_id' ) );
+		$this->assertContains( $failed, wp_list_pluck( $context['previous_reports'], 'test_id' ) );
+	}
+
 	public function test_batch_is_restricted_to_its_related_compound() {
 		$first = $this->compound( 'First' ); $second = $this->compound( 'Second' );
 		$this->test_record( $first, 'approved', 'publish', 'SAME-BATCH' );
@@ -99,11 +112,12 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $this->router()->build_report( 'missing-compound', 'same-batch' ) );
 	}
 
-	public function test_archive_excludes_compounds_without_approved_tests() {
-		$without = $this->compound( 'Without Tests' ); $with = $this->compound( 'With Tests' );
+	public function test_archive_excludes_compounds_without_public_tests_and_includes_incoming_tests() {
+		$without = $this->compound( 'Without Tests' ); $with = $this->compound( 'With Tests' ); $incoming = $this->compound( 'Incoming Tests' );
 		$this->test_record( $with, 'approved', 'publish', 'VISIBLE' );
+		$this->test_record( $incoming, 'pending', 'publish', 'EXPECTED' );
 		$ids = wp_list_pluck( $this->router()->build_archive( 1 )['compounds'], 'compound_id' );
-		$this->assertContains( $with, $ids ); $this->assertNotContains( $without, $ids );
+		$this->assertContains( $with, $ids ); $this->assertContains( $incoming, $ids ); $this->assertNotContains( $without, $ids );
 	}
 
 	public function test_archive_searches_public_compound_names_and_sanitizes_input() {
@@ -122,6 +136,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$model = $this->router()->build_archive( 1 )['compounds'][0];
 		$this->assertCount( 3, $model['recent_batches'] );
 		$this->assertSame( 5, $model['approved_test_count'] );
+		$this->assertSame( 5, $model['public_report_count'] );
 		$this->assertSame( array( 'BATCH-5', 'BATCH-4', 'BATCH-3' ), wp_list_pluck( $model['recent_batches'], 'batch_number' ) );
 		$this->assertSame( $model['url'], $this->view_model->compound( get_post( $compound ) )['url'] );
 	}
@@ -162,13 +177,33 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		update_post_meta( $test, 'lab_verification_url', 'https://lab.example/verify' );
 		update_post_meta( $test, 'verification_code', 'PRIVATE-CODE' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
-		$this->assertStringContainsString( 'View Lab Report', $html );
+		$this->assertStringContainsString( 'View at ILS Labs', $html );
 		$this->assertStringContainsString( esc_url( $url ), $html );
 		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
 		$this->assertStringNotContainsString( 'lab.example/verify', $html );
 		$this->assertStringNotContainsString( 'PRIVATE-CODE', $html );
 		$this->assertStringNotContainsString( 'Verify with Laboratory', $html );
 		$this->assertStringNotContainsString( 'Access Code', $html );
+	}
+
+	public function test_incoming_report_uses_exact_progress_url_without_empty_scientific_panels() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'in-testing', 'publish', 'IN-PROGRESS', '' );
+		$url = 'https://lab.example/progress?id=84';
+		update_post_meta( $test, 'pending_lab_url', $url ); update_post_meta( $test, 'expected_coa_date', '20260730' );
+		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
+		$this->assertStringContainsString( 'Verification in Progress', $html );
+		$this->assertStringContainsString( 'View Lab Progress', $html );
+		$this->assertStringContainsString( esc_url( $url ), $html );
+		$this->assertStringNotContainsString( 'Summary Metrics', $html );
+		$this->assertStringNotContainsString( 'Full-QC Results', $html );
+	}
+
+	public function test_failed_report_remains_inspectable_and_discloses_non_release() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'failed', 'publish', 'FAILED-LOT' );
+		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
+		$this->assertStringContainsString( 'Did Not Pass Release Review', $html );
+		$this->assertStringContainsString( 'Not released for sale', $html );
+		$this->assertStringContainsString( 'Summary Metrics', $html );
 	}
 
 	public function test_pdf_must_be_a_valid_pdf_and_gallery_order_is_preserved() {
@@ -187,11 +222,11 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		remove_filter( 'image_downsize', $downsize, 10 );
 	}
 
-	public function test_shortcode_parameters_do_not_bypass_visibility() {
-		$compound = $this->compound(); $test = $this->test_record( $compound, 'pending', 'publish', 'HIDDEN' );
-		$this->assertSame( '', do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' ) );
-		update_post_meta( $test, 'coa_status', 'approved' );
+	public function test_shortcode_allows_published_incoming_reports_but_does_not_bypass_post_visibility() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'pending', 'publish', 'INCOMING' );
 		$this->assertStringContainsString( 'ps-coa-report', do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' ) );
+		wp_update_post( array( 'ID' => $test, 'post_status' => 'draft' ) );
+		$this->assertSame( '', do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' ) );
 	}
 
 	public function test_invalid_route_support_uses_true_404_and_theme_template() {
@@ -216,7 +251,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_templates_assets_and_deferred_integrations_are_scoped() {
-		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php', 'partials/compound-card.php', 'partials/latest-report-card.php', 'partials/previous-report-card.php', 'partials/status-indicator.php', 'partials/report-metrics.php', 'partials/report-results.php', 'partials/report-documentation.php', 'partials/certificate-gallery.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
+		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php', 'partials/compound-card.php', 'partials/latest-report-card.php', 'partials/previous-report-card.php', 'partials/incoming-report-card.php', 'partials/batch-identity.php', 'partials/status-indicator.php', 'partials/report-metrics.php', 'partials/report-results.php', 'partials/report-documentation.php', 'partials/certificate-gallery.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
 		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $this->router() );
 		$this->assertStringEndsWith( 'templates/archive-testing.php', str_replace( '\\', '/', $loader->locate( 'archive-testing.php' ) ) );
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
@@ -240,6 +275,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'medium_large', file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' ) );
 		foreach ( array( 'data-ps-coa-close', 'data-ps-coa-prev', 'data-ps-coa-next', 'aria-modal="true"', 'loading="lazy"' ) as $needle ) { $this->assertStringContainsString( $needle, $gallery ); }
 		$this->assertStringContainsString( "'pass' === \$icon", $status );
+		$this->assertStringContainsString( "array( 'fail', 'failed' )", $status );
 		$this->assertStringNotContainsString( 'emoji', strtolower( $status ) );
 	}
 
@@ -255,7 +291,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	private function test_record( $compound, $status, $post_status, $batch, $date = '20260701', $current = 0 ) {
 		$id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_status' => $post_status, 'post_title' => $batch ) );
-		update_post_meta( $id, 'compound_id', $compound ); update_post_meta( $id, 'coa_status', $status ); update_post_meta( $id, 'batch_number', $batch ); update_post_meta( $id, 'test_date', $date ); update_post_meta( $id, 'is_current', $current ); update_post_meta( $id, 'testing_lab', 'ils-labs' ); update_post_meta( $id, 'vials_tested', 1 );
+		update_post_meta( $id, 'compound_id', $compound ); update_post_meta( $id, 'coa_status', $status ); update_post_meta( $id, 'batch_number', $batch ); update_post_meta( $id, 'test_date', $date ); update_post_meta( $id, 'is_current', $current ); update_post_meta( $id, 'testing_lab', 'ils-labs' ); update_post_meta( $id, 'vials_tested', 1 ); update_post_meta( $id, 'vial_crimp_color', 'silver' ); update_post_meta( $id, 'vial_cap_color', 'blue' );
 		return $id;
 	}
 }

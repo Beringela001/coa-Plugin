@@ -10,7 +10,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' ) . file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' );
 		$this->assertStringContainsString( 'group_ps_coa_test_details', $source );
 		$this->assertStringContainsString( "'value' => Post_Types::COA_TEST", $source );
-		foreach ( array( 'compound_id', 'batch_number', 'test_date', 'testing_lab', 'status', 'is_current', 'coa_pdf_id', 'page_images', 'internal_notes' ) as $suffix ) { $this->assertStringContainsString( 'field_ps_coa_test_' . $suffix, $source ); }
+		foreach ( array( 'compound_id', 'batch_number', 'test_date', 'expected_coa_date', 'testing_lab', 'status', 'is_current', 'vial_crimp_color', 'vial_crimp_color_other', 'vial_cap_color', 'vial_cap_color_other', 'pending_lab_url', 'coa_pdf_id', 'page_images', 'internal_notes' ) as $suffix ) { $this->assertStringContainsString( 'field_ps_coa_test_' . $suffix, $source ); }
 	}
 
 	public function test_group_registers_on_acf_init_when_available() {
@@ -37,11 +37,35 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		unset( $_POST['acf'] );
 	}
 
+	public function test_release_states_require_identity_data_but_incoming_states_do_not() {
+		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'approved' );
+		foreach ( array( 'test_date', 'testing_lab', 'vial_crimp_color', 'vial_cap_color', 'vials_tested' ) as $name ) { $this->assertNotTrue( $this->validate( '', $name ) ); }
+		$_POST['acf']['field_ps_coa_test_status'] = 'failed';
+		$this->assertNotTrue( $this->validate( '', 'test_date' ) );
+		foreach ( array( 'pending', 'in-testing', 'vendor-vetting' ) as $status ) {
+			$_POST['acf']['field_ps_coa_test_status'] = $status;
+			foreach ( array( 'test_date', 'testing_lab', 'vial_crimp_color', 'vial_cap_color', 'vials_tested' ) as $name ) { $this->assertTrue( $this->validate( '', $name ) ); }
+		}
+		unset( $_POST['acf'] );
+	}
+
+	public function test_other_vial_colors_require_their_custom_values() {
+		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'pending', 'field_ps_coa_test_vial_crimp_color' => 'other', 'field_ps_coa_test_vial_cap_color' => 'other' );
+		$this->assertNotTrue( $this->validate( '', 'vial_crimp_color_other' ) );
+		$this->assertNotTrue( $this->validate( '', 'vial_cap_color_other' ) );
+		$this->assertTrue( $this->validate( 'Teal', 'vial_crimp_color_other' ) );
+		$this->assertTrue( $this->validate( 'Ivory', 'vial_cap_color_other' ) );
+		unset( $_POST['acf'] );
+	}
+
 	public function test_approved_requires_valid_documents_and_no_failed_results() {
 		$pdf = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'application/pdf' ) );
 		$image = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'image/jpeg' ) );
-		$_POST['acf'] = array( 'field_ps_coa_test_coa_pdf_id' => $pdf, 'field_ps_coa_test_page_images' => array( $image ), 'field_ps_coa_test_purity_status' => 'pass' );
+		$_POST['acf'] = array( 'field_ps_coa_test_coa_pdf_id' => $pdf, 'field_ps_coa_test_page_images' => array( $image ), 'field_ps_coa_test_lab_report_url' => 'https://lab.example/report/42', 'field_ps_coa_test_purity_status' => 'pass' );
 		$this->assertTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
+		$_POST['acf']['field_ps_coa_test_lab_report_url'] = '';
+		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
+		$_POST['acf']['field_ps_coa_test_lab_report_url'] = 'https://lab.example/report/42';
 		$_POST['acf']['field_ps_coa_test_purity_status'] = 'fail';
 		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
 		unset( $_POST['acf'] );
@@ -88,6 +112,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
 		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
 		$this->assertArrayHasKey( 'lab_report_url', $keys );
+		foreach ( array( 'expected_coa_date', 'vial_crimp_color', 'vial_cap_color', 'pending_lab_url' ) as $name ) { $this->assertArrayHasKey( $name, $keys ); }
 	}
 
 	public function test_hidden_legacy_metadata_is_not_deleted() {
@@ -143,6 +168,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	public function test_private_fields_are_not_in_rest_schema() {
 		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
 		$this->assertArrayNotHasKey( 'internal_notes', $keys ); $this->assertArrayNotHasKey( 'internal_batch_id', $keys ); $this->assertArrayHasKey( 'batch_number', $keys );
+		$this->assertArrayHasKey( 'pending_lab_url', $keys ); $this->assertArrayHasKey( 'expected_coa_date', $keys );
 	}
 
 	public function test_admin_columns_are_coa_test_specific() {

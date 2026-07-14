@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.2
+Stable tag: 0.4.0-beta.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Original, configurable Pep Select compound testing history and certificate-of-an
 
 == Description ==
 
-Version 0.4.0-beta.2 adds COA-4C frontend refinement and a WordPress Settings API Design & Copy screen.
+Version 0.4.0-beta.3 adds transparent incoming/failed batch history, tighter report presentation, batch identity fields, and clearer Design & Copy guidance.
 
 Public numeric formatting removes floating-point artifacts without changing stored laboratory values. Full-QC eligibility requires published approved records with Pass statuses for purity, identity, heavy metals, and sterility plus Pass endotoxin or Reported endotoxin with a real result. Approved Reported endotoxin uses a success check while remaining visibly labeled Reported.
 
@@ -20,7 +20,9 @@ Archive cards use larger uncropped images, preferred compound names, separate st
 
 Administrators can configure scoped colors, local typography stacks, weights, radii, borders, primary/secondary/search controls, lightbox appearance, and selected public labels. Values are sanitized, request-cached, and output as `.ps-coa-app` variables only when COA CSS loads. Reset Defaults is nonce- and capability-protected and affects only design/copy settings.
 
-Routes, visibility, data, importer, direct lab reports, PDFs, gallery order, theme overrides, shortcodes, and administration remain compatible. Access codes and generic verification URLs stay private. WooCommerce product-page cards, Elementor widgets, AJAX, external fonts, and external libraries are not included.
+Published incoming reports may show an expected COA date and public progress URL. Published failed reports remain inspectable and are clearly marked as not released for sale. Archived, superseded, draft, private, and explicitly private records remain excluded. Approved reports require their public lab URL, PDF, page image, test identity, lab, vial colors, and tested-vial count during ACF validation.
+
+Routes, stored data, PDFs, gallery order, theme overrides, shortcodes, and administration remain compatible. Access codes and generic verification URLs stay private. WooCommerce product-page cards, Elementor widgets, AJAX, external fonts, and external libraries are not included.
 
 == Installation ==
 
@@ -30,6 +32,14 @@ Routes, visibility, data, importer, direct lab reports, PDFs, gallery order, the
 4. Visit `/testing/` after an active compound has an approved published COA test.
 
 == Changelog ==
+
+= 0.4.0-beta.3 =
+* Added public incoming-report and transparent failed-report history states.
+* Added expected COA date, vial crimp/cap colors with conditional Other fields, and an in-progress lab URL.
+* Required approved reports to include the exact public lab report URL and strengthened release-state validation.
+* Tightened archive, history, report, certificate, status, and mobile presentation.
+* Added linked helper descriptions and preview examples to Design & Copy settings.
+* Kept archived, superseded, unpublished, and explicitly private reports out of public views.
 
 = 0.4.0-beta.2 =
 * Added scientific number formatting and strict Full-QC Documented eligibility.

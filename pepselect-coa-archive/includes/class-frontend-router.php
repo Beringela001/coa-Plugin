@@ -50,18 +50,21 @@ final class Frontend_Router {
 		if ( ! $compound ) { return array(); }
 		$tests = $this->tests->all_for_compound( $compound->ID );
 		if ( ! $tests ) { return array(); }
-		$latest = array_shift( $tests );
-		$total = count( $tests ); $pages = (int) ceil( $total / 20 ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
-		$previous = array_slice( $tests, ( $page - 1 ) * 20, 20 );
+		$approved = array_values( array_filter( $tests, function ( $test ) { return 'approved' === get_post_meta( $test->ID, 'coa_status', true ); } ) );
+		$incoming = array_values( array_filter( $tests, function ( $test ) { return in_array( get_post_meta( $test->ID, 'coa_status', true ), array( 'pending', 'in-testing', 'vendor-vetting' ), true ); } ) );
+		$latest = $approved ? array_shift( $approved ) : null;
+		$previous_all = array_values( array_filter( $tests, function ( $test ) use ( $latest ) { $status = get_post_meta( $test->ID, 'coa_status', true ); return ( ! $latest || $test->ID !== $latest->ID ) && in_array( $status, array( 'approved', 'failed' ), true ); } ) );
+		$total = count( $previous_all ); $pages = (int) ceil( $total / 20 ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
+		$previous = array_slice( $previous_all, ( $page - 1 ) * 20, 20 );
 		$compound_model = $this->view_model->compound( $compound );
-		$compound_model['approved_test_count'] = $total + 1;
-		$compound_model['latest_test_date'] = get_post_meta( $latest->ID, 'test_date', true );
-		$compound_model['latest_batch_number'] = get_post_meta( $latest->ID, 'batch_number', true );
-		$compound_model['latest_purity'] = get_post_meta( $latest->ID, 'purity_percentage', true );
-		$compound_model['current_approved_test'] = absint( get_post_meta( $latest->ID, 'is_current', true ) ) ? $this->view_model->test_summary( $latest, $compound ) : null;
+		$compound_model['approved_test_count'] = count( $approved ) + ( $latest ? 1 : 0 );
+		$compound_model['latest_test_date'] = $latest ? get_post_meta( $latest->ID, 'test_date', true ) : '';
+		$compound_model['latest_batch_number'] = $latest ? get_post_meta( $latest->ID, 'batch_number', true ) : '';
+		$compound_model['latest_purity'] = $latest ? get_post_meta( $latest->ID, 'purity_percentage', true ) : '';
+		$compound_model['current_approved_test'] = $latest && absint( get_post_meta( $latest->ID, 'is_current', true ) ) ? $this->view_model->test_summary( $latest, $compound ) : null;
 		$compound_model['previous_approved_tests'] = array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $previous );
 		$canonical = $page > 1 ? add_query_arg( 'paged', $page, $compound_model['url'] ) : $compound_model['url'];
-		return array( 'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $canonical, 'archive_url' => $this->view_model->archive_url(), 'compound' => $compound_model, 'latest_report' => $this->view_model->test_summary( $latest, $compound ), 'previous_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $previous ), 'pagination' => array( 'page' => $page, 'pages' => $pages, 'total' => $total ) );
+		return array( 'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $canonical, 'archive_url' => $this->view_model->archive_url(), 'compound' => $compound_model, 'latest_report' => $latest ? $this->view_model->test_summary( $latest, $compound ) : null, 'incoming_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $incoming ), 'previous_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $previous ), 'pagination' => array( 'page' => $page, 'pages' => $pages, 'total' => $total ) );
 	}
 
 	/** Builds a visible report by route slugs. @param string $compound_slug Compound. @param string $batch_slug Batch. @return array */

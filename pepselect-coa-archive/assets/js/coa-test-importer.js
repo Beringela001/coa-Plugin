@@ -2,15 +2,15 @@
 	'use strict';
 
 	const config = window.PepSelectCOAImporterConfig || { fields: {}, compounds: [], messages: {} };
-	const dateFields = new Set( [ 'test_date', 'date_received' ] );
+	const dateFields = new Set( [ 'test_date', 'expected_coa_date', 'date_received' ] );
 	const booleanFields = new Set( [ 'is_current' ] );
 	const integerFields = new Set( [ 'compound_id', 'vials_submitted', 'vials_tested' ] );
 	const numberFields = new Set( [ 'claimed_content', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' ] );
 	const resultFields = new Set( [ 'purity_status', 'identity_status', 'endotoxin_status', 'heavy_metals_status', 'sterility_status' ] );
-	const urlFields = new Set( [ 'lab_report_url', 'lab_verification_url' ] );
+	const urlFields = new Set( [ 'lab_report_url', 'pending_lab_url', 'lab_verification_url' ] );
 	const ignoredFields = new Set( [ 'coa_pdf_id', 'coa_page_images' ] );
 	const compoundAliases = new Set( [ 'compound_slug', 'compound_display_name' ] );
-	const coaStatuses = new Set( [ 'pending', 'approved', 'failed', 'archived', 'superseded' ] );
+	const coaStatuses = new Set( [ 'pending', 'in-testing', 'vendor-vetting', 'approved', 'failed', 'archived', 'superseded' ] );
 	const resultStatuses = new Set( [ 'pass', 'fail', 'pending', 'not-tested', 'not-applicable', 'reported' ] );
 	let preview = null;
 	let snapshot = null;

@@ -1,4 +1,15 @@
 .ps-coa-settings .form-table { max-width: 980px; }
 .ps-coa-settings .form-table th { width: 240px; }
 .ps-coa-settings hr { margin-block: 2rem; }
+.ps-coa-setting-previews { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 28px; max-width: 980px; }
+.ps-coa-setting-previews > div { background: #fff; border: 1px solid #dcdcde; border-radius: 8px; scroll-margin-top: 42px; padding: 16px; }
+.ps-coa-setting-previews h2 { font-size: 14px; margin-top: 0; }
+.ps-coa-preview-card { border-left: 4px solid #28734d; display: grid; gap: 4px; padding: 12px; }
+.ps-coa-preview-card span { color: #60706d; }
+.ps-coa-preview-heading { font-size: 22px; font-weight: 700; }
+.ps-coa-preview-shapes, .ps-coa-preview-controls { display: flex; gap: 10px; }
+.ps-coa-preview-shapes span { border: 1px solid #d8e0de; border-radius: 12px; padding: 12px 24px; }
+.ps-coa-preview-controls input { min-width: 220px; }
+.ps-coa-preview-lightbox { align-items: center; background: #101616; color: #fff; display: flex; justify-content: space-between; padding: 20px; }
 @media (max-width: 782px) { .ps-coa-settings .form-table th { width: auto; } }
+@media (max-width: 782px) { .ps-coa-setting-previews { grid-template-columns: 1fr; } .ps-coa-preview-controls { align-items: stretch; flex-direction: column; } }

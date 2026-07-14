@@ -29,7 +29,7 @@ final class COA_Test_Fields {
 		$integer = array( 'compound_id', 'vials_submitted', 'vials_tested', 'coa_pdf_id' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
 		$boolean = array( 'is_current' );
-		$safe = array( 'compound_id', 'batch_number', 'test_date', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'coa_status', 'is_current', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'coa_number', 'lab_report_url', 'coa_pdf_id', 'certificate_version', 'public_notes', 'report_notes' );
+		$safe = array( 'compound_id', 'batch_number', 'test_date', 'expected_coa_date', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'coa_status', 'is_current', 'vial_crimp_color', 'vial_crimp_color_other', 'vial_cap_color', 'vial_cap_color_other', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'coa_number', 'lab_report_url', 'pending_lab_url', 'coa_pdf_id', 'certificate_version', 'public_notes', 'report_notes' );
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
 			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
@@ -49,18 +49,23 @@ final class COA_Test_Fields {
 			$this->f( 'compound_id', 'Related Compound', 'post_object', array( 'required' => 1, 'post_type' => array( Post_Types::COMPOUND ), 'post_status' => array( 'publish', 'private' ), 'return_format' => 'id', 'multiple' => 0, 'allow_null' => 0 ) ),
 			$this->f( 'batch_number', 'Batch Number', 'text', array( 'required' => 1, 'maxlength' => 120 ) ),
 			$this->f( 'internal_batch_id', 'Internal Batch ID', 'text', array( 'maxlength' => 120 ) ),
-			$this->f( 'test_date', 'Test Date', 'date_picker', array( 'required' => 1, 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1 ) ),
+			$this->f( 'test_date', 'Test Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Required when a batch is approved or failed.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'expected_coa_date', 'Expected COA Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Shown publicly for incoming reports when available.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'date_received', 'Date Received', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1 ) ),
-			$this->f( 'testing_lab', 'Testing Laboratory', 'select', array( 'required' => 1, 'choices' => self::labs(), 'allow_null' => 0, 'return_format' => 'value' ) ),
+			$this->f( 'testing_lab', 'Testing Laboratory', 'select', array( 'choices' => self::labs(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required when a batch is approved or failed.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'other_testing_lab', 'Other Laboratory Name', 'text', array( 'maxlength' => 120, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_testing_lab', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
 			$this->f( 'lab_accession_number', 'Lab Accession Number', 'text', array( 'maxlength' => 120 ) ),
 			$this->f( 'status', 'COA Status', 'select', array( 'name' => 'coa_status', 'required' => 1, 'choices' => self::statuses(), 'default_value' => 'pending', 'return_format' => 'value' ) ),
 			$this->f( 'is_current', 'Current COA', 'true_false', array( 'default_value' => 0, 'ui' => 1 ) ),
 			$this->tab( 'sample', __( 'Sample Information', 'pepselect-coa-archive' ) ),
+			$this->f( 'vial_crimp_color', 'Vial Crimp Color', 'select', array( 'choices' => self::vial_colors(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required after the pre-release vendor/testing stages.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'vial_crimp_color_other', 'Other Crimp Color', 'text', array( 'maxlength' => 80, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_vial_crimp_color', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
+			$this->f( 'vial_cap_color', 'Vial Cap Color', 'select', array( 'choices' => self::vial_colors(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required after the pre-release vendor/testing stages.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'vial_cap_color_other', 'Other Cap Color', 'text', array( 'maxlength' => 80, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_vial_cap_color', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
 			$this->number( 'claimed_content', 'Claimed Content', 0 ),
 			$this->f( 'content_unit', 'Content Unit', 'select', array( 'choices' => $units, 'default_value' => 'mg', 'return_format' => 'value' ) ),
 			$this->number( 'vials_submitted', 'Vials Submitted', 0, 1 ),
-			$this->number( 'vials_tested', 'Vials Tested', 1, 1, true ),
+			$this->number( 'vials_tested', 'Vials Tested', 1, 1, false ),
 			$this->number( 'average_net_content', 'Average Net Content', 0 ),
 			$this->number( 'minimum_net_content', 'Minimum Net Content', 0 ),
 			$this->number( 'maximum_net_content', 'Maximum Net Content', 0 ),
@@ -82,7 +87,8 @@ final class COA_Test_Fields {
 			$this->f( 'sterility_result', 'Sterility Result', 'text', array( 'maxlength' => 200, 'default_value' => 'No Growth' ) ),
 			$this->tab( 'documents', __( 'Certificate Documents', 'pepselect-coa-archive' ) ),
 			$this->f( 'coa_number', 'COA Number', 'text', array( 'maxlength' => 120 ) ),
-			$this->f( 'lab_report_url', 'Direct Lab Report URL', 'url' ),
+			$this->f( 'lab_report_url', 'Public Lab Report URL', 'url', array( 'instructions' => __( 'Required for approved reports. Used by the public “View at ILS Labs” action.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'pending_lab_url', 'In-Progress Lab URL', 'url', array( 'instructions' => __( 'Optional public lab page for an incoming report.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'verification_code', 'Access Code', 'text', array( 'maxlength' => 200 ) ),
 			$this->f( 'lab_verification_url', 'Lab Verification URL', 'url' ),
 			$this->f( 'certificate_version', 'Certificate Version', 'text', array( 'maxlength' => 50 ) ),
@@ -98,7 +104,9 @@ final class COA_Test_Fields {
 	/** Returns lab choices. @return array */
 	public static function labs() { return array( 'ils-labs' => 'ILS Labs', 'janoshik' => 'Janoshik Analytical', 'mz-biotech' => 'MZ Biolabs', 'other' => 'Other' ); }
 	/** Returns overall statuses. @return array */
-	public static function statuses() { return array( 'pending' => 'Pending', 'approved' => 'Approved', 'failed' => 'Failed', 'archived' => 'Archived', 'superseded' => 'Superseded' ); }
+	public static function statuses() { return array( 'pending' => 'Pending', 'in-testing' => 'In Testing', 'vendor-vetting' => 'Vendor Vetting', 'approved' => 'Approved', 'failed' => 'Failed', 'archived' => 'Archived', 'superseded' => 'Superseded' ); }
+	/** Returns vial color choices. @return array */
+	public static function vial_colors() { return array( 'black' => 'Black', 'blue' => 'Blue', 'clear' => 'Clear', 'gold' => 'Gold', 'gray' => 'Gray', 'green' => 'Green', 'orange' => 'Orange', 'pink' => 'Pink', 'purple' => 'Purple', 'red' => 'Red', 'silver' => 'Silver', 'white' => 'White', 'yellow' => 'Yellow', 'other' => 'Other' ); }
 	/** Returns standardized result choices. @return array */
 	public static function result_choices() { return array( 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'reported' => 'Reported', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable' ); }
 	/** Builds a field. @param string $suffix Key/name suffix. @param string $label Label. @param string $type Type. @param array $options Options. @return array */
