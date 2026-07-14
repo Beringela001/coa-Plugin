@@ -22,6 +22,12 @@ final class Frontend_Query {
 
 	/** Returns the sanitized archive search term. @return string */
 	public function search() {
-		return isset( $_GET['coa_search'] ) ? sanitize_text_field( wp_unslash( $_GET['coa_search'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET['coa_search'] ) ? self::normalize_search( $_GET['coa_search'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	/** Normalizes request/search input; invalid or empty values become no search. @param mixed $value Search input. @return string */
+	public static function normalize_search( $value ) {
+		if ( ! is_scalar( $value ) ) { return ''; }
+		return trim( sanitize_text_field( wp_unslash( (string) $value ) ) );
 	}
 }

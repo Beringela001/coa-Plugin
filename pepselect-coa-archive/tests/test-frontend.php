@@ -8,11 +8,25 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		unset( $_GET['coa_search'] );
 		do_action( 'init' );
 		$this->visibility = new PepSelect\COAArchive\Frontend_Visibility();
 		$this->tests = new PepSelect\COAArchive\COA_Test_Repository( $this->visibility );
 		$this->compounds = new PepSelect\COAArchive\Compound_Repository( $this->visibility );
 		$this->view_model = new PepSelect\COAArchive\Frontend_View_Model();
+	}
+
+	public function tear_down() { unset( $_GET['coa_search'] ); parent::tear_down(); }
+
+	public function test_archive_search_request_normalization_treats_absent_empty_whitespace_and_invalid_values_as_no_search() {
+		$query = new PepSelect\COAArchive\Frontend_Query();
+		$this->assertSame( '', $query->search() );
+		foreach ( array( '', '   ', "\t\r\n", array( 'Retatrutide' ) ) as $value ) {
+			$_GET['coa_search'] = $value;
+			$this->assertSame( '', $query->search() );
+		}
+		$_GET['coa_search'] = '  Retatrutide  ';
+		$this->assertSame( 'Retatrutide', $query->search() );
 	}
 
 	public function test_query_variables_and_three_routes_are_registered() {
@@ -76,6 +90,13 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertFalse( $this->visibility->is_test_public( $approved ) );
 	}
 
+	public function test_legacy_approved_report_without_new_vial_colors_remains_public_and_keeps_compound_in_archive() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'approved', 'publish', 'LEGACY' );
+		delete_post_meta( $test, 'vial_crimp_color' ); delete_post_meta( $test, 'vial_cap_color' );
+		$this->assertTrue( $this->visibility->is_test_public( $test, $compound ) );
+		$this->assertContains( $compound, wp_list_pluck( $this->router()->build_archive( 1 )['compounds'], 'compound_id' ) );
+	}
+
 	public function test_current_report_is_latest_and_is_not_duplicated_in_previous_reports() {
 		$compound = $this->compound();
 		$this->test_record( $compound, 'approved', 'publish', 'NEWER', '20260720', 0 );
@@ -128,6 +149,54 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertSame( array( $display ), wp_list_pluck( $this->router()->build_archive( 1, 'Retatrutide' )['compounds'], 'compound_id' ) );
 		$this->assertSame( array( $compound_name ), wp_list_pluck( $this->router()->build_archive( 1, 'Tesamorelin' )['compounds'], 'compound_id' ) );
 		$this->assertSame( array( $short ), wp_list_pluck( $this->router()->build_archive( 1, '<b>BPC</b>' )['compounds'], 'compound_id' ) );
+	}
+
+	public function test_archive_empty_whitespace_matching_missing_and_cleared_search_results() {
+		$retatrutide = $this->compound( 'Retatrutide 30mg' ); $other = $this->compound( 'BPC-157' );
+		update_post_meta( $retatrutide, 'display_name', 'Retatrutide' ); update_post_meta( $retatrutide, 'short_name', 'Reta' );
+		$this->test_record( $retatrutide, 'approved', 'publish', 'RETA-BATCH' ); $this->test_record( $other, 'approved', 'publish', 'BPC-BATCH' );
+		$all_ids = wp_list_pluck( $this->router()->build_archive( 1 )['compounds'], 'compound_id' );
+		$this->assertContains( $retatrutide, $all_ids ); $this->assertContains( $other, $all_ids );
+		$this->assertSame( $all_ids, wp_list_pluck( $this->router()->build_archive( 1, '' )['compounds'], 'compound_id' ) );
+		$this->assertSame( $all_ids, wp_list_pluck( $this->router()->build_archive( 1, '   ' )['compounds'], 'compound_id' ) );
+		$this->assertSame( array( $retatrutide ), wp_list_pluck( $this->router()->build_archive( 1, 'Retatrutide' )['compounds'], 'compound_id' ) );
+		$this->assertSame( array( $retatrutide ), wp_list_pluck( $this->router()->build_archive( 1, 'Reta' )['compounds'], 'compound_id' ) );
+		$this->assertEmpty( $this->router()->build_archive( 1, 'NothingExists123' )['compounds'] );
+		$_GET['coa_search'] = 'NothingExists123';
+		$this->assertStringContainsString( 'No matching compounds', do_shortcode( '[pepselect_coa_archive]' ) );
+		$this->assertSame( $all_ids, wp_list_pluck( $this->router()->build_archive( 1, '' )['compounds'], 'compound_id' ) );
+	}
+
+	public function test_archive_search_does_not_bypass_visibility_or_attach_global_sql_filters() {
+		$public = $this->compound( 'Public Retatrutide' ); $inactive = $this->compound( 'Inactive Retatrutide' );
+		$this->test_record( $public, 'approved', 'publish', 'PUBLIC' ); $this->test_record( $inactive, 'approved', 'publish', 'INACTIVE' ); update_post_meta( $inactive, 'is_active', 0 );
+		$this->assertSame( array( $public ), wp_list_pluck( $this->router()->build_archive( 1, 'Retatrutide' )['compounds'], 'compound_id' ) );
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-compound-repository.php' );
+		$this->assertStringNotContainsString( "add_filter( 'posts_search'", $source );
+		$this->assertStringNotContainsString( "add_filter( 'posts_where'", $source );
+	}
+
+	public function test_archive_cache_keys_separate_normalized_search_and_unsearched_requests() {
+		$all = PepSelect\COAArchive\Archive_Cache::key( '', 1, 24, array( 3, 2, 1 ) );
+		$this->assertSame( $all, PepSelect\COAArchive\Archive_Cache::key( '   ', 1, 24, array( 1, 2, 3 ) ) );
+		$this->assertNotSame( $all, PepSelect\COAArchive\Archive_Cache::key( 'Retatrutide', 1, 24, array( 1, 2, 3 ) ) );
+		$this->assertSame( PepSelect\COAArchive\Archive_Cache::key( 'Retatrutide', 1, 24, array( 1 ) ), PepSelect\COAArchive\Archive_Cache::key( '  retatrutide ', 1, 24, array( 1 ) ) );
+	}
+
+	public function test_relevant_post_save_advances_archive_cache_namespace() {
+		$compound = $this->compound();
+		$before = PepSelect\COAArchive\Archive_Cache::key( '', 1, 24, array( $compound ) );
+		wp_update_post( array( 'ID' => $compound, 'post_title' => 'Updated Retatrutide' ) );
+		$this->assertNotSame( $before, PepSelect\COAArchive\Archive_Cache::key( '', 1, 24, array( $compound ) ) );
+	}
+
+	public function test_plugin_upgrade_invalidates_cached_empty_archive_namespace() {
+		$ids = array( 101 );
+		PepSelect\COAArchive\Archive_Cache::set( '', 1, 24, $ids, array( 'posts' => array(), 'total' => 0, 'pages' => 0, 'page' => 1 ) );
+		$this->assertNotNull( PepSelect\COAArchive\Archive_Cache::get( '', 1, 24, $ids ) );
+		update_option( PepSelect\COAArchive\Upgrade::VERSION_OPTION, '0.4.0-beta.3' );
+		PepSelect\COAArchive\Upgrade::maybe_upgrade();
+		$this->assertNull( PepSelect\COAArchive\Archive_Cache::get( '', 1, 24, $ids ) );
 	}
 
 	public function test_compound_cards_preview_only_three_newest_batches_and_count_all_reports() {
@@ -265,10 +334,16 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function test_templates_render_compact_cards_metrics_statuses_and_accessible_gallery_controls() {
 		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/partials/compound-card.php' );
+		$archive_page = file_get_contents( dirname( __DIR__ ) . '/templates/archive-testing.php' );
 		$report = file_get_contents( dirname( __DIR__ ) . '/templates/single-coa-report.php' );
 		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-gallery.php' );
 		$status = file_get_contents( dirname( __DIR__ ) . '/templates/partials/status-indicator.php' );
 		$this->assertStringContainsString( 'array_slice( $compound[\'recent_batches\'], 0, 3 )', $archive );
+		$this->assertStringContainsString( 'method="get"', $archive_page );
+		$this->assertStringContainsString( 'name="coa_search"', $archive_page );
+		$this->assertStringContainsString( 'value="<?php echo esc_attr( $search ); ?>"', $archive_page );
+		$this->assertStringContainsString( 'type="submit"', $archive_page );
+		$this->assertStringContainsString( 'Clear', $archive_page );
 		$this->assertStringContainsString( "Design_Settings::copy( 'view_history' )", $archive );
 		$this->assertStringContainsString( 'report-metrics.php', $report );
 		$this->assertStringContainsString( 'report-results.php', $report );

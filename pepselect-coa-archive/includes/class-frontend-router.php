@@ -33,7 +33,7 @@ final class Frontend_Router {
 
 	/** Builds the public archive context. @param int $page Page. @param string $search Search term. @return array */
 	public function build_archive( $page = 1, $search = '' ) {
-		$search = sanitize_text_field( (string) $search );
+		$search = Frontend_Query::normalize_search( $search );
 		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests(), $page, 24, $search );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();

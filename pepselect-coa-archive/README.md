@@ -1,6 +1,14 @@
 # Pep Select COA Archive
 
-Version 0.4.0-beta.3 is the COA-4 refinement pass: tighter public layouts, transparent incoming and failed batch histories, clearer batch identity, and more approachable design-setting guidance.
+Version 0.4.0-beta.4 is a narrowly scoped archive-query regression fix following the COA-4 refinement pass.
+
+## Archive regression fix
+
+The beta.3 public visibility check unintentionally required newly introduced vial crimp and cap colors on legacy approved reports. Those records were removed from the eligible COA set, which also removed their compounds from `/testing/`. Beta.4 restores legacy approved visibility while retaining vial-color requirements when administrators save new approved or failed records.
+
+Archive search now normalizes request input with unslashing, text sanitization, and trimming. Empty, absent, whitespace-only, and non-scalar values behave as no search. Non-empty searches cover post title, `display_name`, `compound_name`, and `short_name` without attaching SQL filters to unrelated WordPress queries.
+
+Archive result caching uses a plugin-only, versioned object-cache namespace. Unsearched and normalized searched requests have distinct keys. Saving or deleting a compound/COA test and upgrading or reactivating the plugin advances only this namespace, so prior empty results cannot survive without flushing unrelated WordPress caches.
 
 ## Public frontend
 
@@ -82,6 +90,12 @@ Visibility, current-report ordering, routes, rewrite rules, template overrides u
 8. Confirm search radius setting changes the search form.
 9. Confirm View all reports works and its count includes all public batch states.
 10. Confirm mobile archive layout works.
+11. Load `/testing/` without a query string and confirm Retatrutide appears.
+12. Search for `Retatrutide` and `Reta`; confirm matching compounds appear.
+13. Search for `NothingExists123`; confirm the no-results state appears.
+14. Clear the search and confirm all eligible compounds return.
+15. Open the direct compound and report routes; confirm both still resolve.
+16. Clear the plugin/Kinsta page cache and repeat the unsearched and searched checks.
 
 ### History
 

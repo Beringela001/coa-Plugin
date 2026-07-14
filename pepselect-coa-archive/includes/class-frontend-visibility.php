@@ -28,10 +28,6 @@ final class Frontend_Visibility {
 		if ( 8 !== strlen( $date ) || ! checkdate( (int) substr( $date, 4, 2 ), (int) substr( $date, 6, 2 ), (int) substr( $date, 0, 4 ) ) ) { return false; }
 		$lab = (string) get_post_meta( $post->ID, 'testing_lab', true );
 		if ( ! in_array( $lab, array( 'ils-labs', 'janoshik', 'mz-biotech', 'other' ), true ) || ( 'other' === $lab && '' === trim( (string) get_post_meta( $post->ID, 'other_testing_lab', true ) ) ) ) { return false; }
-		foreach ( array( 'vial_crimp_color', 'vial_cap_color' ) as $color_key ) {
-			$color = (string) get_post_meta( $post->ID, $color_key, true );
-			if ( ! array_key_exists( $color, COA_Test_Fields::vial_colors() ) || ( 'other' === $color && '' === trim( (string) get_post_meta( $post->ID, $color_key . '_other', true ) ) ) ) { return false; }
-		}
 		return absint( get_post_meta( $post->ID, 'vials_tested', true ) ) >= 1;
 	}
 

@@ -76,6 +76,7 @@ final class Plugin {
 		$frontend_view_model        = new Frontend_View_Model();
 		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
+		Archive_Cache::register_hooks();
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this->post_types, 'register' ), 5 );
 		if ( false === has_action( 'init', array( $this->compound_fields, 'register_rest_meta' ) ) ) {

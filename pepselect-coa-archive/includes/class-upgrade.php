@@ -10,10 +10,11 @@ final class Upgrade {
 	/** Flushes rewrite rules once per installed plugin version. @return void */
 	public static function maybe_upgrade() {
 		if ( PEPSELECT_COA_ARCHIVE_VERSION === get_option( self::VERSION_OPTION ) ) { return; }
+		Archive_Cache::invalidate();
 		flush_rewrite_rules( false );
 		update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false );
 	}
 
 	/** Records activation after the activation transaction has flushed rules. @return void */
-	public static function mark_current() { update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+	public static function mark_current() { Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
 }

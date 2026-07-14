@@ -43,7 +43,7 @@ final class Frontend_Template_Loader {
 
 	public function archive_shortcode() {
 		$context = $this->router->context();
-		$search = isset( $_GET['coa_search'] ) ? sanitize_text_field( wp_unslash( $_GET['coa_search'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search = isset( $_GET['coa_search'] ) ? Frontend_Query::normalize_search( $_GET['coa_search'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! $context || 'archive' !== $context['view'] ) { $context = $this->router->build_archive( 1, $search ); }
 		$this->ensure_assets();
 		return $this->render( 'archive-testing.php', $context );

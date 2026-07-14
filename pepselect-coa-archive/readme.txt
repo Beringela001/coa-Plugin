@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.3
+Stable tag: 0.4.0-beta.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Original, configurable Pep Select compound testing history and certificate-of-an
 
 == Description ==
 
-Version 0.4.0-beta.3 adds transparent incoming/failed batch history, tighter report presentation, batch identity fields, and clearer Design & Copy guidance.
+Version 0.4.0-beta.4 fixes the unsearched archive regression while preserving the beta.3 frontend and admin refinements.
 
 Public numeric formatting removes floating-point artifacts without changing stored laboratory values. Full-QC eligibility requires published approved records with Pass statuses for purity, identity, heavy metals, and sterility plus Pass endotoxin or Reported endotoxin with a real result. Approved Reported endotoxin uses a success check while remaining visibly labeled Reported.
 
@@ -32,6 +32,13 @@ Routes, stored data, PDFs, gallery order, theme overrides, shortcodes, and admin
 4. Visit `/testing/` after an active compound has an approved published COA test.
 
 == Changelog ==
+
+= 0.4.0-beta.4 =
+* Restored legacy approved reports and their compounds to the public archive when new vial-color metadata is absent.
+* Normalized absent, empty, whitespace-only, and invalid archive search values as no search.
+* Added post-title matching while preserving display-name, compound-name, and short-name search.
+* Added versioned, plugin-only archive cache keys and targeted invalidation on upgrades and relevant record changes.
+* Added regression coverage for default, searched, cleared, private, cached, compound-route, and report-route behavior.
 
 = 0.4.0-beta.3 =
 * Added public incoming-report and transparent failed-report history states.
