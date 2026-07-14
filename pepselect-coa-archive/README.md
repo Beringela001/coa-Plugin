@@ -1,6 +1,6 @@
 # Pep Select COA Archive
 
-Version 0.4.0-alpha.1 is the COA-4A public routing and data-layer prerelease. It adds secure server-rendered archive, compound-history, and report routes with minimal structural templates. The final COA-4B design is intentionally deferred.
+Version 0.4.0-alpha.2 is the COA-4A.1 routing fix. It makes the archive, compound-history, and report URLs direct virtual routes and removes the frontend self-redirect that caused `/testing/` to loop.
 
 ## Architecture
 
@@ -16,9 +16,11 @@ The plugin owns three narrowly matched public contexts:
 
 The registered query variables are `ps_coa_view`, `ps_compound_slug`, and `ps_batch_slug`. Route values are sanitized before repository lookups. Invalid, inactive, unpublished, mismatched, or ineligible records set WordPress's 404 state, send a 404 status and no-cache headers, and use the active theme's 404 template. Invalid records are never redirected to the archive, and canonical redirects are disabled only while a COA route is being resolved.
 
-### Existing `/testing/` page safety
+### Direct virtual route ownership
 
-The archive rewrite targets `pagename=testing` plus the prefixed archive context. If a published page with that slug exists, WordPress and the active theme continue to render the page; the plugin appends the archive at runtime or honors an existing `[pepselect_coa_archive]` shortcode. Stored page and Elementor content are never changed. If no published page exists, the plugin fallback archive template renders the route. Nested rules also test their exact `pagename`, allowing an existing published child page to win rather than being hijacked; otherwise the plugin resolves the compound or report.
+No WordPress page is required or created. The compound post type no longer registers a competing built-in archive at the same path. Each plugin rewrite populates `ps_coa_view` directly, and `template_include` selects the appropriate plugin or theme-override template in the same request. The plugin does not filter page content or use an Elementor page shell.
+
+In 0.4.0-alpha.1, a request resolved by WordPress as the `ps_compound` archive could reach `Frontend_Router::protect_legacy_routes()` without `ps_coa_view`. That method issued a 301 from `/testing/` to the identical `/testing/` URL, creating an infinite loop before core `redirect_canonical` ran. Alpha.2 removes all frontend redirect calls from the router. Legacy core post-type URLs are blocked with a true 404 instead of redirected, while recognized virtual COA routes render directly.
 
 ### Visibility and query architecture
 
@@ -47,7 +49,7 @@ The stylesheet `assets/css/coa-frontend.css` contains structural, strongly prefi
 
 ### Canonicals, media, and caching
 
-Each valid context provides a self canonical URL. Filters integrate with Yoast, Rank Math, and SEOPress; fallback markup is suppressed when those plugins or SureRank are detected so another SEO owner is not duplicated. A normal WordPress page shell keeps its core page canonical.
+Each valid context provides a self canonical URL. Canonical metadata never performs an HTTP redirect. Filters integrate with Yoast, Rank Math, and SEOPress; fallback markup is suppressed when those plugins or SureRank are detected so another SEO owner is not duplicated. Core `redirect_canonical` is disabled only when a strongly prefixed COA route is recognized, preventing WordPress from misinterpreting the virtual query while leaving normal pages, posts, and WooCommerce routes unchanged.
 
 Direct Lab Report URL is the primary external action. Lab Verification URL is the fallback when no direct URL exists, and PDF remains a separate download. External actions use a new browsing context with `noopener noreferrer`. A PDF URL is returned only for an existing inherited `application/pdf` attachment. Gallery items must be valid image attachments, retain their saved order, use the WordPress `large` image size, lazy loading, and saved or fallback alt text. PDFs and full-size images are never loaded in archive/history queries.
 
@@ -55,7 +57,7 @@ COA-4A deliberately uses WordPress's post, metadata, and attachment object cache
 
 ### Upgrade behavior
 
-The installed version is stored in `pepselect_coa_archive_version`. Activation registers structures, flushes rewrite rules once, and records the version. Existing installations run `Upgrade::maybe_upgrade()` after post types and routes register; it flushes once only when the stored version differs, then records `0.4.0-alpha.1`. It is idempotent and never flushes on every request.
+The installed version is stored in `pepselect_coa_archive_version`. Activation registers structures, flushes rewrite rules once, and records the version. Existing installations run `Upgrade::maybe_upgrade()` after post types and routes register; it flushes once only when the stored version differs, then records `0.4.0-alpha.2`. This installs the direct virtual-route rules once and remains idempotent on later requests.
 
 ## Compound fields
 
@@ -160,38 +162,34 @@ Supported columns are the structured COA fields documented above, excluding `coa
 6. Confirm replacements require approval and Clear Imported Values restores pre-import values.
 7. Confirm the COA Test list remains readable and columns can still be hidden through Screen Options.
 
-### COA-4A manual QA
+### COA-4A.1 routing QA
 
-1. Visit `/testing/`.
-2. Confirm only active compounds with approved tests appear.
-3. Confirm inactive compounds do not appear.
-4. Confirm a compound with no approved test does not appear.
-5. Click Retatrutide 30mg.
-6. Confirm `/testing/retatrutide-30mg/` loads.
-7. Confirm Latest Report appears separately.
-8. Confirm Previous Reports do not duplicate the latest test.
-9. Confirm test date, batch, purity, net content, lab, and statuses display.
-10. Click View Full Report.
-11. Confirm the nested batch URL loads.
-12. Confirm the report belongs to the correct compound.
-13. Confirm purity, net content, identity, endotoxin, heavy metals, and sterility display.
-14. Confirm View Lab Report appears when a direct URL exists.
-15. Confirm Download Original PDF appears when a PDF exists.
-16. Confirm Access Code displays only when present.
-17. Confirm page images display in saved order.
-18. Confirm internal notes do not appear.
-19. Confirm internal batch ID does not appear.
-20. Test an invalid compound URL and confirm a true 404.
-21. Test an invalid batch URL and confirm a true 404.
-22. Test a valid batch under the wrong compound and confirm a true 404.
-23. Temporarily set a test to Pending and confirm it disappears publicly.
-24. Restore it to Approved.
-25. Temporarily deactivate WooCommerce and confirm the COA frontend still works.
-26. Temporarily deactivate Elementor and confirm templates still render.
-27. Confirm no plugin frontend assets load on unrelated pages.
-28. Confirm desktop and mobile structural layouts remain readable.
-29. Confirm existing admin editing still works.
-30. Confirm the CSV importer still works.
+1. Activate version 0.4.0-alpha.2.
+2. Visit `/testing/`.
+3. Confirm it loads with HTTP 200.
+4. Confirm there is no `ERR_TOO_MANY_REDIRECTS`.
+5. Visit `/testing` without the trailing slash.
+6. Confirm at most one redirect occurs.
+7. Visit a valid compound route.
+8. Confirm it loads without redirecting repeatedly.
+9. Visit a valid batch route.
+10. Confirm it loads without redirecting repeatedly.
+11. Visit an invalid compound route.
+12. Confirm a true 404.
+13. Visit an invalid batch route.
+14. Confirm a true 404.
+15. Visit a valid batch under the wrong compound.
+16. Confirm a true 404.
+17. Visit the homepage.
+18. Visit the shop.
+19. Visit a product page.
+20. Visit the cart.
+21. Visit checkout.
+22. Confirm unrelated routes are unaffected.
+23. Confirm `wp-admin` remains accessible.
+24. Confirm existing compound and COA records remain intact.
+25. Confirm the CSV importer still works.
+26. Confirm no final frontend styling was added.
 
 Validation requires a valid compound, batch, date, laboratory, and at least one vial tested. It validates controlled choices, numeric ranges, content bounds, URLs, PDF/image attachments, other-lab names, and exact compound/batch duplicates. Approved records require a PDF and at least one page image and cannot contain a failed result status. Scientific status is never inferred from numeric values.
 

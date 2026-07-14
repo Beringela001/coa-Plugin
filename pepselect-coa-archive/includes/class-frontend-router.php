@@ -21,26 +21,14 @@ final class Frontend_Router {
 		elseif ( 'compound' === $view ) { $this->context = $this->build_compound( $this->query->compound_slug(), 0, $this->query->page() ); }
 		elseif ( 'report' === $view ) { $this->context = $this->build_report( $this->query->compound_slug(), $this->query->batch_slug() ); }
 		if ( ! $this->context ) { $this->mark_404(); return; }
-		$this->context['page_shell'] = 'archive' === $view && is_page( 'testing' );
 		set_query_var( 'ps_coa_context', $this->context );
-		if ( ! $this->context['page_shell'] ) { $this->mark_200(); }
+		$this->mark_200();
 	}
 
-	/** Canonicalizes legacy core post-type URLs and blocks visibility bypasses. @return void */
+	/** Blocks legacy core post-type URLs without redirecting or bypassing visibility. @return void */
 	public function protect_legacy_routes() {
 		if ( $this->is_route() || is_preview() || is_admin() ) { return; }
-		if ( is_post_type_archive( Post_Types::COMPOUND ) ) { wp_safe_redirect( $this->view_model->archive_url(), 301 ); exit; }
-		if ( is_singular( Post_Types::COMPOUND ) ) {
-			$compound = $this->compounds->find_public_by_id( get_queried_object_id() );
-			if ( $compound ) { wp_safe_redirect( $this->view_model->compound_url( $compound ), 301 ); exit; }
-			$this->mark_404(); return;
-		}
-		if ( is_singular( Post_Types::COA_TEST ) ) {
-			$test = $this->tests->find_public_by_id( get_queried_object_id() );
-			$compound = $test ? $this->compounds->find_public_by_id( get_post_meta( $test->ID, 'compound_id', true ) ) : null;
-			if ( $test && $compound ) { wp_safe_redirect( $this->view_model->test_url( $compound, $test ), 301 ); exit; }
-			$this->mark_404();
-		}
+		if ( is_post_type_archive( Post_Types::COMPOUND ) || is_singular( array( Post_Types::COMPOUND, Post_Types::COA_TEST ) ) ) { $this->mark_404(); }
 	}
 
 	/** Builds the public archive context. @param int $page Page. @return array */

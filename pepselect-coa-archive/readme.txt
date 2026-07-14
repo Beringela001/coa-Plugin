@@ -4,7 +4,7 @@ Tags: coa, laboratory, compounds, archive
 Requires at least: 6.5
 Tested up to: 7.0.1
 Requires PHP: 8.1
-Stable tag: 0.4.0-alpha.1
+Stable tag: 0.4.0-alpha.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,9 @@ No. Internal notes are not registered in the REST schema.
 No content is deleted. Deactivation flushes rewrite rules; uninstall intentionally preserves data and capabilities.
 
 == Changelog ==
+
+= 0.4.0-alpha.2 =
+* Fixed the `/testing/` self-redirect by using direct virtual rewrites and same-request template rendering.
 
 = 0.4.0-alpha.1 =
 * Added COA-4A public routing, repositories, visibility rules, normalized view models, minimal templates, shortcodes, canonical handling, and versioned rewrite upgrades.

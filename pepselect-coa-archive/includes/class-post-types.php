@@ -71,7 +71,7 @@ final class Post_Types {
 				'public' => true, 'show_ui' => true, 'show_in_rest' => true,
 				'show_in_menu' => 'pepselect-coa-archive',
 				'supports' => array( 'title', 'thumbnail', 'custom-fields', 'revisions' ),
-				'has_archive' => 'testing', 'rewrite' => array( 'slug' => 'testing', 'with_front' => false ),
+				'has_archive' => false, 'rewrite' => array( 'slug' => 'testing', 'with_front' => false ),
 				'capability_type' => array( 'ps_coa', 'ps_coas' ), 'map_meta_cap' => true,
 				'capabilities' => Capabilities::post_type_map(),
 				'menu_position' => 25,

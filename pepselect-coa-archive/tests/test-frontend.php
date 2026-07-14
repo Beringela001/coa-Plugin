@@ -23,13 +23,45 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'testing/?$', $rules );
 		$this->assertArrayHasKey( 'testing/([^/]+)/?$', $rules );
 		$this->assertArrayHasKey( 'testing/([^/]+)/([^/]+)/?$', $rules );
+		$this->assertSame( 'index.php?ps_coa_view=archive', $rules['testing/?$'] );
+		$this->assertStringContainsString( 'ps_coa_view=compound', $rules['testing/([^/]+)/?$'] );
+		$this->assertStringContainsString( 'ps_coa_view=report', $rules['testing/([^/]+)/([^/]+)/?$'] );
+		$keys = array_keys( $rules );
+		$this->assertLessThan( array_search( 'testing/([^/]+)/?$', $keys, true ), array_search( 'testing/([^/]+)/([^/]+)/?$', $keys, true ) );
+		$this->assertLessThan( array_search( 'testing/?$', $keys, true ), array_search( 'testing/([^/]+)/?$', $keys, true ) );
+		$this->assertFalse( get_post_type_object( 'ps_compound' )->has_archive );
 	}
 
-	public function test_existing_testing_page_is_used_as_a_shell_not_overwritten() {
-		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-rewrites.php' );
-		$this->assertStringContainsString( 'pagename=testing&ps_coa_view=archive', $source );
-		$this->assertStringNotContainsString( 'wp_update_post', $source );
-		$this->assertStringNotContainsString( 'wp_delete_post', $source );
+	public function test_virtual_routes_render_without_page_shells_or_frontend_redirects() {
+		$rewrites = file_get_contents( dirname( __DIR__ ) . '/includes/class-rewrites.php' );
+		$router = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-router.php' );
+		$loader = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
+		$this->assertStringNotContainsString( 'pagename=testing', $rewrites );
+		$this->assertStringNotContainsString( 'wp_redirect', $router );
+		$this->assertStringNotContainsString( 'wp_safe_redirect', $router );
+		$this->assertStringNotContainsString( "add_filter( 'the_content'", $loader );
+		$this->assertStringContainsString( "return \$this->locate( \$context['template'] )", $loader );
+	}
+
+	public function test_redirect_canonical_is_disabled_only_for_prefixed_coa_routes() {
+		$router = $this->router(); $loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+		set_query_var( 'ps_coa_view', '' );
+		foreach ( array( '/page/', '/post/', '/product/item/', '/shop/', '/cart/', '/checkout/' ) as $path ) {
+			$destination = 'https://example.org' . $path;
+			$this->assertSame( $destination, $loader->filter_redirect_canonical( $destination, $destination . '?source=test' ) );
+		}
+		set_query_var( 'ps_coa_view', 'archive' );
+		$this->assertFalse( $loader->filter_redirect_canonical( 'https://example.org/testing/', 'https://example.org/testing/' ) );
+		$this->assertFalse( $loader->filter_redirect_canonical( 'https://example.org/testing/', 'https://example.org/testing/?source=test' ) );
+		set_query_var( 'ps_coa_view', '' );
+	}
+
+	public function test_valid_route_contexts_resolve_without_redirect_helpers() {
+		$compound = $this->compound(); $test = $this->test_record( $compound, 'approved', 'publish', 'RT30-0726-A' );
+		$router = $this->router();
+		$this->assertSame( 'archive-testing.php', $router->build_archive( 1 )['template'] );
+		$this->assertSame( 'single-compound-history.php', $router->build_compound( '', $compound, 1 )['template'] );
+		$this->assertSame( 'single-coa-report.php', $router->build_report_by_ids( $compound, $test )['template'] );
 	}
 
 	public function test_visibility_allows_only_active_compounds_and_approved_published_tests() {
@@ -131,7 +163,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		add_action( 'generate_rewrite_rules', $listener );
 		update_option( PepSelect\COAArchive\Upgrade::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION );
 		PepSelect\COAArchive\Upgrade::maybe_upgrade(); $this->assertSame( 0, $calls );
-		update_option( PepSelect\COAArchive\Upgrade::VERSION_OPTION, '0.3.2' );
+		update_option( PepSelect\COAArchive\Upgrade::VERSION_OPTION, '0.4.0-alpha.1' );
 		PepSelect\COAArchive\Upgrade::maybe_upgrade(); $this->assertGreaterThan( 0, $calls ); $after = $calls;
 		PepSelect\COAArchive\Upgrade::maybe_upgrade(); $this->assertSame( $after, $calls );
 		remove_action( 'generate_rewrite_rules', $listener );

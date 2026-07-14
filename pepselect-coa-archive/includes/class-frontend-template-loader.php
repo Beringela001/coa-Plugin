@@ -6,14 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /** Loads theme-overridable templates, shortcodes, scoped CSS, and canonicals. */
 final class Frontend_Template_Loader {
 	/** @var Frontend_Router */ private $router;
-	/** @var bool */ private $archive_rendered = false;
 
 	public function __construct( Frontend_Router $router ) { $this->router = $router; }
 
 	public function register_hooks() {
 		add_filter( 'template_include', array( $this, 'template_include' ), 50 );
 		add_filter( 'redirect_canonical', array( $this, 'filter_redirect_canonical' ), 10, 2 );
-		add_filter( 'the_content', array( $this, 'append_archive_to_page' ), 99 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_head', array( $this, 'output_canonical' ), 1 );
 		add_filter( 'wpseo_canonical', array( $this, 'filter_canonical' ) );
@@ -29,15 +27,8 @@ final class Frontend_Template_Loader {
 		if ( $this->router->is_404() ) { $not_found = get_404_template(); return $not_found ?: $template; }
 		if ( ! $this->router->is_route() ) { return $template; }
 		$context = $this->router->context();
-		if ( ! $context || ! empty( $context['page_shell'] ) ) { return $template; }
+		if ( ! $context ) { return $template; }
 		return $this->locate( $context['template'] );
-	}
-
-	/** Uses an existing published /testing/ page as an unmodified runtime shell. */
-	public function append_archive_to_page( $content ) {
-		$context = $this->router->context();
-		if ( ! $context || empty( $context['page_shell'] ) || ! is_main_query() || ! in_the_loop() || $this->archive_rendered ) { return $content; }
-		return $content . $this->render( 'archive-testing.php', $context );
 	}
 
 	/** Enqueues minimal structural CSS only for routes or posts containing COA shortcodes. */
@@ -50,7 +41,7 @@ final class Frontend_Template_Loader {
 
 	public function archive_shortcode() {
 		$this->ensure_assets();
-		$this->archive_rendered = true; $context = $this->router->context();
+		$context = $this->router->context();
 		if ( ! $context || 'archive' !== $context['view'] ) { $context = $this->router->build_archive( 1 ); }
 		return $this->render( 'archive-testing.php', $context );
 	}

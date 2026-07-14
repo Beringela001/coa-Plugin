@@ -8,7 +8,6 @@ final class Frontend_Query {
 	/** Returns the requested view or an empty string. @return string */
 	public function view() {
 		$view = sanitize_key( (string) get_query_var( 'ps_coa_view' ) );
-		if ( is_page() && 'archive' !== $view ) { return ''; }
 		return in_array( $view, array( 'archive', 'compound', 'report' ), true ) ? $view : '';
 	}
 
