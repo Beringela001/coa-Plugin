@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /** Loads theme-overridable templates, shortcodes, scoped CSS, and canonicals. */
 final class Frontend_Template_Loader {
 	/** @var Frontend_Router */ private $router;
+	/** @var bool */ private $variables_added = false;
 
 	public function __construct( Frontend_Router $router ) { $this->router = $router; }
 
@@ -87,6 +88,7 @@ final class Frontend_Template_Loader {
 
 	private function ensure_assets( $gallery = false ) {
 		wp_enqueue_style( 'pepselect-coa-frontend', plugins_url( 'assets/css/pepselect-coa-frontend.css', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION );
+		if ( ! $this->variables_added ) { wp_add_inline_style( 'pepselect-coa-frontend', Design_Settings::inline_css() ); $this->variables_added = true; }
 		if ( $gallery ) { wp_enqueue_script( 'pepselect-coa-lightbox', plugins_url( 'assets/js/pepselect-coa-lightbox.js', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION, true ); }
 		if ( did_action( 'wp_head' ) && ! wp_style_is( 'pepselect-coa-frontend', 'done' ) ) { wp_print_styles( 'pepselect-coa-frontend' ); }
 	}

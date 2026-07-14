@@ -8,11 +8,12 @@
 		<?php endif; ?>
 	</div>
 	<div class="ps-coa-compound-card__body">
-		<h2><a href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( $compound['display_name'] ); ?></a></h2>
-		<?php if ( $compound['strength_value'] ) : ?><p class="ps-coa-strength"><?php echo esc_html( trim( $compound['strength_value'] . ' ' . $compound['strength_unit'] ) ); ?></p><?php endif; ?>
+		<h2><a href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( $compound['public_name'] ); ?></a></h2>
+		<?php if ( $compound['strength_value_display'] && $compound['display_strength_separately'] ) : ?><p class="ps-coa-strength"><span><?php echo esc_html( trim( $compound['strength_value_display'] . ' ' . $compound['strength_unit'] ) ); ?></span></p><?php endif; ?>
+		<div class="ps-coa-assurance <?php echo $compound['is_full_qc_documented'] ? 'ps-coa-assurance--full' : 'ps-coa-assurance--neutral'; ?>"><span aria-hidden="true"></span><div><strong<?php echo $compound['is_full_qc_documented'] ? ' class="ps-coa-accent"' : ''; ?>><?php echo esc_html( $compound['is_full_qc_documented'] ? \PepSelect\COAArchive\Design_Settings::copy( 'full_qc_label' ) : \PepSelect\COAArchive\Design_Settings::copy( 'neutral_label' ) ); ?></strong><small><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'full_qc_copy' ) ); ?></small></div></div>
 		<dl class="ps-coa-compact-facts">
 			<div><dt><?php esc_html_e( 'Latest test', 'pepselect-coa-archive' ); ?></dt><dd><?php echo esc_html( $compound['latest_approved_test_date_label'] ?: __( 'Not available', 'pepselect-coa-archive' ) ); ?></dd></div>
-			<div><dt><?php esc_html_e( 'Purity', 'pepselect-coa-archive' ); ?></dt><dd><?php echo '' !== $compound['latest_purity_percentage'] ? esc_html( $compound['latest_purity_percentage'] . '%' ) : esc_html__( 'Not reported', 'pepselect-coa-archive' ); ?></dd></div>
+			<div><dt><?php esc_html_e( 'Purity', 'pepselect-coa-archive' ); ?></dt><dd><?php echo '' !== $compound['latest_purity_percentage_display'] ? esc_html( $compound['latest_purity_percentage_display'] . '%' ) : esc_html__( 'Not reported', 'pepselect-coa-archive' ); ?></dd></div>
 			<div><dt><?php esc_html_e( 'Laboratory', 'pepselect-coa-archive' ); ?></dt><dd><?php echo esc_html( $compound['latest_laboratory_display_name'] ?: __( 'Not available', 'pepselect-coa-archive' ) ); ?></dd></div>
 		</dl>
 		<?php if ( $compound['recent_batches'] ) : ?><div class="ps-coa-batch-preview" aria-label="<?php esc_attr_e( 'Recent approved batches', 'pepselect-coa-archive' ); ?>">
@@ -20,5 +21,5 @@
 			<ul><?php foreach ( array_slice( $compound['recent_batches'], 0, 3 ) as $batch ) : ?><li><a href="<?php echo esc_url( $batch['detail_url'] ); ?>"><span><?php echo esc_html( $batch['batch_number'] ); ?></span><time datetime="<?php echo esc_attr( $batch['test_date'] ); ?>"><?php echo esc_html( $batch['test_date_label'] ); ?></time></a></li><?php endforeach; ?></ul>
 		</div><?php endif; ?>
 	</div>
-	<footer class="ps-coa-compound-card__footer"><a class="ps-coa-text-link" href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( sprintf( _n( 'View all %s report', 'View all %s reports', $compound['approved_test_count'], 'pepselect-coa-archive' ), number_format_i18n( $compound['approved_test_count'] ) ) ); ?> <span aria-hidden="true">&rarr;</span></a></footer>
+	<footer class="ps-coa-compound-card__footer"><a class="ps-coa-text-link" href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'view_history' ) ); ?> <span class="ps-coa-report-count"><?php echo esc_html( number_format_i18n( $compound['approved_test_count'] ) ); ?></span> <span aria-hidden="true">&rarr;</span></a></footer>
 </article>

@@ -31,3 +31,19 @@ function pepselect_coa_template_path( $template ) {
 	}
 	return PEPSELECT_COA_ARCHIVE_DIR . 'templates/' . $template;
 }
+
+/**
+ * Formats a stored numeric value for public scientific display without changing metadata.
+ *
+ * @param mixed  $value Stored value.
+ * @param string $type  quantity, purity, or integer.
+ * @return string
+ */
+function pepselect_coa_format_number( $value, $type = 'quantity' ) {
+	if ( '' === $value || null === $value || ! is_numeric( $value ) ) { return ''; }
+	$precision = 'purity' === $type ? 4 : ( 'integer' === $type ? 0 : 2 );
+	$rounded = round( (float) $value, $precision );
+	if ( 0.0 === $rounded ) { $rounded = 0; }
+	if ( 0 === $precision ) { return number_format( $rounded, 0, '.', '' ); }
+	return rtrim( rtrim( number_format( $rounded, $precision, '.', '' ), '0' ), '.' );
+}

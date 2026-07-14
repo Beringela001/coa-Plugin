@@ -49,6 +49,9 @@ final class Plugin {
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
 
+	/** @var Design_Settings_Admin|null */
+	private $design_settings_admin;
+
 	/** Returns the shared plugin instance. @return Plugin */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -100,6 +103,8 @@ final class Plugin {
 		add_action( 'admin_notices', array( $this->dependencies, 'render_notices' ) );
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_future_date_notice' ) );
 		if ( is_admin() ) {
+			$this->design_settings_admin = new Design_Settings_Admin();
+			$this->design_settings_admin->register_hooks();
 			$this->compound_admin = new Compound_Admin();
 			$this->compound_admin->register_hooks();
 			$this->coa_test_admin = new COA_Test_Admin();

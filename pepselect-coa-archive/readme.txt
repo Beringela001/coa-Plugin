@@ -4,40 +4,40 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.1
+Stable tag: 0.4.0-beta.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Original, server-rendered Pep Select compound testing history and certificate-of-analysis reports.
+Original, configurable Pep Select compound testing history and certificate-of-analysis reports.
 
 == Description ==
 
-Version 0.4.0-beta.1 adds the COA-4B public design system to the existing `/testing/`, compound-history, and individual-report routes.
+Version 0.4.0-beta.2 adds COA-4C frontend refinement and a WordPress Settings API Design & Copy screen.
 
-The archive has sanitized GET search, compact compound cards, a three-batch newest-report preview, and real complete-history counts. Compound pages clearly separate the latest report from all paginated previous approved reports. Individual reports present metrics, full-QC statuses, direct laboratory documentation, valid PDFs, ordered certificate thumbnails, public notes, and accessible report navigation.
+Public numeric formatting removes floating-point artifacts without changing stored laboratory values. Full-QC eligibility requires published approved records with Pass statuses for purity, identity, heavy metals, and sterility plus Pass endotoxin or Reported endotoxin with a real result. Approved Reported endotoxin uses a success check while remaining visibly labeled Reported.
 
-Status values remain scientifically literal: Reported is never presented as Pass, and missing data is not invented. The exact validated `lab_report_url` is the primary external action. Generic lab verification URLs and access codes remain stored for administration but are excluded from public view models and templates.
+Archive cards use larger uncropped images, preferred compound names, separate strength, assurance labels, complete report counts, and no more than three batch previews. History headers are simpler. Certificate thumbnails and the fullscreen lightbox use contained images without cropping.
 
-The vanilla JavaScript certificate viewer supports Escape, arrow keys, visible page count, focus containment, and focus return. CSS is strongly scoped, responsive, theme-typography friendly, and loaded only on COA routes or shortcode output. Gallery JavaScript loads only for reports with images.
+Administrators can configure scoped colors, local typography stacks, weights, radii, borders, primary/secondary/search controls, lightbox appearance, and selected public labels. Values are sanitized, request-cached, and output as `.ps-coa-app` variables only when COA CSS loads. Reset Defaults is nonce- and capability-protected and affects only design/copy settings.
 
-Theme overrides remain available under `pepselect-coa/`. WooCommerce product-page cards, Elementor widgets, AJAX filtering, and frontend frameworks are not included.
+Routes, visibility, data, importer, direct lab reports, PDFs, gallery order, theme overrides, shortcodes, and administration remain compatible. Access codes and generic verification URLs stay private. WooCommerce product-page cards, Elementor widgets, AJAX, external fonts, and external libraries are not included.
 
 == Installation ==
 
-1. Upload the `pepselect-coa-archive` folder to `/wp-content/plugins/` or install the packaged ZIP.
+1. Upload the `pepselect-coa-archive` folder or install the packaged ZIP.
 2. Activate Pep Select COA Archive.
-3. Visit Settings > Permalinks and save only if routes were not refreshed automatically.
-4. Open `/testing/` after at least one active compound has an approved published COA test.
+3. Open COA Archive → Design & Copy to keep defaults or adjust the presentation.
+4. Visit `/testing/` after an active compound has an approved published COA test.
 
 == Changelog ==
 
-= 0.4.0-beta.1 =
-* Added the original responsive Pep Select COA-4B archive, history, and full-report design.
-* Added sanitized server-rendered compound search and three-batch card previews.
-* Added modular status, metric, result, documentation, and gallery partials.
-* Added an accessible dependency-free certificate lightbox that loads only when needed.
-* Removed verification URLs and access codes from public report contexts while retaining admin metadata.
-* Preserved all public visibility, current-test, relationship, routing, admin, importer, and attachment rules.
+= 0.4.0-beta.2 =
+* Added scientific number formatting and strict Full-QC Documented eligibility.
+* Improved pass indicators and approved Reported-endotoxin presentation without changing stored status.
+* Refined archive cards, history headers, report metrics, certificate thumbnails, and fullscreen lightbox.
+* Added sanitized, request-cached Design & Copy settings and scoped CSS-variable output.
+* Added capability- and nonce-protected reset behavior.
+* Preserved public privacy, routes, visibility, existing data, importer, and backend behavior.
 
 = 0.4.0-alpha.1 =
 * Added the initial COA-4 public route, repository, visibility, view-model, shortcode, and template foundation.

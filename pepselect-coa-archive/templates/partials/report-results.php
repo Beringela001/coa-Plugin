@@ -8,6 +8,6 @@
 		array( 'label' => __( 'Endotoxin', 'pepselect-coa-archive' ), 'status' => $test['endotoxin_status'], 'detail' => trim( $test['endotoxin_result'] . ' ' . $test['endotoxin_unit'] ) ),
 	);
 	foreach ( $results as $result ) : ?>
-		<article><div><h3><?php echo esc_html( $result['label'] ); ?></h3><?php $status = $result['status']; include pepselect_coa_template_path( 'partials/status-indicator.php' ); ?></div><?php if ( $result['detail'] ) : ?><p><?php echo esc_html( $result['detail'] ); ?></p><?php endif; ?></article>
+		<article class="<?php echo ! empty( $result['status']['success'] ) ? 'ps-coa-result--success' : ''; ?>"><div><h3><?php echo esc_html( $result['label'] ); ?></h3><?php $status = $result['status']; include pepselect_coa_template_path( 'partials/status-indicator.php' ); ?></div><?php if ( $result['detail'] ) : ?><p><?php echo esc_html( $result['detail'] ); ?></p><?php endif; ?></article>
 	<?php endforeach; ?>
 </div>

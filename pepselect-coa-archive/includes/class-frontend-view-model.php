@@ -17,10 +17,12 @@ final class Frontend_View_Model {
 			'latest_approved_test_date_label' => $summary ? $summary['test_date_label'] : '',
 			'latest_approved_batch_number' => $summary ? $summary['batch_number'] : '',
 			'latest_purity_percentage' => $summary ? $summary['purity_percentage'] : '',
+			'latest_purity_percentage_display' => $summary ? $summary['purity_percentage_display'] : '',
 			'latest_average_net_content' => $summary ? $summary['average_net_content'] : '',
 			'latest_laboratory_display_name' => $summary ? $summary['laboratory'] : '',
 			'latest_coa_status' => $summary ? $summary['coa_status'] : '',
 			'latest_test_url' => $summary ? $summary['detail_url'] : '',
+			'is_full_qc_documented' => $summary ? $summary['is_full_qc_documented'] : false,
 			'recent_batches' => array_map( function ( $test ) use ( $compound ) { return $this->test_summary( $test, $compound ); }, array_slice( $recent, 0, 3 ) ),
 			'has_current_approved_test' => (bool) array_filter( $tests, static function ( $test ) { return (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ); } ),
 		) );
@@ -30,15 +32,23 @@ final class Frontend_View_Model {
 	public function compound( $compound ) {
 		$image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) );
 		$product_id = absint( get_post_meta( $compound->ID, 'woocommerce_product_id', true ) );
+		$display_name = get_post_meta( $compound->ID, 'display_name', true ) ?: $compound->post_title;
+		$compound_name = (string) get_post_meta( $compound->ID, 'compound_name', true );
+		$strength = (string) get_post_meta( $compound->ID, 'strength_value', true );
+		$strength_unit = (string) get_post_meta( $compound->ID, 'strength_unit', true );
+		$strength_pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $strength_unit );
 		return array(
 			'compound_id' => $compound->ID,
 			'title' => $compound->post_title,
 			'slug' => $compound->post_name,
-			'display_name' => get_post_meta( $compound->ID, 'display_name', true ) ?: $compound->post_title,
-			'compound_name' => (string) get_post_meta( $compound->ID, 'compound_name', true ),
+			'display_name' => $display_name,
+			'compound_name' => $compound_name,
+			'public_name' => trim( $compound_name ) ?: $display_name,
+			'display_strength_separately' => '' !== trim( $compound_name ) || '' === $strength_pattern || false === stripos( preg_replace( '/\s+/', '', $display_name ), preg_replace( '/\s+/', '', $strength_pattern ) ),
 			'short_name' => (string) get_post_meta( $compound->ID, 'short_name', true ),
-			'strength_value' => (string) get_post_meta( $compound->ID, 'strength_value', true ),
-			'strength_unit' => (string) get_post_meta( $compound->ID, 'strength_unit', true ),
+			'strength_value' => $strength,
+			'strength_value_display' => pepselect_coa_format_number( $strength, 'quantity' ),
+			'strength_unit' => $strength_unit,
 			'category' => (string) get_post_meta( $compound->ID, 'compound_category', true ),
 			'archive_description' => (string) get_post_meta( $compound->ID, 'archive_description', true ),
 			'compound_image_id' => $image_id,
@@ -58,6 +68,17 @@ final class Frontend_View_Model {
 	public function test_summary( $test, $compound = null ) {
 		$compound = $compound ?: get_post( absint( get_post_meta( $test->ID, 'compound_id', true ) ) );
 		$date = (string) get_post_meta( $test->ID, 'test_date', true );
+		$coa_status = (string) get_post_meta( $test->ID, 'coa_status', true );
+		$claimed = (string) get_post_meta( $test->ID, 'claimed_content', true );
+		$vials = (string) get_post_meta( $test->ID, 'vials_tested', true );
+		$average = (string) get_post_meta( $test->ID, 'average_net_content', true );
+		$minimum = (string) get_post_meta( $test->ID, 'minimum_net_content', true );
+		$maximum = (string) get_post_meta( $test->ID, 'maximum_net_content', true );
+		$purity = (string) get_post_meta( $test->ID, 'purity_percentage', true );
+		$endotoxin_result = trim( (string) get_post_meta( $test->ID, 'endotoxin_result', true ) );
+		$endotoxin_value = (string) get_post_meta( $test->ID, 'endotoxin_status', true );
+		$reported_success = 'publish' === $test->post_status && 'approved' === $coa_status && 'reported' === $endotoxin_value && '' !== $endotoxin_result;
+		$full_qc = $this->is_full_qc_documented( $test );
 		return array(
 			'test_id' => $test->ID, 'title' => $test->post_title, 'slug' => $test->post_name,
 			'batch_number' => (string) get_post_meta( $test->ID, 'batch_number', true ),
@@ -65,20 +86,24 @@ final class Frontend_View_Model {
 			'date_received' => (string) get_post_meta( $test->ID, 'date_received', true ),
 			'date_received_label' => $this->date_label( get_post_meta( $test->ID, 'date_received', true ) ),
 			'laboratory' => $this->laboratory_name( get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ),
-			'coa_status' => 'approved', 'coa_status_data' => $this->status( 'approved' ),
+			'coa_status' => $coa_status, 'coa_status_data' => $this->status( $coa_status ),
 			'is_current' => (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ),
-			'claimed_content' => (string) get_post_meta( $test->ID, 'claimed_content', true ),
+			'claimed_content' => $claimed, 'claimed_content_display' => pepselect_coa_format_number( $claimed ),
 			'content_unit' => (string) get_post_meta( $test->ID, 'content_unit', true ),
-			'vials_tested' => (string) get_post_meta( $test->ID, 'vials_tested', true ),
-			'average_net_content' => (string) get_post_meta( $test->ID, 'average_net_content', true ),
-			'minimum_net_content' => (string) get_post_meta( $test->ID, 'minimum_net_content', true ),
-			'maximum_net_content' => (string) get_post_meta( $test->ID, 'maximum_net_content', true ),
-			'purity_percentage' => (string) get_post_meta( $test->ID, 'purity_percentage', true ),
+			'vials_tested' => $vials, 'vials_tested_display' => pepselect_coa_format_number( $vials, 'integer' ),
+			'average_net_content' => $average, 'average_net_content_display' => pepselect_coa_format_number( $average ),
+			'minimum_net_content' => $minimum, 'minimum_net_content_display' => pepselect_coa_format_number( $minimum ),
+			'maximum_net_content' => $maximum, 'maximum_net_content_display' => pepselect_coa_format_number( $maximum ),
+			'purity_percentage' => $purity, 'purity_percentage_display' => pepselect_coa_format_number( $purity, 'purity' ),
 			'purity_status' => $this->status( get_post_meta( $test->ID, 'purity_status', true ) ),
 			'identity_status' => $this->status( get_post_meta( $test->ID, 'identity_status', true ) ),
-			'endotoxin_status' => $this->status( get_post_meta( $test->ID, 'endotoxin_status', true ) ),
+			'endotoxin_status' => $this->status( $endotoxin_value, $reported_success ),
+			'endotoxin_result' => $endotoxin_result,
+			'endotoxin_unit' => (string) get_post_meta( $test->ID, 'endotoxin_unit', true ),
 			'heavy_metals_status' => $this->status( get_post_meta( $test->ID, 'heavy_metals_status', true ) ),
 			'sterility_status' => $this->status( get_post_meta( $test->ID, 'sterility_status', true ) ),
+			'is_full_qc_documented' => $full_qc,
+			'assurance_label' => $full_qc ? Design_Settings::copy( 'full_qc_label' ) : Design_Settings::copy( 'neutral_label' ),
 			'coa_number' => (string) get_post_meta( $test->ID, 'coa_number', true ),
 			'lab_report_url' => $this->http_url( get_post_meta( $test->ID, 'lab_report_url', true ) ),
 			'detail_url' => $compound ? $this->test_url( $compound, $test ) : '',
@@ -91,8 +116,6 @@ final class Frontend_View_Model {
 		$model = $this->test_summary( $test, $compound );
 		$model['purity_method'] = (string) get_post_meta( $test->ID, 'purity_method', true );
 		$model['identity_method'] = (string) get_post_meta( $test->ID, 'identity_method', true );
-		$model['endotoxin_result'] = (string) get_post_meta( $test->ID, 'endotoxin_result', true );
-		$model['endotoxin_unit'] = (string) get_post_meta( $test->ID, 'endotoxin_unit', true );
 		$model['heavy_metals_summary'] = (string) get_post_meta( $test->ID, 'heavy_metals_summary', true );
 		$model['sterility_result'] = (string) get_post_meta( $test->ID, 'sterility_result', true );
 		$model['certificate_version'] = (string) get_post_meta( $test->ID, 'certificate_version', true );
@@ -109,12 +132,23 @@ final class Frontend_View_Model {
 		return isset( $names[ $stored ] ) ? $names[ $stored ] : ( 'other' === $stored && trim( (string) $other ) ? trim( (string) $other ) : ucwords( str_replace( '-', ' ', (string) $stored ) ) );
 	}
 
-	/** Returns semantic, non-interpretive status data. @param string $stored Stored value. @return array */
-	public function status( $stored ) {
+	/** Returns semantic status data with an explicit approved-report success override. @param string $stored Stored value. @param bool $success_override Green icon without relabeling. @return array */
+	public function status( $stored, $success_override = false ) {
 		$stored = sanitize_key( str_replace( '_', '-', (string) $stored ) );
 		$labels = array( 'approved' => 'Approved', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
 		$value = isset( $labels[ $stored ] ) ? $stored : '';
-		return array( 'value' => $value, 'label' => $value ? $labels[ $value ] : 'Not Reported', 'class' => $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty', 'icon' => $value ?: 'empty', 'public' => true );
+		$class = $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty';
+		if ( $success_override ) { $class .= ' ps-coa-status--success-reported'; }
+		return array( 'value' => $value, 'label' => $value ? $labels[ $value ] : 'Not Reported', 'class' => $class, 'icon' => $success_override ? 'pass' : ( $value ?: 'empty' ), 'public' => true, 'success' => (bool) $success_override || in_array( $value, array( 'pass', 'approved' ), true ) );
+	}
+
+	/** Returns true only for a complete approved, published full-QC record. @param \WP_Post|int $test Test. @return bool */
+	public function is_full_qc_documented( $test ) {
+		$test = get_post( $test ); if ( ! $test || 'publish' !== $test->post_status || 'approved' !== get_post_meta( $test->ID, 'coa_status', true ) ) { return false; }
+		foreach ( array( 'purity_status', 'identity_status', 'heavy_metals_status', 'sterility_status' ) as $key ) { if ( 'pass' !== get_post_meta( $test->ID, $key, true ) ) { return false; } }
+		$endotoxin = get_post_meta( $test->ID, 'endotoxin_status', true );
+		if ( ! in_array( $endotoxin, array( 'pass', 'reported' ), true ) ) { return false; }
+		return 'reported' !== $endotoxin || '' !== trim( (string) get_post_meta( $test->ID, 'endotoxin_result', true ) );
 	}
 
 	public function archive_url() { return home_url( user_trailingslashit( 'testing' ) ); }

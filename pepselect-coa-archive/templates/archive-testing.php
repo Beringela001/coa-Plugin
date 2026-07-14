@@ -5,17 +5,17 @@ $ps_embedded = isset( $ps_embedded ) && $ps_embedded;
 $search = isset( $ps_context['search'] ) ? $ps_context['search'] : '';
 if ( ! $ps_embedded ) { get_header(); }
 ?>
-<main class="ps-coa ps-coa-archive" id="ps-coa-main">
+<main class="ps-coa ps-coa-app ps-coa-archive" id="ps-coa-main">
 	<header class="ps-coa-header">
-		<p class="ps-coa-eyebrow"><?php esc_html_e( 'Pep Select Quality Archive', 'pepselect-coa-archive' ); ?></p>
-		<h1><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></h1>
-		<p><?php esc_html_e( 'Independent laboratory reports organized by compound and batch.', 'pepselect-coa-archive' ); ?></p>
+		<p class="ps-coa-eyebrow"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'archive_eyebrow' ) ); ?></p>
+		<h1><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'archive_title' ) ); ?></h1>
+		<p><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'archive_intro' ) ); ?></p>
 	</header>
 	<form class="ps-coa-search" action="<?php echo esc_url( $ps_context['archive_url'] ); ?>" method="get" role="search">
 		<label for="ps-coa-search-input"><?php esc_html_e( 'Search compounds', 'pepselect-coa-archive' ); ?></label>
 		<div class="ps-coa-search__controls">
-			<input id="ps-coa-search-input" name="coa_search" type="search" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search compounds...', 'pepselect-coa-archive' ); ?>">
-			<button class="ps-coa-button ps-coa-button--primary" type="submit"><?php esc_html_e( 'Search', 'pepselect-coa-archive' ); ?></button>
+			<input id="ps-coa-search-input" name="coa_search" type="search" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php echo esc_attr( \PepSelect\COAArchive\Design_Settings::copy( 'search_placeholder_copy' ) ); ?>">
+			<button class="ps-coa-button ps-coa-search__button" type="submit" aria-label="<?php echo esc_attr( \PepSelect\COAArchive\Design_Settings::copy( 'search_button_copy' ) ); ?>"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'search_button_copy' ) ); ?></button>
 			<?php if ( '' !== $search ) : ?><a class="ps-coa-button ps-coa-button--secondary" href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Clear', 'pepselect-coa-archive' ); ?></a><?php endif; ?>
 		</div>
 	</form>

@@ -234,12 +234,12 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-gallery.php' );
 		$status = file_get_contents( dirname( __DIR__ ) . '/templates/partials/status-indicator.php' );
 		$this->assertStringContainsString( 'array_slice( $compound[\'recent_batches\'], 0, 3 )', $archive );
-		$this->assertStringContainsString( 'View all %s reports', $archive );
+		$this->assertStringContainsString( "Design_Settings::copy( 'view_history' )", $archive );
 		$this->assertStringContainsString( 'report-metrics.php', $report );
 		$this->assertStringContainsString( 'report-results.php', $report );
 		$this->assertStringContainsString( 'medium_large', file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' ) );
 		foreach ( array( 'data-ps-coa-close', 'data-ps-coa-prev', 'data-ps-coa-next', 'aria-modal="true"', 'loading="lazy"' ) as $needle ) { $this->assertStringContainsString( $needle, $gallery ); }
-		$this->assertStringContainsString( "'reported' === \$value", $status );
+		$this->assertStringContainsString( "'pass' === \$icon", $status );
 		$this->assertStringNotContainsString( 'emoji', strtolower( $status ) );
 	}
 

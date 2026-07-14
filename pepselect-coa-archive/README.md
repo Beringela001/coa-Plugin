@@ -1,151 +1,148 @@
 # Pep Select COA Archive
 
-Version 0.4.0-beta.1 delivers the COA-4B public design and interaction layer for the existing server-rendered archive, compound-history, and individual-report routes.
+Version 0.4.0-beta.2 is Milestone COA-4C: frontend polish, clearer scientific status presentation, full-viewport certificate viewing, and administrator-controlled design and public copy.
 
-## COA-4B scope
+## Public frontend
 
-The plugin presents a calm, technical documentation experience at:
+The existing server-rendered routes remain unchanged:
 
 - `/testing/`
 - `/testing/{compound-slug}/`
 - `/testing/{compound-slug}/{batch-slug}/`
 
-The design is original to Pep Select and remains independent of Elementor and WooCommerce. It inherits the active theme’s typography and uses only strongly scoped `.ps-coa-*` selectors. No product-page cards, Elementor widgets, external icon libraries, external requests, AJAX search, analytics, or frontend frameworks are included.
+Archive cards now use a larger contained compound image, `compound_name` as the preferred title, a separate formatted strength pill, an assurance treatment, three recent batches at most, the complete approved-report count, and a configured history action. Search remains a sanitized GET request and has strongly scoped input/button styling.
 
-## Archive behavior
+The history header is compact: configurable eyebrow, compound name, separate strength, configured “Vetting History” suffix, and latest report date. The approved-report count is no longer in the header. A non-empty archive description appears separately below it. Latest and previous report cards preserve all existing ordering and pagination.
 
-The archive provides a server-rendered GET search using `coa_search`. Input is sanitized and matched against each public compound’s `display_name`, `compound_name`, and `short_name`. Search and pagination remain in the URL.
+The full report retains its breadcrumb, header, metrics, Full-QC rows, direct laboratory report, valid original PDF, saved-order certificate pages, notes, and navigation. Public access codes, generic verification URLs, and laboratory addresses remain absent.
 
-Each compact compound card contains a restrained compound image or local vial fallback, display name, strength, latest approved test date, purity, laboratory, and the real approved-report count. Up to three newest approved batches appear as a preview; this is not a history limit. The “View all reports” action opens the compound’s complete approved history.
+## Scientific display rules
 
-## Compound history
+Stored laboratory metadata is never rewritten for presentation.
 
-The history page separates one latest report from all previous approved reports. Existing current-test logic remains unchanged: an explicitly current approved report leads; otherwise the newest test date leads. The latest report is never duplicated in Previous Reports.
+- Quantities and mass values use at most two useful decimal places: `29.999999` → `30`, `31.010000` → `31.01`, and `5.500000` → `5.5`.
+- Purity uses at most four useful decimal places.
+- Vial counts display as integers.
+- Pass uses a more visible green circular check plus the text “Pass.”
+- Identity details such as “Confirmed,” heavy-metals summaries, and sterility results such as “No Growth” receive success treatment only when their stored status is `pass`.
+- Fail, Pending, Not Tested, and Not Applicable keep distinct icons, colors, and visible labels.
 
-The latest card shows batch, date, laboratory, purity, net content, labeled content when available, vials tested when available, and identity/heavy-metals/sterility/endotoxin statuses. Previous reports use smaller cards and remain fully available through the existing 20-record pagination.
+An endotoxin status of `reported` receives a green check only when the COA post is published, `coa_status` is approved, and a non-empty endotoxin result exists. It still visibly says “Reported”; it is never relabeled Pass, no threshold is inferred, and stored data is unchanged.
 
-## Status semantics
+“Full-QC Documented” appears only when the report is published and approved, purity/identity/heavy-metals/sterility statuses are all Pass, and endotoxin is Pass or is Reported with a non-empty result. Other public approved reports receive the configurable neutral “Independent Report Published” label.
 
-The reusable status indicator always displays text and an original inline SVG symbol:
+## Certificate viewer
 
-- `pass`: restrained green check and “Pass”
-- `reported`: blue information indicator and “Reported”; never reinterpreted as Pass
-- `pending`: amber indicator and “Pending”
-- `not-tested`: neutral indicator and “Not Tested”
-- `not-applicable`: neutral indicator and “Not Applicable”
-- `fail`: restrained red indicator and “Fail”
+Certificate thumbnails retain saved order and Page N labels. Images use responsive `medium_large` sources, lazy loading, configurable radius, and `object-fit: contain` without cropping. The dependency-free fullscreen viewer uses up to approximately 96vw × 92vh, maintains page aspect ratio, prevents body scrolling while open, and restores it on close. Escape, arrow navigation, visible count, focus containment, focus return, touch-sized controls, and reduced-motion behavior remain.
 
-Missing status values remain “Not Reported.” Numeric purity never creates an inferred pass result.
+## Design & Copy settings
 
-## Full report
+Administrators with `manage_ps_coas` can open **COA Archive → Design & Copy**. The screen uses the WordPress Settings API and the single `pepselect_coa_design_settings` option. It loads WordPress’s color picker and its small admin assets only on that screen.
 
-The report page contains a breadcrumb, compact report header, summary metrics, full-QC results, documentation actions, certificate gallery, public technical notes when present, descriptive adjacent-report links, and back navigation.
+Settings include:
 
-The primary documentation action uses the exact validated `lab_report_url` and opens it with `target="_blank"` and `rel="noopener noreferrer"`. A valid WordPress PDF attachment is a secondary action. The public view model and templates do not expose `lab_verification_url` or `verification_code`, and no generic verification fallback is constructed. Admin metadata remains stored and unchanged.
+- Colors: page, card, muted surface, primary/muted text, border, accent, accent-word, success, information, warning, and failure.
+- Typography: inherited, System Sans, Arial/Helvetica, Georgia, or Times New Roman for headings and body; heading/body weights; normal or italic accent words. No remote fonts load.
+- Corners and borders: card, panel, image, search field, search button, primary button, and secondary button radii (0–40px); card and input borders (0–4px).
+- Buttons and search: background, text, border, hover background/text/border for primary, secondary, and search buttons; input background, text, border, placeholder, and focus border.
+- Lightbox: overlay color and 0.50–1.00 opacity; control background, text/icon, border, and 0–40px radius.
+- Public copy: archive eyebrow/title/introduction, history eyebrow/suffix, latest label, Full-QC label/copy, neutral label, history/report actions, search placeholder, and search button label.
 
-Only validated PDF attachments are linked. Certificate images are validated attachments, retain saved order, and render as lazy-loaded WordPress `medium_large` responsive thumbnails. Full-resolution URLs are held for the lightbox and loaded only when a page is opened.
+Empty or invalid settings fall back to the COA-4B appearance. Color, choice, text, integer, and opacity inputs are normalized by type. No arbitrary CSS input exists.
 
-## Gallery and accessibility
+`wp_add_inline_style()` outputs sanitized variables only when the frontend COA stylesheet loads. Variables are scoped to `.ps-coa-app`, including:
 
-The dependency-free lightbox loads only for a rendered report with certificate images. It supports:
+`--ps-coa-page-bg`, `--ps-coa-surface`, `--ps-coa-surface-muted`, `--ps-coa-text`, `--ps-coa-text-muted`, `--ps-coa-border`, `--ps-coa-accent`, `--ps-coa-accent-word`, `--ps-coa-success`, `--ps-coa-info`, `--ps-coa-warning`, `--ps-coa-danger`, typography variables, radius/border variables, button/search variables, and lightbox variables.
 
-- semantic button triggers and a labeled modal dialog
-- close, previous, and next controls
-- Escape, Left Arrow, and Right Arrow keys
-- visible page count
-- focus containment while open
-- focus return to the triggering thumbnail
-- touch-friendly controls
-- reduced-motion preferences
+Reset to Defaults requires `manage_ps_coas`, a valid nonce, and confirmation. It deletes only the design/copy option. Compounds, reports, routes, relationships, and media remain untouched.
 
-Breadcrumbs, headings, focus rings, image alternatives, external-link notices, and readable status labels support keyboard and assistive-technology use. Color is never the only status cue.
+## Performance, security, and compatibility
 
-## Responsive design system
+Normalized settings are cached in memory for the request, preventing option queries per card. Frontend CSS still loads only for COA routes or shortcodes; gallery JavaScript still loads only for reports with images. Admin assets load only on Design & Copy. No external fonts, frameworks, AJAX, telemetry, or HTTP requests were added.
 
-The centered container is capped at 1220px with fluid horizontal padding. Archive cards use four columns only at wide widths, three on desktop, two on tablet, and one on mobile. Report metrics collapse from four columns to two and then one. Buttons expand on narrow screens, status groups wrap, and certificate thumbnails collapse without horizontal scrolling.
-
-The frontend stylesheet exposes these safe variables:
-
-- `--ps-coa-primary` (uses Elementor’s primary variable when available, with a plugin fallback)
-- `--ps-coa-text`
-- `--ps-coa-muted`
-- `--ps-coa-border`
-- `--ps-coa-surface`
-- `--ps-coa-soft-surface`
-- `--ps-coa-success`
-- `--ps-coa-info`
-- `--ps-coa-warning`
-- `--ps-coa-danger`
-- `--ps-coa-radius`
-- `--ps-coa-shadow`
-
-No global font family is set.
-
-## Templates and asset loading
-
-Theme overrides remain available under `theme/pepselect-coa/`. Child theme, parent theme, then plugin fallback order is unchanged. COA-4B adds modular partials for compound cards, latest reports, previous reports, status indicators, metrics, result panels, documentation, and the certificate gallery. Existing partial filenames remain as compatibility wrappers.
-
-`assets/css/pepselect-coa-frontend.css` loads only on COA routes or pages containing a COA shortcode. `assets/js/pepselect-coa-lightbox.js` loads only when the resolved report context contains gallery images. Shortcode rendering follows the same rules.
+Visibility, current-report ordering, routes, rewrite rules, template overrides under `theme/pepselect-coa/`, shortcodes, ACF keys, CSV import, direct report links, PDF validation, gallery order, capabilities, and non-destructive uninstall behavior are preserved. WooCommerce product-page cards and Elementor widgets remain deferred.
 
 ## Manual QA checklist
 
-### Main archive
+### Archive
 
 1. Visit `/testing/`.
-2. Confirm the header and search look intentional.
-3. Confirm compound cards are compact.
-4. Confirm there is no large empty area inside cards.
-5. Confirm each card previews at most three recent batches.
-6. Confirm the real total report count is shown.
-7. Confirm View all reports opens the compound history.
-8. Confirm mobile layout uses one card per row.
-9. Confirm search works and preserves safe URLs.
+2. Confirm compound image is larger and not cropped.
+3. Confirm compound title is easier to read.
+4. Confirm strength is shown separately without duplicate wording.
+5. Confirm assurance label appears appropriately.
+6. Confirm search button says Search.
+7. Confirm search button is not blank or red.
+8. Confirm search radius setting changes the search form.
+9. Confirm View all reports remains correct.
+10. Confirm mobile archive layout works.
 
-### Compound history
+### History
 
-10. Open Retatrutide 30mg.
-11. Confirm Latest Report has stronger but restrained visual hierarchy.
-12. Confirm purity does not visually overwhelm the card.
-13. Confirm net content, lab, date, and batch display.
-14. Confirm identity, heavy metals, sterility, and endotoxin display.
-15. Confirm Endotoxin Reported is not shown as a green Pass.
-16. Confirm previous reports use smaller cards.
-17. Confirm all previous reports remain accessible through pagination.
-18. Confirm latest is not duplicated.
-19. Confirm the page works on mobile.
+11. Open a compound history page.
+12. Confirm approved-report count is removed from the top header.
+13. Confirm latest report date remains.
+14. Confirm the header contains less text.
+15. Confirm history title uses the configured suffix.
+16. Confirm archive description is outside the main compact header.
+17. Confirm pass checks are more visible.
+18. Confirm reported endotoxin receives a green check but still says Reported.
+19. Confirm numeric values are clean.
+20. Confirm mobile layout works.
 
 ### Full report
 
-20. Open a full batch report.
-21. Confirm report header displays compound, batch, date, status, and lab.
-22. Confirm summary metrics are clear.
-23. Confirm full-QC statuses are easy to scan.
-24. Confirm quantitative endotoxin result displays correctly.
-25. Confirm View Lab Report opens the exact saved report URL.
-26. Confirm Verify with Laboratory does not appear.
-27. Confirm generic lab verification address does not appear.
-28. Confirm Access Code does not appear.
-29. Confirm Download Original PDF appears when available.
-30. Confirm gallery thumbnails are in saved order.
-31. Confirm clicking an image opens the lightbox.
-32. Confirm Escape closes it.
-33. Confirm keyboard previous/next navigation works.
-34. Confirm focus returns correctly.
-35. Confirm internal notes do not appear.
-36. Confirm internal batch ID does not appear.
-37. Confirm previous/next report navigation works.
-38. Confirm mobile layout remains readable.
+21. Open a full report.
+22. Confirm `29.999999` no longer appears.
+23. Confirm labeled content displays as `30 mg`.
+24. Confirm Identity Pass has a visible green check.
+25. Confirm Heavy Metals Pass has a visible green check.
+26. Confirm Sterility No Growth has a visible green check.
+27. Confirm approved Reported endotoxin has a visible green check.
+28. Confirm endotoxin still says Reported.
+29. Confirm access code is absent.
+30. Confirm generic verification URL is absent.
+31. Confirm laboratory address is absent.
+32. Confirm View Lab Report uses the exact direct URL.
+33. Confirm Download Original PDF still works.
+
+### Lightbox
+
+34. Open Page 1.
+35. Confirm the entire certificate page is visible.
+36. Confirm the image is not cropped.
+37. Confirm it uses most of the viewport.
+38. Confirm previous/next buttons work.
+39. Confirm Escape closes it.
+40. Confirm mobile controls work.
+41. Change lightbox colors in settings.
+42. Confirm controls update and are not red.
+
+### Settings
+
+43. Open COA Archive → Design & Copy.
+44. Change page background color.
+45. Change card background color.
+46. Change success color.
+47. Change accent-word color.
+48. Change card radius.
+49. Change search radius.
+50. Change button radius.
+51. Change lightbox colors.
+52. Change heading font to System Sans.
+53. Change history suffix.
+54. Save settings.
+55. Confirm frontend reflects changes.
+56. Reset to defaults.
+57. Confirm business data remains intact.
 
 ### Site safety
 
-39. Visit the homepage.
-40. Visit the shop.
-41. Visit a product page.
-42. Visit cart and checkout.
-43. Confirm no COA styles or scripts affect unrelated pages.
-44. Confirm no product-page COA cards were added.
-45. Confirm wp-admin and the CSV importer still work.
-
-## Deferred work
-
-WooCommerce product-page COA cards and Elementor widgets are explicitly deferred. This release stops at COA-4B.
+58. Visit homepage.
+59. Visit shop.
+60. Visit product pages.
+61. Visit cart and checkout.
+62. Confirm COA CSS variables do not affect unrelated pages.
+63. Confirm no product-page COA cards were added.
+64. Confirm wp-admin compound and COA editing still work.
+65. Confirm CSV importer still works.

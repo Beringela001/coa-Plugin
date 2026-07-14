@@ -1,0 +1,4 @@
+.ps-coa-settings .form-table { max-width: 980px; }
+.ps-coa-settings .form-table th { width: 240px; }
+.ps-coa-settings hr { margin-block: 2rem; }
+@media (max-width: 782px) { .ps-coa-settings .form-table th { width: auto; } }
