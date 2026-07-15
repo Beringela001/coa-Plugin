@@ -4,57 +4,81 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.4
+Stable tag: 0.4.0-beta.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Original, configurable Pep Select compound testing history and certificate-of-analysis reports.
+Public compound testing histories with progressive vendor-vetting administration and transparent approved and failed reports.
 
 == Description ==
 
-Version 0.4.0-beta.4 fixes the unsearched archive regression while preserving the beta.3 frontend and admin refinements.
+Version 0.4.0-beta.11 finalizes truthful partial-QC states, hero metadata order, and the responsive fullscreen certificate viewer.
 
-Public numeric formatting removes floating-point artifacts without changing stored laboratory values. Full-QC eligibility requires published approved records with Pass statuses for purity, identity, heavy metals, and sterility plus Pass endotoxin or Reported endotoxin with a real result. Approved Reported endotoxin uses a success check while remaining visibly labeled Reported.
+The exact Batch Vial Photo is optional through laboratory submission and required during Verification in Progress and Complete. An optional ordered Batch Identity Photos gallery provides supporting views. Published legacy reports remain public and receive a non-destructive admin warning until an exact image is added.
 
-Archive cards use larger uncropped images, preferred compound names, separate strength, assurance labels, complete report counts, and no more than three batch previews. History headers are simpler. Certificate thumbnails and the fullscreen lightbox use contained images without cropping.
+Report-specific views fall back from the exact batch image to the COA Test Featured Image, Compound image, then a bundled neutral placeholder. The redesigned responsive report follows the approved three-part hero, compact real-value metrics, truthful Full-QC strip and table, separate certificate and identity galleries, and dark final-document panel. Optional Fentanyl data never defaults to Pass.
 
-Administrators can configure scoped colors, local typography stacks, weights, radii, borders, primary/secondary/search controls, lightbox appearance, and selected public labels. Values are sanitized, request-cached, and output as `.ps-coa-app` variables only when COA CSS loads. Reset Defaults is nonce- and capability-protected and affects only design/copy settings.
-
-Published incoming reports may show an expected COA date and public progress URL. Published failed reports remain inspectable and are clearly marked as not released for sale. Archived, superseded, draft, private, and explicitly private records remain excluded. Approved reports require their public lab URL, PDF, page image, test identity, lab, vial colors, and tested-vial count during ACF validation.
-
-Routes, stored data, PDFs, gallery order, theme overrides, shortcodes, and administration remain compatible. Access codes and generic verification URLs stay private. WooCommerce product-page cards, Elementor widgets, AJAX, external fonts, and external libraries are not included.
+Private access/verification metadata and internal fields remain excluded from public output. Existing workflow privacy, archive grouping, failed transparency, search, CSV import, PDF/gallery/lightbox, design settings, capabilities, and non-destructive uninstall remain intact. Product-page cards, QR codes, SKU matching, Elementor widgets, and external integrations are not included.
 
 == Installation ==
 
-1. Upload the `pepselect-coa-archive` folder or install the packaged ZIP.
-2. Activate Pep Select COA Archive.
-3. Open COA Archive → Design & Copy to keep defaults or adjust the presentation.
-4. Visit `/testing/` after an active compound has an approved published COA test.
+1. Install the packaged ZIP or upload `pepselect-coa-archive`.
+2. Activate the plugin.
+3. Open COA Archive > Add New COA Test and select the operational stage.
+4. Review public workflow wording under COA Archive > Design & Copy.
+5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
 
+= 0.4.0-beta.11 =
+* Preserved all seven QC positions with truthful full, partial, missing, and failed states.
+* Reordered hero metadata and added exact Current/Past batch labels.
+* Rebuilt certificate-page cards and repaired the scoped accessible fullscreen viewer.
+
+= 0.4.0-beta.10 =
+* Restored centered icon-above-label cells in the exact two-tier Full-QC bar.
+* Limited Fentanyl Screen status to Pass, Fail, and Not Tested with canonical derived values.
+* Added exact Immunoassay and 50 ng/mL cutoff output to the detailed results table.
+
+= 0.4.0-beta.9 =
+* Restore the pale-green Full-QC header and separate white, divided category row directly beneath Summary Metrics.
+* Add dynamic rendered-category counts, saved-data detail copy, truthful per-category success styling, and responsive tablet/mobile layouts.
+* Preserve the existing report hero, results table, certificate lightbox, archive/history routes, document panels, and source documentation panel.
+
+= 0.4.0-beta.8 =
+* Recompose the approved report into dense mockup-matched hero, measured-values, laboratory-data, document, and source-documentation panels.
+* Add all five Fentanyl Screen fields, ILS approval validation, backward-compatible CSV mapping, and Fentanyl Free success representation.
+* Preserve failed and incoming truthfulness, private metadata boundaries, responsive result cards, and the existing certificate lightbox.
+
+= 0.4.0-beta.7 =
+* Added exact Batch Vial Photo and optional ordered Batch Identity Photos fields.
+* Enforced the exact-vial image at Verification in Progress and Complete, with a non-destructive legacy exemption and admin warning.
+* Added the batch, Featured Image, Compound image, and local-placeholder fallback sequence to report-specific views.
+* Rebuilt the full report into a responsive three-part hero, compact metrics, truthful Full-QC strip/table, separate document/photo galleries, and dark laboratory panel.
+* Added optional Fentanyl fields without Pass defaults and kept private verification/internal metadata out of public output.
+* Added scoped document-panel settings, 42 COA-4E coverage tests, and the complete 75-step manual QA checklist.
+
+= 0.4.0-beta.6 =
+* Added the COA-4D_Form_Rev five-stage progressive COA Test editor.
+* Limited normal final status choices to Pending, Approved, and Failed while preserving legacy outcomes read-only.
+* Normalized retired sample-received and coa-pending stages safely.
+* Restored the native Featured Image metabox without Gutenberg or a competing image field.
+* Added scoped stage-controller JavaScript/CSS, guidance, Partial Results Available, and stage-authoritative validation.
+* Added the requested crimp/cap field keys with legacy custom-color fallbacks.
+* Centralized public stage privacy for view models, templates, routes, REST metadata, archive cards, and partial results.
+* Added tests and documentation for form scope, privacy, legacy handling, assets, and Featured Image behavior.
+
+= 0.4.0-beta.5 =
+* Added separate operational workflow tracking, expected dates, incoming/failed grouping, copy settings, and transparent failed reports.
+
 = 0.4.0-beta.4 =
-* Restored legacy approved reports and their compounds to the public archive when new vial-color metadata is absent.
-* Normalized absent, empty, whitespace-only, and invalid archive search values as no search.
-* Added post-title matching while preserving display-name, compound-name, and short-name search.
-* Added versioned, plugin-only archive cache keys and targeted invalidation on upgrades and relevant record changes.
-* Added regression coverage for default, searched, cleared, private, cached, compound-route, and report-route behavior.
+* Restored legacy approved reports, normalized archive search, and added versioned plugin-only archive caching.
 
 = 0.4.0-beta.3 =
-* Added public incoming-report and transparent failed-report history states.
-* Added expected COA date, vial crimp/cap colors with conditional Other fields, and an in-progress lab URL.
-* Required approved reports to include the exact public lab report URL and strengthened release-state validation.
-* Tightened archive, history, report, certificate, status, and mobile presentation.
-* Added linked helper descriptions and preview examples to Design & Copy settings.
-* Kept archived, superseded, unpublished, and explicitly private reports out of public views.
+* Added initial incoming/failed presentation and stricter approved documentation validation.
 
 = 0.4.0-beta.2 =
-* Added scientific number formatting and strict Full-QC Documented eligibility.
-* Improved pass indicators and approved Reported-endotoxin presentation without changing stored status.
-* Refined archive cards, history headers, report metrics, certificate thumbnails, and fullscreen lightbox.
-* Added sanitized, request-cached Design & Copy settings and scoped CSS-variable output.
-* Added capability- and nonce-protected reset behavior.
-* Preserved public privacy, routes, visibility, existing data, importer, and backend behavior.
+* Added scientific formatting, certificate-viewer refinements, and scoped Design & Copy settings.
 
 = 0.4.0-alpha.1 =
 * Added the initial COA-4 public route, repository, visibility, view-model, shortcode, and template foundation.

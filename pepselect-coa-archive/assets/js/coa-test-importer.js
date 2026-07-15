@@ -3,15 +3,17 @@
 
 	const config = window.PepSelectCOAImporterConfig || { fields: {}, compounds: [], messages: {} };
 	const dateFields = new Set( [ 'test_date', 'expected_coa_date', 'date_received' ] );
-	const booleanFields = new Set( [ 'is_current' ] );
+	const booleanFields = new Set( [ 'is_current', 'partial_results_available' ] );
 	const integerFields = new Set( [ 'compound_id', 'vials_submitted', 'vials_tested' ] );
 	const numberFields = new Set( [ 'claimed_content', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' ] );
-	const resultFields = new Set( [ 'purity_status', 'identity_status', 'endotoxin_status', 'heavy_metals_status', 'sterility_status' ] );
+	const resultFields = new Set( [ 'purity_status', 'identity_status', 'endotoxin_status', 'heavy_metals_status', 'sterility_status', 'fentanyl_status' ] );
 	const urlFields = new Set( [ 'lab_report_url', 'pending_lab_url', 'lab_verification_url' ] );
-	const ignoredFields = new Set( [ 'coa_pdf_id', 'coa_page_images' ] );
+	const ignoredFields = new Set( [ 'coa_pdf_id', 'coa_page_images', 'batch_vial_photo', 'batch_identity_photos' ] );
 	const compoundAliases = new Set( [ 'compound_slug', 'compound_display_name' ] );
-	const coaStatuses = new Set( [ 'pending', 'in-testing', 'vendor-vetting', 'approved', 'failed', 'archived', 'superseded' ] );
+	const coaStatuses = new Set( [ 'pending', 'approved', 'failed' ] );
+	const workflowStages = new Set( [ 'vendor-vetting', 'waiting-on-vendor', 'submitted-to-lab', 'in-testing', 'complete' ] );
 	const resultStatuses = new Set( [ 'pass', 'fail', 'pending', 'not-tested', 'not-applicable', 'reported' ] );
+	const fentanylStatuses = new Set( [ 'pass', 'fail', 'not-tested' ] );
 	let preview = null;
 	let snapshot = null;
 
@@ -67,12 +69,22 @@
 		return labels[ normalized ] ? { value: labels[ normalized ], other: '' } : { value: 'other', other: raw };
 	}
 
+	function normalizeFentanylResult( value ) {
+		const raw = String( value ).trim();
+		const normalized = raw.toLowerCase().replace( /[\s._-]+/g, ' ' );
+		if ( [ 'nd', 'n/d', 'not detected', 'none detected', 'no fentanyl detected' ].includes( normalized ) ) { return 'Not detected'; }
+		if ( /below (?:the )?(?:limit of )?detection/.test( normalized ) ) { return 'Below detection limit'; }
+		return raw;
+	}
+
 	function normalizeValue( name, value ) {
 		const raw = String( value ).trim();
 		if ( '' === raw ) { return { valid: true, value: '' }; }
 		if ( dateFields.has( name ) ) { const date = normalizeDate( raw ); return { valid: null !== date, value: date || raw, error: 'Invalid date' }; }
 		if ( booleanFields.has( name ) ) { const bool = normalizeBoolean( raw ); return { valid: null !== bool, value: bool || raw, error: 'Invalid boolean' }; }
 		if ( 'coa_status' === name ) { const status = normalizeStatus( raw, coaStatuses ); return { valid: null !== status, value: status || raw, error: 'Invalid COA status' }; }
+		if ( 'workflow_stage' === name ) { const legacy = { 'sample-received': 'submitted-to-lab', 'coa-pending': 'in-testing' }; const normalized = String( raw ).toLowerCase().replace( /[ _]+/g, '-' ); const status = legacy[ normalized ] || normalizeStatus( raw, workflowStages ); return { valid: null !== status, value: status || raw, error: 'Invalid workflow stage' }; }
+		if ( 'fentanyl_status' === name ) { const status = normalizeStatus( raw, fentanylStatuses ); return { valid: null !== status, value: status || raw, error: 'Invalid Fentanyl Screen status' }; }
 		if ( resultFields.has( name ) ) { const status = normalizeStatus( raw, resultStatuses ); return { valid: null !== status, value: status || raw, error: 'Invalid result status' }; }
 		if ( 'testing_lab' === name ) { const lab = normalizeLab( raw ); return { valid: true, value: lab.value, other: lab.other }; }
 		if ( integerFields.has( name ) && ! /^-?\d+$/.test( raw ) ) { return { valid: false, value: raw, error: 'Invalid integer' }; }
@@ -134,10 +146,16 @@
 		const items = [];
 		for ( const header of headers ) {
 			if ( compoundAliases.has( header ) ) { items.push( { column: header, imported: row[ header ], current: getFieldValue( 'compound_id' ), result: compoundResult.error ? 'Invalid' : ( compoundResult.match ? 'Will Populate' : 'No Matching Field' ), error: compoundResult.error || compoundResult.warning } ); continue; }
-			if ( ignoredFields.has( header ) ) { items.push( { column: header, imported: row[ header ], current: '', result: 'No Matching Field', error: 'PDF and gallery fields must be uploaded manually.' } ); continue; }
+			if ( ignoredFields.has( header ) ) { items.push( { column: header, imported: row[ header ], current: '', result: 'No Matching Field', error: 'Media fields must be uploaded manually.' } ); continue; }
 			if ( ! config.fields[ header ] ) { items.push( { column: header, imported: row[ header ], current: '', result: 'Unknown Column' } ); continue; }
 			const normalized = normalizeValue( header, row[ header ] ); const current = getFieldValue( header );
 			items.push( { column: header, imported: row[ header ], value: normalized.value, current, result: normalized.valid ? ( String( current ) === String( normalized.value ) ? 'Unchanged' : ( current ? 'Will Replace' : 'Will Populate' ) ) : 'Invalid', error: normalized.error, other: normalized.other } );
+		}
+		const fentanylStatusItem = items.find( item => 'fentanyl_status' === item.column );
+		const fentanylResultItem = items.find( item => 'fentanyl_result' === item.column );
+		if ( fentanylStatusItem && fentanylResultItem ) {
+			fentanylResultItem.value = 'pass' === fentanylStatusItem.value ? 'Not detected' : ( 'fail' === fentanylStatusItem.value ? 'Detected' : '' );
+			fentanylResultItem.result = String( fentanylResultItem.current ) === String( fentanylResultItem.value ) ? 'Unchanged' : ( fentanylResultItem.current ? 'Will Replace' : 'Will Populate' );
 		}
 		const labItem = items.find( item => 'testing_lab' === item.column && item.other );
 		if ( labItem ) {
@@ -202,5 +220,5 @@
 		clearButton.addEventListener( 'click', function () { clearImportedValues(); clearButton.disabled = true; message( 'Imported values were restored to their pre-import state.', false ); } );
 	} );
 
-	window.PepSelectCOAImporter = { parseCsv, normalizeDate, normalizeBoolean, normalizeStatus, normalizeLab, normalizeValue, matchCompound, previewText, applyPreview, clearImportedValues };
+	window.PepSelectCOAImporter = { parseCsv, normalizeDate, normalizeBoolean, normalizeStatus, normalizeLab, normalizeFentanylResult, normalizeValue, matchCompound, previewText, applyPreview, clearImportedValues };
 } )( window, document, jQuery );

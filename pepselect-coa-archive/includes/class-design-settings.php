@@ -14,7 +14,8 @@ final class Design_Settings {
 			'page_bg' => array( 'Page background', '#ffffff' ), 'surface' => array( 'Primary surface / card', '#ffffff' ), 'surface_muted' => array( 'Secondary / muted panel', '#f4f7f6' ),
 			'text' => array( 'Primary text', '#1d2927' ), 'text_muted' => array( 'Secondary / muted text', '#60706d' ), 'border' => array( 'Border', '#d8e0de' ),
 			'accent' => array( 'Primary accent', '#315d58' ), 'accent_word' => array( 'Accent word', '#315d58' ), 'success' => array( 'Success / check', '#28734d' ),
-			'info' => array( 'Informational', '#247182' ), 'warning' => array( 'Warning', '#8a641d' ), 'danger' => array( 'Failure', '#a33b3b' ),
+			'info' => array( 'Incoming / testing', '#247182' ), 'vendor' => array( 'Vendor vetting / waiting', '#596f73' ), 'warning' => array( 'Warning', '#8a641d' ), 'danger' => array( 'Failure', '#a33b3b' ), 'neutral_status' => array( 'Neutral / inactive', '#60706d' ),
+			'document_bg' => array( 'Laboratory panel background', '#082a4f' ), 'document_surface' => array( 'Laboratory panel surface', '#0d365f' ), 'document_text' => array( 'Laboratory panel text', '#ffffff' ), 'document_muted' => array( 'Laboratory panel muted text', '#c5d4e2' ), 'document_border' => array( 'Laboratory panel border', '#31577b' ),
 		);
 		$fields = array();
 		foreach ( $colors as $key => $data ) { $fields[ $key ] = array( 'section' => 'colors', 'label' => $data[0], 'type' => 'color', 'default' => $data[1] ); }
@@ -41,12 +42,23 @@ final class Design_Settings {
 		$fields['lightbox_opacity'] = array( 'section' => 'lightbox', 'label' => 'Overlay opacity', 'type' => 'decimal', 'default' => .94, 'min' => .5, 'max' => 1, 'step' => .01 );
 		$fields['lightbox_control_radius'] = array( 'section' => 'lightbox', 'label' => 'Control border radius', 'type' => 'integer', 'default' => 24, 'min' => 0, 'max' => 40, 'suffix' => 'px' );
 		$copy = array(
+			'report_hero_copy' => array( 'Full-report introduction', 'This certificate documents the independent laboratory analysis for the exact vial shown here. Match the batch number, cap, and crimp with your vial before use in laboratory research.' ),
+			'legacy_report_hero_copy' => array( 'Legacy full-report introduction', 'This legacy certificate documents the independent laboratory analysis for the published batch. A representative vial image is shown because an exact batch photo was not stored.' ),
 			'archive_eyebrow' => array( 'Archive eyebrow', 'Pep Select Quality Archive' ), 'archive_title' => array( 'Archive title', 'Testing & Documentation' ), 'archive_intro' => array( 'Archive introduction', 'Independent laboratory reports organized by compound and batch.' ),
 			'history_eyebrow' => array( 'Compound history eyebrow', 'Batch Vetting Record' ), 'history_suffix' => array( 'Compound history title suffix', 'Vetting History' ), 'latest_label' => array( 'Latest report label', 'Latest Report' ),
-			'full_qc_label' => array( 'Full-QC assurance label', 'Full-QC Documented' ), 'full_qc_copy' => array( 'Full-QC assurance copy', 'Independent testing. Published batch records.' ), 'neutral_label' => array( 'Neutral assurance label', 'Independent Report Published' ),
+			'full_qc_label' => array( 'Full-QC assurance label', 'Full-QC Documented' ), 'full_qc_copy' => array( 'Full-QC assurance copy', 'Independent report published.' ), 'neutral_label' => array( 'Neutral assurance label', 'Independent Report Published' ),
+			'incoming_heading' => array( 'Incoming reports heading', 'Incoming Reports' ), 'previous_heading' => array( 'Previous reports heading', 'Previous Reports' ),
+			'vendor_vetting_label' => array( 'Vetting-vendor label', 'Vetting Vendor' ), 'vendor_vetting_copy' => array( 'Vetting-vendor copy', 'We are currently vetting vendors for this compound.' ),
+			'waiting_vendor_label' => array( 'Waiting-vendor label', 'Waiting on Vendor' ), 'waiting_vendor_copy' => array( 'Waiting-vendor copy', 'We are currently waiting on a new batch from our vendor.' ),
+			'submitted_lab_label' => array( 'Submitted-to-lab label', 'Submitted to Laboratory' ), 'submitted_lab_copy' => array( 'Submitted-to-lab copy', 'Samples have been shipped to the testing laboratory.' ),
+			'in_testing_label' => array( 'In-testing label', 'Verification in Progress' ), 'in_testing_copy' => array( 'In-testing copy', 'Independent testing is underway.' ),
+			'complete_stage_label' => array( 'Complete-stage label', 'Independently Tested' ), 'complete_stage_copy' => array( 'Complete-stage copy', 'Published batch report available.' ),
+			'failed_report_label' => array( 'Failed-report label', 'Did Not Pass Release Review' ), 'failed_report_copy' => array( 'Failed-report copy', 'This batch was not released for sale.' ),
+			'expected_date_label' => array( 'Expected-date label', 'Expected report' ), 'view_pending_lab' => array( 'Pending-lab action', 'View Laboratory Status' ), 'view_failed_report' => array( 'Failed-report action', 'View Full Report' ),
 			'view_history' => array( 'View-history action', 'View all reports' ), 'view_report' => array( 'View-full-report action', 'View Full Report' ), 'search_placeholder_copy' => array( 'Search placeholder', 'Search compounds...' ), 'search_button_copy' => array( 'Search button label', 'Search' ),
 		);
 		foreach ( $copy as $key => $data ) { $fields[ $key ] = array( 'section' => 'copy', 'label' => $data[0], 'type' => 'text', 'default' => $data[1] ); }
+		$fields['show_failed_only_compounds'] = array( 'section' => 'behavior', 'label' => 'Show failed-only compounds in archive', 'type' => 'boolean', 'default' => 0 );
 		return $fields;
 	}
 
@@ -73,6 +85,7 @@ final class Design_Settings {
 			elseif ( 'select' === $field['type'] ) { $value = sanitize_key( $value ); $output[ $key ] = isset( $field['options'][ $value ] ) ? $value : $field['default']; }
 			elseif ( 'integer' === $field['type'] ) { $output[ $key ] = max( $field['min'], min( $field['max'], absint( $value ) ) ); }
 			elseif ( 'decimal' === $field['type'] ) { $output[ $key ] = max( $field['min'], min( $field['max'], round( (float) $value, 2 ) ) ); }
+			elseif ( 'boolean' === $field['type'] ) { $output[ $key ] = empty( $value ) ? 0 : 1; }
 			else { $clean = sanitize_text_field( $value ); $output[ $key ] = '' === trim( $clean ) ? $field['default'] : $clean; }
 		}
 		self::$cache = $output;
@@ -87,7 +100,7 @@ final class Design_Settings {
 		$s = self::get();
 		$font = array( 'inherit' => 'inherit', 'system' => 'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif', 'arial' => 'Arial,Helvetica,sans-serif', 'georgia' => 'Georgia,serif', 'times' => '"Times New Roman",Times,serif' );
 		$vars = array(
-			'page-bg' => $s['page_bg'], 'surface' => $s['surface'], 'surface-muted' => $s['surface_muted'], 'text' => $s['text'], 'text-muted' => $s['text_muted'], 'border' => $s['border'], 'accent' => $s['accent'], 'accent-word' => $s['accent_word'], 'success' => $s['success'], 'info' => $s['info'], 'warning' => $s['warning'], 'danger' => $s['danger'],
+			'page-bg' => $s['page_bg'], 'surface' => $s['surface'], 'surface-muted' => $s['surface_muted'], 'text' => $s['text'], 'text-muted' => $s['text_muted'], 'border' => $s['border'], 'accent' => $s['accent'], 'accent-word' => $s['accent_word'], 'success' => $s['success'], 'info' => $s['info'], 'vendor' => $s['vendor'], 'warning' => $s['warning'], 'danger' => $s['danger'], 'neutral-status' => $s['neutral_status'], 'document-bg' => $s['document_bg'], 'document-surface' => $s['document_surface'], 'document-text' => $s['document_text'], 'document-muted' => $s['document_muted'], 'document-border' => $s['document_border'],
 			'heading-font' => $font[ $s['heading_font'] ], 'body-font' => $font[ $s['body_font'] ], 'heading-weight' => 'inherit' === $s['heading_weight'] ? 'inherit' : $s['heading_weight'], 'body-weight' => 'inherit' === $s['body_weight'] ? 'inherit' : $s['body_weight'], 'accent-style' => $s['accent_style'],
 			'card-radius' => $s['card_radius'] . 'px', 'panel-radius' => $s['panel_radius'] . 'px', 'image-radius' => $s['image_radius'] . 'px', 'search-radius' => $s['search_radius'] . 'px', 'search-button-radius' => $s['search_button_radius'] . 'px', 'primary-button-radius' => $s['primary_button_radius'] . 'px', 'secondary-button-radius' => $s['secondary_button_radius'] . 'px', 'card-border-width' => $s['card_border_width'] . 'px', 'input-border-width' => $s['input_border_width'] . 'px',
 			'primary-button-bg' => $s['primary_button_bg'], 'primary-button-text' => $s['primary_button_text'], 'primary-button-border' => $s['primary_button_border'], 'primary-button-hover-bg' => $s['primary_button_hover_bg'], 'primary-button-hover-text' => $s['primary_button_hover_text'], 'primary-button-hover-border' => $s['primary_button_hover_border'],

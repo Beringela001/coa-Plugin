@@ -27,11 +27,12 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 	public function test_full_qc_documented_requires_every_required_status() {
 		$test = $this->test_record();
 		foreach ( array( 'purity_status', 'identity_status', 'heavy_metals_status', 'sterility_status' ) as $key ) { update_post_meta( $test, $key, 'pass' ); }
+		foreach ( array( 'purity_percentage' => '99.9', 'average_net_content' => '30', 'heavy_metals_summary' => 'Below limits', 'sterility_result' => 'No growth', 'fentanyl_status' => 'pass' ) as $key => $value ) { update_post_meta( $test, $key, $value ); }
 		update_post_meta( $test, 'endotoxin_status', 'reported' ); update_post_meta( $test, 'endotoxin_result', '<0.05' );
 		$this->assertTrue( $this->view_model->is_full_qc_documented( $test ) );
 		update_post_meta( $test, 'identity_status', '' ); $this->assertFalse( $this->view_model->is_full_qc_documented( $test ) );
 		update_post_meta( $test, 'identity_status', 'pass' ); update_post_meta( $test, 'endotoxin_result', '' ); $this->assertFalse( $this->view_model->is_full_qc_documented( $test ) );
-		update_post_meta( $test, 'endotoxin_status', 'pass' ); $this->assertTrue( $this->view_model->is_full_qc_documented( $test ) );
+		update_post_meta( $test, 'endotoxin_status', 'pass' ); $this->assertFalse( $this->view_model->is_full_qc_documented( $test ) ); update_post_meta( $test, 'endotoxin_result', '<0.05' ); $this->assertTrue( $this->view_model->is_full_qc_documented( $test ) );
 	}
 
 	public function test_approved_reported_endotoxin_uses_success_icon_but_keeps_reported_label() {
@@ -79,7 +80,7 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 		$sanitized = PepSelect\COAArchive\Design_Settings::sanitize( array( 'accent' => 'red', 'card_radius' => 99, 'lightbox_opacity' => .1 ) );
 		$this->assertSame( '#315d58', $sanitized['accent'] ); $this->assertSame( 40, $sanitized['card_radius'] ); $this->assertSame( .5, $sanitized['lightbox_opacity'] );
 		$css = PepSelect\COAArchive\Design_Settings::inline_css();
-		$this->assertStringStartsWith( '.ps-coa-app{', $css ); $this->assertStringContainsString( '--ps-coa-accent:', $css ); $this->assertStringNotContainsString( ':root', $css );
+		$this->assertStringStartsWith( '.ps-coa-app{', $css ); $this->assertStringContainsString( '--ps-coa-accent:', $css ); $this->assertStringContainsString( '--ps-coa-document-bg:', $css ); $this->assertStringContainsString( '--ps-coa-document-surface:', $css ); $this->assertStringNotContainsString( ':root', $css );
 		$this->assertSame( 'manage_ps_coas', $admin->settings_capability() );
 	}
 
@@ -87,7 +88,7 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-design-settings-admin.php' );
 		$this->assertStringContainsString( 'Preview example', $source );
 		$this->assertStringContainsString( 'What this changes', $source );
-		foreach ( array( 'colors', 'typography', 'corners', 'buttons', 'lightbox', 'copy' ) as $section ) { $this->assertStringContainsString( 'id="ps-coa-preview-' . $section . '"', $source ); }
+		foreach ( array( 'colors', 'typography', 'corners', 'buttons', 'lightbox', 'copy', 'behavior' ) as $section ) { $this->assertStringContainsString( 'id="ps-coa-preview-' . $section . '"', $source ); }
 	}
 
 	public function test_reset_assets_search_and_lightbox_are_scoped_and_safe() {
@@ -100,7 +101,7 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'if ( $hook !== $this->hook )', $admin );
 		$this->assertStringContainsString( 'wp_add_inline_style', $loader );
 		$this->assertStringContainsString( 'ps-coa-search__button', $archive ); $this->assertStringContainsString( "search_button_copy", $archive );
-		$this->assertStringContainsString( 'object-fit: contain', $css ); $this->assertStringContainsString( 'max-width: min(96vw, 100%)', $css ); $this->assertStringContainsString( 'max-height: min(92vh', $css );
+		$this->assertStringContainsString( 'object-fit: contain', $css ); $this->assertStringContainsString( 'max-width: calc(100vw - 160px)', $css ); $this->assertStringContainsString( 'max-height: calc(100vh - 80px)', $css );
 		$this->assertStringContainsString( '--ps-coa-lightbox-control-radius', $css );
 	}
 

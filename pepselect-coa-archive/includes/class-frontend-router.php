@@ -34,7 +34,8 @@ final class Frontend_Router {
 	/** Builds the public archive context. @param int $page Page. @param string $search Search term. @return array */
 	public function build_archive( $page = 1, $search = '' ) {
 		$search = Frontend_Query::normalize_search( $search );
-		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests(), $page, 24, $search );
+		$settings = Design_Settings::get();
+		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests( ! empty( $settings['show_failed_only_compounds'] ) ), $page, 24, $search );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();
 		foreach ( $result['posts'] as $compound ) { $items[] = $this->view_model->archive_compound( $compound, isset( $grouped[ $compound->ID ] ) ? $grouped[ $compound->ID ] : array() ); }
@@ -48,12 +49,12 @@ final class Frontend_Router {
 	public function build_compound( $slug = '', $id = 0, $page = 1 ) {
 		$compound = $id ? $this->compounds->find_public_by_id( $id ) : $this->compounds->find_public_by_slug( $slug );
 		if ( ! $compound ) { return array(); }
-		$tests = $this->tests->all_for_compound( $compound->ID );
-		if ( ! $tests ) { return array(); }
-		$approved = array_values( array_filter( $tests, function ( $test ) { return 'approved' === get_post_meta( $test->ID, 'coa_status', true ); } ) );
-		$incoming = array_values( array_filter( $tests, function ( $test ) { return in_array( get_post_meta( $test->ID, 'coa_status', true ), array( 'pending', 'in-testing', 'vendor-vetting' ), true ); } ) );
+		$classified = $this->tests->classified_for_compound( $compound->ID );
+		$tests = array_merge( $classified['approved'], $classified['incoming'], $classified['failed'] ); if ( ! $tests ) { return array(); }
+		$approved = $classified['approved']; $incoming = $classified['incoming'];
 		$latest = $approved ? array_shift( $approved ) : null;
-		$previous_all = array_values( array_filter( $tests, function ( $test ) use ( $latest ) { $status = get_post_meta( $test->ID, 'coa_status', true ); return ( ! $latest || $test->ID !== $latest->ID ) && in_array( $status, array( 'approved', 'failed' ), true ); } ) );
+		$previous_all = array_merge( $approved, $classified['failed'] );
+		usort( $previous_all, static function ( $left, $right ) { $ld = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) ); $rd = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) ); $date = strcmp( $rd, $ld ); return 0 !== $date ? $date : strcmp( $right->post_date_gmt, $left->post_date_gmt ); } );
 		$total = count( $previous_all ); $pages = (int) ceil( $total / 20 ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
 		$previous = array_slice( $previous_all, ( $page - 1 ) * 20, 20 );
 		$compound_model = $this->view_model->compound( $compound );

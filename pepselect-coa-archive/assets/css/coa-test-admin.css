@@ -12,9 +12,19 @@
 .post-type-ps_coa_test .column-compound_id { min-width: 145px; }
 .post-type-ps_coa_test .column-batch_number { min-width: 115px; }
 .post-type-ps_coa_test .column-test_date,
+.post-type-ps_coa_test .column-workflow_stage,
+.post-type-ps_coa_test .column-expected_coa_date,
 .post-type-ps_coa_test .column-testing_lab,
 .post-type-ps_coa_test .column-purity_percentage,
 .post-type-ps_coa_test .column-vials_tested,
 .post-type-ps_coa_test .column-coa_status,
 .post-type-ps_coa_test .column-is_current,
 .post-type-ps_coa_test .column-coa_pdf_id { white-space: nowrap; }
+
+.post-type-ps_coa_test .ps-coa-status { border-radius: 999px; display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; }
+.post-type-ps_coa_test .ps-coa-status--approved { background: #e5f5eb; color: #17633e; }
+.post-type-ps_coa_test .ps-coa-status--incoming { background: #e4f2f5; color: #175d6b; }
+.post-type-ps_coa_test .ps-coa-status--vendor { background: #edf0f0; color: #45595c; }
+.post-type-ps_coa_test .ps-coa-status--failed { background: #f9e8e8; color: #8a2929; }
+.post-type-ps_coa_test .ps-coa-status--archived,
+.post-type-ps_coa_test .ps-coa-status--superseded { background: #f0f0f1; color: #50575e; }

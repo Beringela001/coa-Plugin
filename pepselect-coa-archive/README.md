@@ -1,151 +1,69 @@
+
 # Pep Select COA Archive
 
-Version 0.4.0-beta.4 is a narrowly scoped archive-query regression fix following the COA-4 refinement pass.
+Version 0.4.0-beta.11 is the **COA-4E.3 Final Report Logic, Metadata Order, and Certificate Viewer** milestone. The supplied report and certificate-page references are authoritative visual targets; they are not distributed with the plugin.
 
-## Archive regression fix
+## Exact batch identity
 
-The beta.3 public visibility check unintentionally required newly introduced vial crimp and cap colors on legacy approved reports. Those records were removed from the eligible COA set, which also removed their compounds from `/testing/`. Beta.4 restores legacy approved visibility while retaining vial-color requirements when administrators save new approved or failed records.
+COA Tests now include `batch_vial_photo` (`field_ps_coa_test_batch_vial_photo`), an Attachment-ID image of the exact tested vial, and the optional ordered `batch_identity_photos` gallery (`field_ps_coa_test_batch_identity_photos`). The main photo is optional during vendor vetting, waiting, and laboratory submission, then required at Verification in Progress and Complete. Server validation verifies that it is an image the current editor may use; the stage controller communicates the same rule immediately.
 
-Archive search now normalizes request input with unslashing, text sanitization, and trimming. Empty, absent, whitespace-only, and non-scalar values behave as no search. Non-empty searches cover post title, `display_name`, `compound_name`, and `short_name` without attaching SQL filters to unrelated WordPress queries.
+Published legacy Verification in Progress and Complete records without this new image remain public and retain their URLs. Their edit screen shows a warning. An unchanged legacy record may remain untouched, but a stage change or material report update requires the image. No migration deletes or hides existing records.
 
-Archive result caching uses a plugin-only, versioned object-cache namespace. Unsearched and normalized searched requests have distinct keys. Saving or deleting a compound/COA test and upgrading or reactivating the plugin advances only this namespace, so prior empty results cannot survive without flushing unrelated WordPress caches.
+Report-specific image fallback order is: exact Batch Vial Photo, COA Test Featured Image, related Compound image, then the bundled neutral vial placeholder. The main archive compound card continues to represent the compound with its generic image. Images remain responsive, preserve aspect ratio, and below-the-fold galleries are lazy-loaded.
 
-## Public frontend
+## Full report
 
-The existing server-rendered routes remain unchanged:
+The `/testing/{compound-slug}/{batch-slug}/` report uses modular, theme-overridable partials and the approved composition: breadcrumb; three-column report hero; one contained Measured Values panel; one contained Independent Laboratory Data panel; one contained Original Document panel; optional Batch Identity Photos; the dark Source Documentation panel; and subtle report navigation.
 
-- `/testing/`
-- `/testing/{compound-slug}/`
-- `/testing/{compound-slug}/{batch-slug}/`
+The Measured Values panel places four icon-led summary cards first and the Full-QC Testing Passed bar immediately beneath them. The restored bar uses a pale-green header and a separate white, divided category row. It includes only categories supported by meaningful saved public data, keeps the label `Fentanyl Screen`, and applies green success treatment only when the saved status and evidence support success. The detailed laboratory table remains unchanged, displays only saved methods/specifications/results, and becomes equivalent labeled result cards on mobile.
 
-Archive cards use a larger contained compound image, `compound_name` as the preferred title, a separate formatted strength pill, a mission-aligned assurance treatment, three recent public batches at most, the complete public-report count, and a configured history action. Approved, incoming/vendor-vetting, and failed batches use distinct accessible treatments.
+The hero uses the exact tested vial when saved, with fallback order: COA Test Featured Image, related Compound image, then the bundled neutral vial placeholder. Fallbacks receive only the subtle caption `Representative vial image`; the primary report introduction never becomes a legacy-warning paragraph. Approved, failed, and incoming reports keep distinct truthful language and styling.
 
-The history header is compact: configurable eyebrow, compound name, separate strength, configured “Vetting History” suffix, and latest approved report date (or an in-progress fallback). The report count is absent from the header. A non-empty archive description appears separately below it. Sections are ordered Latest Report, Incoming Reports, then Previous Reports. Latest contains only the newest approved report; incoming contains pending, in-testing, and vendor-vetting reports; previous contains older approved reports and clearly marked failed reports.
+Certificate pages preserve saved order and use the existing keyboard-accessible lightbox. The dark laboratory panel exposes only the exact saved final `lab_report_url` and a valid uploaded PDF. Public models and templates do not expose access/verification codes, generic verification URLs, internal batch IDs, internal notes, or laboratory street addresses. Methods, specifications, accreditation, results, and claims are never fabricated.
 
-The full report retains its breadcrumb, compact header, metrics, Full-QC rows, exact public laboratory link, valid original PDF, saved-order certificate pages, notes, and navigation. A batch-state banner and vial identity block clarify approved, in-progress, and failed records. Incoming reports do not display empty scientific result panels. Public access codes, generic verification URLs, and laboratory addresses remain absent.
+## Fentanyl Screen data and workflow
 
-## Admin test fields and validation
+The Test Results section includes five stable fields: `fentanyl_status`, `fentanyl_result`, `fentanyl_method`, `fentanyl_specification`, and `fentanyl_notes`. Status offers only Pass, Fail, and Not Tested and defaults to Not Tested. The form keeps method/specification read-only at `Immunoassay` and `Immunoassay, 50 ng/mL cutoff`; the result is derived as `Not detected`, `Detected`, or blank from the selected status.
 
-COA Test administration adds Expected COA Date, Vial Crimp Color, Vial Cap Color, conditional Other text inputs, and In-Progress Lab URL without renaming existing ACF keys. Incoming states may omit final lab, test date, vial colors, and tested-vial count. Approved and failed states require those release identity values. Approved status additionally requires a valid original PDF, at least one valid certificate image, no failed result status, and the exact Public Lab Report URL used by “View at ILS Labs.”
+These fields remain unavailable during Vendor Vetting, Waiting on Vendor, and Submitted to Laboratory. They become editable during In Testing only when Partial Results Available is enabled, and are available at Complete. A completed approved ILS report requires Pass, or Reported with an explicitly successful saved result, plus result, method, and specification. A completed failed report may truthfully store Pass, Reported, or Fail without automatically changing the overall outcome.
 
-Published approved, failed, pending, in-testing, and vendor-vetting records may be public after centralized eligibility checks. Archived, superseded, draft, private, explicitly private, inactive-compound, and mismatched-compound records remain excluded.
+## CSV example
 
-## Scientific display rules
+The five Fentanyl columns are optional, so existing single-record CSV files remain compatible. A reviewable partial-results import may use:
 
-Stored laboratory metadata is never rewritten for presentation.
+```csv
+compound_slug,batch_number,workflow_stage,coa_status,testing_lab,partial_results_available,fentanyl_status,fentanyl_result,fentanyl_method,fentanyl_specification,fentanyl_notes
+retatrutide-30-mg,RT30-0726-B,in-testing,pending,ils-labs,1,pass,Not detected,Immunoassay,"Immunoassay, 50 ng/mL cutoff",Independent screen
+```
 
-- Quantities and mass values use at most two useful decimal places: `29.999999` → `30`, `31.010000` → `31.01`, and `5.500000` → `5.5`.
-- Purity uses at most four useful decimal places.
-- Vial counts display as integers.
-- Pass uses a more visible green circular check plus the text “Pass.”
-- Identity details such as “Confirmed,” heavy-metals summaries, and sterility results such as “No Growth” receive success treatment only when their stored status is `pass`.
-- Fail, Pending, Not Tested, and Not Applicable keep distinct icons, colors, and visible labels.
+The importer validates the dedicated status set, keeps blank status blank, normalizes common successful result phrases only when an explicit successful status and result are supplied, and always preserves preview/review before the normal WordPress save or publish action.
 
-An endotoxin status of `reported` receives a green check only when the COA post is published, `coa_status` is approved, and a non-empty endotoxin result exists. It still visibly says “Reported”; it is never relabeled Pass, no threshold is inferred, and stored data is unchanged.
+## Responsive behavior
 
-“Full-QC Documented” appears only when the report is published and approved, purity/identity/heavy-metals/sterility statuses are all Pass, and endotoxin is Pass or is Reported with a non-empty result. Other public approved reports receive the configurable neutral “Independent Report Published” label.
+- 1180â€“1240px centered report width; three-part hero and four metrics on desktop.
+- Two-row/tablet hero, two-column metrics, and adaptive document/laboratory panels at 1024px and 768px.
+- Identity â†’ vial â†’ outcome stacking, non-scrolling result cards, one-column document/photo galleries, and full-width actions at 480px, 390px, and 360px.
+- Scoped active-theme typography and existing configurable colors/radii; new laboratory-panel color variables live in the existing Design & Copy screen.
+- Logical headings, icon-plus-text statuses, focus visibility, meaningful alt text, external-link indication, dark-panel contrast, and reduced-motion compatibility.
 
-## Certificate viewer
+## Manual visual QA — beta.11
 
-Certificate thumbnails retain saved order and Page N labels. Images use responsive `medium_large` sources, lazy loading, configurable radius, and `object-fit: contain` without cropping. The dependency-free fullscreen viewer uses up to approximately 96vw × 92vh, maintains page aspect ratio, prevents body scrolling while open, and restores it on close. Escape, arrow navigation, visible count, focus containment, focus return, touch-sized controls, and reduced-motion behavior remain.
+For complete reports, confirm all seven QC positions remain visible. A complete seven-category success reads `Full-QC Testing Passed`; a successful partial panel reads `QC Testing Passed`, retains all seven positions, and shows `--` for untested categories. Confirm the hero metadata order is COA Reference, Report Date, Cap / Certificate Version, Batch Status, Crimp and that Batch Status reads exactly `Current` or `Past`.
 
-## Design & Copy settings
+For certificate pages, confirm two large, uncropped cards render per row on desktop and one per row on mobile. Open each page and verify the counter, disabled boundary navigation, arrow keys, Escape, backdrop close, focus restoration, focus containment, and scroll lock.
 
-Administrators with `manage_ps_coas` can open **COA Archive → Design & Copy**. The screen uses the WordPress Settings API and the single `pepselect_coa_design_settings` option. Every setting has a short helper and a “What this changes” link; each logical group has a linked preview example. It loads WordPress’s color picker and its small admin assets only on that screen.
-
-Settings include:
-
-- Colors: page, card, muted surface, primary/muted text, border, accent, accent-word, success, information, warning, and failure.
-- Typography: inherited, System Sans, Arial/Helvetica, Georgia, or Times New Roman for headings and body; heading/body weights; normal or italic accent words. No remote fonts load.
-- Corners and borders: card, panel, image, search field, search button, primary button, and secondary button radii (0–40px); card and input borders (0–4px).
-- Buttons and search: background, text, border, hover background/text/border for primary, secondary, and search buttons; input background, text, border, placeholder, and focus border.
-- Lightbox: overlay color and 0.50–1.00 opacity; control background, text/icon, border, and 0–40px radius.
-- Public copy: archive eyebrow/title/introduction, history eyebrow/suffix, latest label, Full-QC label/copy, neutral label, history/report actions, search placeholder, and search button label.
-
-Empty or invalid settings fall back to the COA-4B appearance. Color, choice, text, integer, and opacity inputs are normalized by type. No arbitrary CSS input exists.
-
-`wp_add_inline_style()` outputs sanitized variables only when the frontend COA stylesheet loads. Variables are scoped to `.ps-coa-app`, including:
-
-`--ps-coa-page-bg`, `--ps-coa-surface`, `--ps-coa-surface-muted`, `--ps-coa-text`, `--ps-coa-text-muted`, `--ps-coa-border`, `--ps-coa-accent`, `--ps-coa-accent-word`, `--ps-coa-success`, `--ps-coa-info`, `--ps-coa-warning`, `--ps-coa-danger`, typography variables, radius/border variables, button/search variables, and lightbox variables.
-
-Reset to Defaults requires `manage_ps_coas`, a valid nonce, and confirmation. It deletes only the design/copy option. Compounds, reports, routes, relationships, and media remain untouched.
-
-## Performance, security, and compatibility
-
-Normalized settings are cached in memory for the request, preventing option queries per card. Frontend CSS still loads only for COA routes or shortcodes; gallery JavaScript still loads only for reports with images. Admin assets load only on Design & Copy. No external fonts, frameworks, AJAX, telemetry, or HTTP requests were added.
-
-Visibility, current-report ordering, routes, rewrite rules, template overrides under `theme/pepselect-coa/`, shortcodes, ACF keys, CSV import, direct report links, PDF validation, gallery order, capabilities, and non-destructive uninstall behavior are preserved. WooCommerce product-page cards and Elementor widgets remain deferred.
-
-## Manual QA checklist
-
-### Archive
-
-1. Visit `/testing/`.
-2. Confirm compound image is larger and not cropped.
-3. Confirm compound title is easier to read.
-4. Confirm strength is shown separately without duplicate wording.
-5. Confirm assurance label appears appropriately.
-6. Confirm search button says Search.
-7. Confirm search button is not blank or red.
-8. Confirm search radius setting changes the search form.
-9. Confirm View all reports works and its count includes all public batch states.
-10. Confirm mobile archive layout works.
-11. Load `/testing/` without a query string and confirm Retatrutide appears.
-12. Search for `Retatrutide` and `Reta`; confirm matching compounds appear.
-13. Search for `NothingExists123`; confirm the no-results state appears.
-14. Clear the search and confirm all eligible compounds return.
-15. Open the direct compound and report routes; confirm both still resolve.
-16. Clear the plugin/Kinsta page cache and repeat the unsearched and searched checks.
-
-### History
-
-11. Open a compound history page.
-12. Confirm approved-report count is removed from the top header.
-13. Confirm latest report date remains.
-14. Confirm the header contains less text.
-15. Confirm history title uses the configured suffix.
-16. Confirm archive description is outside the main compact header.
-17. Confirm Latest Report contains only the newest approved report.
-18. Confirm Incoming Reports contains in-testing and vendor-vetting batches, photos, dates, and available lab-progress links.
-19. Confirm Previous Reports contains older approved and failed batches.
-20. Confirm failed batches say they were not released for sale and remain inspectable.
-21. Confirm green/progress/fail pills, clean numeric values, and mobile layout work.
-
-### Full report
-
-22. Open approved, incoming, and failed full reports.
-23. Confirm spacing is tighter and metric boxes are centered.
-24. Confirm `29.999999` no longer appears and labeled content displays as `30 mg`.
-25. Confirm Pass, Reported, and No Growth are visually obvious where semantically successful.
-26. Confirm Download Original PDF works.
-27. Confirm View at ILS Labs uses the exact Public Lab Report URL.
-28. Confirm incoming reports show progress documentation without empty result panels.
-29. Confirm access codes, generic verification URLs, and laboratory addresses are absent.
-
-### Lightbox
-
-30. Confirm certificate thumbnails are prominent, grouped, and uncropped.
-31. Open Page 1 and confirm it uses most of the viewport without cropping.
-32. Confirm previous/next, Escape, focus return, and mobile controls work.
-
-### Settings
-
-33. Open COA Archive → Design & Copy.
-34. Confirm helper text, Preview example, and What this changes links exist and reach the right examples.
-35. Change representative colors, radii, buttons, lightbox, typography, and copy; save and confirm the frontend updates.
-36. Reset to defaults and confirm business data remains intact.
-
-### Admin form
-
-37. Create pending, in-testing, and vendor-vetting reports without final release fields; confirm they can save.
-38. Confirm crimp/cap dropdowns work and Other reveals and requires its text input.
-39. Confirm approved and failed reports require test date, lab, vial colors, and at least one tested vial.
-40. Confirm approved cannot save without a valid public lab URL, PDF, and certificate image.
-41. Confirm expected date and pending lab URL save and appear on Incoming Reports.
-
-### Site safety
-
-42. Visit homepage, shop, product pages, cart, and checkout.
-43. Confirm COA CSS variables do not affect unrelated pages.
-44. Confirm no product-page COA cards, hooks, or Elementor widgets were added.
-45. Confirm wp-admin compound/COA editing and CSV import still work.
+1. Open an approved report.
+2. Confirm Summary Metrics appear first.
+3. Confirm the Full-QC bar appears immediately beneath them.
+4. Confirm Independent Laboratory Data appears immediately after the bar.
+5. Compare the bar side by side with `Full_report_page_mockup.png`.
+6. Confirm the pale-green top row matches.
+7. Confirm the white category row matches.
+8. Confirm the circular check icons match.
+9. Confirm seven categories display when all seven contain saved data.
+10. Confirm Fentanyl Screen displays.
+11. Confirm the category count is correct.
+12. Confirm no duplicate component exists.
+13. Confirm desktop spacing matches the mockup.
+14. Confirm the tablet layout remains usable.
+15. Confirm the mobile layout has no horizontal scrolling.

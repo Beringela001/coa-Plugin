@@ -26,6 +26,9 @@ final class COA_Test_Repository {
 			elseif ( $this->visibility->is_incoming( $test ) ) { $result['incoming'][] = $test; }
 			elseif ( $this->visibility->is_failed( $test ) ) { $result['failed'][] = $test; }
 		}
+		usort( $result['approved'], array( $this, 'compare_approved' ) );
+		usort( $result['incoming'], array( $this, 'compare_incoming' ) );
+		usort( $result['failed'], array( $this, 'compare_previous' ) );
 		return $result;
 	}
 
@@ -43,10 +46,14 @@ final class COA_Test_Repository {
 	}
 
 	/** Returns unique compound IDs that own eligible tests. @return int[] */
-	public function compound_ids_with_public_tests() {
-		$compound_ids = array();
-		foreach ( $this->eligible_ids() as $test_id ) { $compound_ids[] = absint( get_post_meta( $test_id, 'compound_id', true ) ); }
-		return array_values( array_unique( array_filter( $compound_ids ) ) );
+	public function compound_ids_with_public_tests( $show_failed_only = false ) {
+		$states = array();
+		foreach ( $this->eligible_ids() as $test_id ) {
+			$compound_id = absint( get_post_meta( $test_id, 'compound_id', true ) ); if ( ! $compound_id ) { continue; }
+			if ( ! isset( $states[ $compound_id ] ) ) { $states[ $compound_id ] = array( 'primary' => false, 'failed' => false ); }
+			if ( $this->visibility->is_failed( $test_id ) ) { $states[ $compound_id ]['failed'] = true; } else { $states[ $compound_id ]['primary'] = true; }
+		}
+		return array_values( array_map( 'absint', array_keys( array_filter( $states, static function ( $state ) use ( $show_failed_only ) { return $state['primary'] || ( $show_failed_only && $state['failed'] ); } ) ) ) );
 	}
 
 	/** Finds an eligible test by ID and optional expected compound. @param int $test_id Test ID. @param int $compound_id Expected compound. @return \WP_Post|null */
@@ -61,6 +68,8 @@ final class COA_Test_Repository {
 		if ( '' === $slug ) { return null; }
 		$matches = array();
 		foreach ( $this->all_for_compound( $compound_id ) as $test ) {
+			$stage = COA_Workflow::stage( $test );
+			if ( in_array( $stage, array( 'vendor-vetting', 'waiting-on-vendor', 'submitted-to-lab' ), true ) ) { if ( 'progress-' . $test->ID === $slug ) { $matches[ $test->ID ] = $test; } continue; }
 			$batch = sanitize_title( (string) get_post_meta( $test->ID, 'batch_number', true ) );
 			if ( $slug === $batch || $slug === sanitize_title( $test->post_name ) ) { $matches[ $test->ID ] = $test; }
 		}
@@ -98,5 +107,18 @@ final class COA_Test_Repository {
 		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
 		$date = strcmp( $right_date, $left_date );
 		return 0 !== $date ? $date : strcmp( $right->post_date_gmt, $left->post_date_gmt );
+	}
+
+	private function compare_approved( $left, $right ) { return $this->compare_tests( $left, $right ); }
+	private function compare_previous( $left, $right ) {
+		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) ); $right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
+		$date = strcmp( $right_date, $left_date ); return 0 !== $date ? $date : strcmp( $right->post_date_gmt, $left->post_date_gmt );
+	}
+	private function compare_incoming( $left, $right ) {
+		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'expected_coa_date', true ) ); $right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'expected_coa_date', true ) );
+		if ( $left_date && $right_date && $left_date !== $right_date ) { return strcmp( $left_date, $right_date ); }
+		if ( $left_date && ! $right_date ) { return -1; } if ( ! $left_date && $right_date ) { return 1; }
+		$priority = COA_Workflow::priority( COA_Workflow::stage( $left ) ) <=> COA_Workflow::priority( COA_Workflow::stage( $right ) );
+		return 0 !== $priority ? $priority : strcmp( $right->post_date_gmt, $left->post_date_gmt );
 	}
 }

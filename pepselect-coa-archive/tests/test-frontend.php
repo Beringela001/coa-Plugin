@@ -246,7 +246,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		update_post_meta( $test, 'lab_verification_url', 'https://lab.example/verify' );
 		update_post_meta( $test, 'verification_code', 'PRIVATE-CODE' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
-		$this->assertStringContainsString( 'View at ILS Labs', $html );
+		$this->assertStringContainsString( 'View Verified Lab Report', $html );
 		$this->assertStringContainsString( esc_url( $url ), $html );
 		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
 		$this->assertStringNotContainsString( 'lab.example/verify', $html );
@@ -271,8 +271,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$compound = $this->compound(); $test = $this->test_record( $compound, 'failed', 'publish', 'FAILED-LOT' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
 		$this->assertStringContainsString( 'Did Not Pass Release Review', $html );
-		$this->assertStringContainsString( 'Not released for sale', $html );
-		$this->assertStringContainsString( 'Summary Metrics', $html );
+		$this->assertStringContainsString( 'This batch was not released for sale.', $html );
+		$this->assertStringContainsString( 'Measured values', $html );
 	}
 
 	public function test_pdf_must_be_a_valid_pdf_and_gallery_order_is_preserved() {
@@ -320,7 +320,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_templates_assets_and_deferred_integrations_are_scoped() {
-		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php', 'partials/compound-card.php', 'partials/latest-report-card.php', 'partials/previous-report-card.php', 'partials/incoming-report-card.php', 'partials/batch-identity.php', 'partials/status-indicator.php', 'partials/report-metrics.php', 'partials/report-results.php', 'partials/report-documentation.php', 'partials/certificate-gallery.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
+		foreach ( array( 'archive-testing.php', 'single-compound-history.php', 'single-coa-report.php', 'partials/archive-compound-item.php', 'partials/report-summary.php', 'partials/report-status.php', 'partials/compound-card.php', 'partials/latest-report-card.php', 'partials/previous-report-card.php', 'partials/incoming-report-card.php', 'partials/batch-identity.php', 'partials/status-indicator.php', 'partials/report-metrics.php', 'partials/report-results.php', 'partials/report-documentation.php', 'partials/certificate-gallery.php', 'partials/report-hero.php', 'partials/batch-vial-image.php', 'partials/batch-identity-meta.php', 'partials/report-summary-metrics.php', 'partials/full-qc-status-strip.php', 'partials/full-qc-results-table.php', 'partials/certificate-pages.php', 'partials/batch-identity-gallery.php', 'partials/gallery-lightbox.php', 'partials/laboratory-report-panel.php', 'partials/report-navigation.php' ) as $template ) { $this->assertFileExists( dirname( __DIR__ ) . '/templates/' . $template ); }
 		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $this->router() );
 		$this->assertStringEndsWith( 'templates/archive-testing.php', str_replace( '\\', '/', $loader->locate( 'archive-testing.php' ) ) );
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
@@ -336,7 +336,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/partials/compound-card.php' );
 		$archive_page = file_get_contents( dirname( __DIR__ ) . '/templates/archive-testing.php' );
 		$report = file_get_contents( dirname( __DIR__ ) . '/templates/single-coa-report.php' );
-		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-gallery.php' );
+		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-pages.php' ) . file_get_contents( dirname( __DIR__ ) . '/templates/partials/gallery-lightbox.php' );
 		$status = file_get_contents( dirname( __DIR__ ) . '/templates/partials/status-indicator.php' );
 		$this->assertStringContainsString( 'array_slice( $compound[\'recent_batches\'], 0, 3 )', $archive );
 		$this->assertStringContainsString( 'method="get"', $archive_page );
@@ -345,8 +345,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'type="submit"', $archive_page );
 		$this->assertStringContainsString( 'Clear', $archive_page );
 		$this->assertStringContainsString( "Design_Settings::copy( 'view_history' )", $archive );
-		$this->assertStringContainsString( 'report-metrics.php', $report );
-		$this->assertStringContainsString( 'report-results.php', $report );
+		$this->assertStringContainsString( 'report-summary-metrics.php', $report );
+		$this->assertStringContainsString( 'full-qc-results-table.php', $report );
 		$this->assertStringContainsString( 'medium_large', file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' ) );
 		foreach ( array( 'data-ps-coa-close', 'data-ps-coa-prev', 'data-ps-coa-next', 'aria-modal="true"', 'loading="lazy"' ) as $needle ) { $this->assertStringContainsString( $needle, $gallery ); }
 		$this->assertStringContainsString( "'pass' === \$icon", $status );
@@ -367,6 +367,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	private function test_record( $compound, $status, $post_status, $batch, $date = '20260701', $current = 0 ) {
 		$id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_status' => $post_status, 'post_title' => $batch ) );
 		update_post_meta( $id, 'compound_id', $compound ); update_post_meta( $id, 'coa_status', $status ); update_post_meta( $id, 'batch_number', $batch ); update_post_meta( $id, 'test_date', $date ); update_post_meta( $id, 'is_current', $current ); update_post_meta( $id, 'testing_lab', 'ils-labs' ); update_post_meta( $id, 'vials_tested', 1 ); update_post_meta( $id, 'vial_crimp_color', 'silver' ); update_post_meta( $id, 'vial_cap_color', 'blue' );
+		if ( 'in-testing' === $status ) { update_post_meta( $id, 'expected_coa_date', '20260730' ); }
 		return $id;
 	}
 }

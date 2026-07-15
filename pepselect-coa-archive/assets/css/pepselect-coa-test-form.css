@@ -1,0 +1,38 @@
+.post-type-ps_coa_test #acf-group_ps_coa_test_details .ps-coa-stage-guidance {
+	background: #f0f6f5;
+	border-left: 4px solid #315d58;
+	margin: 0;
+	padding: 12px 16px;
+}
+
+.post-type-ps_coa_test .ps-coa-stage-guidance strong,
+.post-type-ps_coa_test .ps-coa-stage-guidance span { display: block; }
+.post-type-ps_coa_test .ps-coa-stage-guidance span { margin-top: 3px; }
+
+.post-type-ps_coa_test #acf-group_ps_coa_test_details .acf-field.ps-coa-stage-disabled {
+	background: #f6f7f7;
+	color: #646970;
+	opacity: .72;
+}
+
+.post-type-ps_coa_test #acf-group_ps_coa_test_details .acf-field.ps-coa-stage-disabled::after {
+	color: #646970;
+	content: "Unavailable at this workflow stage";
+	display: block;
+	font-size: 12px;
+	font-style: italic;
+	margin-top: 6px;
+}
+
+.post-type-ps_coa_test .ps-coa-legacy-notice {
+	background: #fcf0f1;
+	border-left: 4px solid #d63638;
+	font-weight: 600;
+	margin: 12px 0 0;
+	padding: 10px 12px;
+}
+
+.post-type-ps_coa_test #acf-group_ps_coa_test_details .ps-coa-stage-required > .acf-label label::after { color: #b32d2e; content: " *"; }
+.post-type-ps_coa_test #acf-group_ps_coa_test_details .ps-coa-batch-photo-requirement { color: #8a2424; font-size: 12px; font-weight: 500; margin: 6px 0 0; }
+
+.post-type-ps_coa_test #postimagediv .inside { margin-bottom: 0; }

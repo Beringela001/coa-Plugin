@@ -3,7 +3,7 @@
 class PepSelect_COA_Archive_CSV_Importer_Test extends WP_UnitTestCase {
 	public function test_direct_report_field_is_stable_and_verification_fields_remain() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
-		$this->assertStringContainsString( "'lab_report_url', 'Direct Lab Report URL', 'url'", $source );
+		$this->assertStringContainsString( "'lab_report_url', 'Public Lab Report URL', 'url'", $source );
 		$this->assertStringContainsString( 'field_ps_coa_test_lab_report_url', file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' ) );
 		foreach ( array( 'coa_number', 'verification_code', 'lab_verification_url' ) as $name ) { $this->assertStringContainsString( "'" . $name . "'", $source ); }
 	}
@@ -27,7 +27,9 @@ class PepSelect_COA_Archive_CSV_Importer_Test extends WP_UnitTestCase {
 
 	public function test_parser_functions_and_manual_media_exclusions_are_exposed() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/assets/js/coa-test-importer.js' );
-		foreach ( array( 'parseCsv', 'normalizeDate', 'normalizeBoolean', 'normalizeStatus', 'normalizeLab', 'matchCompound', 'previewText', 'applyPreview', 'clearImportedValues' ) as $function ) { $this->assertStringContainsString( $function, $source ); }
-		$this->assertStringContainsString( "'coa_pdf_id', 'coa_page_images'", $source );
+		foreach ( array( 'parseCsv', 'normalizeDate', 'normalizeBoolean', 'normalizeStatus', 'normalizeLab', 'normalizeFentanylResult', 'matchCompound', 'previewText', 'applyPreview', 'clearImportedValues' ) as $function ) { $this->assertStringContainsString( $function, $source ); }
+		$this->assertStringContainsString( "'coa_pdf_id', 'coa_page_images', 'batch_vial_photo', 'batch_identity_photos'", $source );
+		$this->assertStringContainsString( "'fentanyl_status'", $source );
+		$this->assertStringContainsString( 'fentanyl_notes', file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-importer.php' ) );
 	}
 }

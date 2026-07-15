@@ -30,6 +30,7 @@ final class Design_Settings_Admin {
 			'buttons' => array( 'Buttons & Search', 'Scoped colors for primary, secondary, and archive-search controls.' ),
 			'lightbox' => array( 'Lightbox', 'Fullscreen certificate viewer overlay and control appearance.' ),
 			'copy' => array( 'Public Copy', 'Plain-text labels used by public COA templates. Empty submissions fall back to defaults.' ),
+			'behavior' => array( 'Archive Behavior', 'Controls whether compounds with only failed reports appear in the main archive.' ),
 		);
 		foreach ( $sections as $key => $section ) { add_settings_section( 'ps_coa_' . $key, __( $section[0], 'pepselect-coa-archive' ), array( $this, 'render_section' ), self::PAGE, array( 'description' => $section[1], 'preview' => $key ) ); }
 		foreach ( Design_Settings::fields() as $key => $field ) { add_settings_field( 'ps_coa_' . $key, __( $field['label'], 'pepselect-coa-archive' ), array( $this, 'render_field' ), self::PAGE, 'ps_coa_' . $field['section'], array( 'key' => $key, 'field' => $field, 'label_for' => 'ps-coa-' . $key ) ); }
@@ -39,7 +40,9 @@ final class Design_Settings_Admin {
 
 	public function render_field( $args ) {
 		$key = $args['key']; $field = $args['field']; $settings = Design_Settings::get(); $value = $settings[ $key ]; $name = Design_Settings::OPTION . '[' . $key . ']';
-		if ( 'select' === $field['type'] ) {
+		if ( 'boolean' === $field['type'] ) {
+			printf( '<input id="%1$s" name="%2$s" type="checkbox" value="1" %3$s>', esc_attr( $args['label_for'] ), esc_attr( $name ), checked( $value, 1, false ) );
+		} elseif ( 'select' === $field['type'] ) {
 			printf( '<select id="%1$s" name="%2$s">', esc_attr( $args['label_for'] ), esc_attr( $name ) );
 			foreach ( $field['options'] as $option => $label ) { printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $option ), selected( $value, $option, false ), esc_html( $label ) ); }
 			echo '</select>';
@@ -66,6 +69,7 @@ final class Design_Settings_Admin {
 			<div id="ps-coa-preview-buttons"><h2><?php esc_html_e( 'Buttons & Search example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-controls"><input type="text" value="<?php esc_attr_e( 'Search compounds...', 'pepselect-coa-archive' ); ?>" readonly><button type="button" class="button button-primary"><?php esc_html_e( 'Search', 'pepselect-coa-archive' ); ?></button></div></div>
 			<div id="ps-coa-preview-lightbox"><h2><?php esc_html_e( 'Lightbox example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-lightbox"><span>&larr;</span><strong><?php esc_html_e( 'Certificate page', 'pepselect-coa-archive' ); ?></strong><span>&rarr;</span></div></div>
 			<div id="ps-coa-preview-copy"><h2><?php esc_html_e( 'Public copy example', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Labels update the archive, history cards, actions, and search without changing URLs or scientific data.', 'pepselect-coa-archive' ); ?></p></div>
+			<div id="ps-coa-preview-behavior"><h2><?php esc_html_e( 'Archive behavior example', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Failed-only compounds stay out of the main archive unless explicitly enabled.', 'pepselect-coa-archive' ); ?></p></div>
 		</section>
 		<hr><h2><?php esc_html_e( 'Reset Defaults', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Reset only COA design and public-copy settings. Compounds, reports, routes, and media are not changed.', 'pepselect-coa-archive' ); ?></p>
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" onsubmit="return confirm('<?php echo esc_js( __( 'Reset all COA design and copy settings to their defaults?', 'pepselect-coa-archive' ) ); ?>');"><input type="hidden" name="action" value="pepselect_coa_reset_design"><?php wp_nonce_field( 'pepselect_coa_reset_design' ); ?><?php submit_button( __( 'Reset to Defaults', 'pepselect-coa-archive' ), 'secondary', 'submit', false ); ?></form></div>

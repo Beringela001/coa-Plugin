@@ -39,6 +39,8 @@ final class Plugin {
 
 	/** @var COA_Test_Admin|null */
 	private $coa_test_admin;
+	/** @var COA_Test_Form|null */
+	private $coa_test_form;
 
 	/** @var COA_Test_Importer|null */
 	private $coa_test_importer;
@@ -103,7 +105,10 @@ final class Plugin {
 		add_action( 'admin_notices', array( $this->post_types, 'render_conflict_notices' ) );
 		add_action( 'admin_notices', array( $this->dependencies, 'render_notices' ) );
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_future_date_notice' ) );
+		add_action( 'admin_notices', array( $this->coa_test_service, 'render_workflow_notices' ) );
 		if ( is_admin() ) {
+			$this->coa_test_form = new COA_Test_Form();
+			$this->coa_test_form->register_hooks();
 			$this->design_settings_admin = new Design_Settings_Admin();
 			$this->design_settings_admin->register_hooks();
 			$this->compound_admin = new Compound_Admin();

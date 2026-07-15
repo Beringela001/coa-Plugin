@@ -16,6 +16,7 @@ final class Archive_Cache {
 		add_action( 'before_delete_post', array( __CLASS__, 'invalidate_for_post' ) );
 		add_action( 'trashed_post', array( __CLASS__, 'invalidate_for_post' ) );
 		add_action( 'untrashed_post', array( __CLASS__, 'invalidate_for_post' ) );
+		add_action( 'update_option_' . Design_Settings::OPTION, array( __CLASS__, 'invalidate' ) );
 	}
 
 	/** Returns a cached archive result or null on a miss. @return array|null */
@@ -40,7 +41,8 @@ final class Archive_Cache {
 	}
 
 	/** Advances only this plugin's archive namespace, making prior results unreachable. @return int */
-	public static function invalidate() {
+	public static function invalidate( $unused = null ) {
+		unset( $unused );
 		$version = self::version() + 1;
 		update_option( self::VERSION_OPTION, $version, false );
 		return $version;
