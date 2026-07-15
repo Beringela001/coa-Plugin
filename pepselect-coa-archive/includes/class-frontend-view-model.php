@@ -28,7 +28,7 @@ final class Frontend_View_Model {
 			$compound_model['compound_image_alt'] = $archive_image_summary['vial_image_alt'];
 			$compound_model['archive_image_source'] = $archive_image_summary['vial_image_source'];
 		} else {
-			$compound_model['archive_image_source'] = $compound_model['compound_image_url'] ? 'compound-image' : 'local-placeholder';
+			$compound_model['archive_image_source'] = $compound_model['compound_image_url'] ? $compound_model['base_image_source'] : 'local-placeholder';
 			if ( ! $compound_model['compound_image_url'] ) { $compound_model['compound_image_url'] = plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE ); $compound_model['compound_image_alt'] = sprintf( __( '%s vial', 'pepselect-coa-archive' ), $compound_model['public_name'] ); }
 		}
 		return array_merge( $compound_model, array(
@@ -62,8 +62,11 @@ final class Frontend_View_Model {
 
 	/** Returns public compound fields. @param \WP_Post $compound Compound. @return array */
 	public function compound( $compound ) {
-		$image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) );
+		$compound_image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) );
 		$product_id = absint( get_post_meta( $compound->ID, 'woocommerce_product_id', true ) );
+		$product_image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) );
+		$image_id = $this->valid_image_id( $product_image_id ) ? $product_image_id : $compound_image_id;
+		$base_image_source = $this->valid_image_id( $product_image_id ) ? 'woocommerce-product-image' : ( $this->valid_image_id( $compound_image_id ) ? 'compound-image' : '' );
 		$display_name = get_post_meta( $compound->ID, 'display_name', true ) ?: $compound->post_title;
 		$compound_name = (string) get_post_meta( $compound->ID, 'compound_name', true );
 		$strength = (string) get_post_meta( $compound->ID, 'strength_value', true );
@@ -88,6 +91,7 @@ final class Frontend_View_Model {
 			'compound_image_srcset' => $this->image_srcset( $image_id, 'medium' ),
 			'compound_image_sizes' => $this->image_sizes( $image_id, 'medium' ),
 			'compound_image_alt' => $this->image_alt( $image_id, $compound->post_title ),
+			'base_image_source' => $base_image_source,
 			'display_order' => absint( get_post_meta( $compound->ID, 'display_order', true ) ),
 			'is_featured' => (bool) absint( get_post_meta( $compound->ID, 'is_featured', true ) ),
 			'url' => $this->compound_url( $compound ),
@@ -125,6 +129,7 @@ final class Frontend_View_Model {
 		$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
 		$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
 		if ( ! $image_source && $this->valid_image_id( $image_id ) ) { $image_source = 'featured-image'; }
+		if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
 		if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) ) ?: get_post_thumbnail_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'compound-image'; } }
 		if ( ! $image_source ) { $image_id = 0; $image_source = 'local-placeholder'; }
 		$image_url = $image_id ? $this->image_url( $image_id, 'large' ) : plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE );

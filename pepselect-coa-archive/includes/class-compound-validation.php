@@ -38,7 +38,7 @@ final class Compound_Validation {
 		if ( in_array( $name, array( 'display_name', 'compound_name', 'short_name', 'strength_unit', 'compound_category' ), true ) ) { return sanitize_text_field( trim( (string) $value ) ); }
 		if ( in_array( $name, array( 'archive_description', 'internal_notes' ), true ) ) { return sanitize_textarea_field( trim( (string) $value ) ); }
 		if ( 'strength_value' === $name ) { return is_numeric( $value ) ? (float) $value : $value; }
-		if ( in_array( $name, array( 'display_order', 'compound_image_id', 'woocommerce_product_id' ), true ) ) { return absint( $value ); }
+		if ( in_array( $name, array( 'display_order', 'compound_image_id' ), true ) ) { return absint( $value ); }
 		if ( in_array( $name, array( 'is_active', 'is_featured' ), true ) ) { return empty( $value ) ? 0 : 1; }
 		return $value;
 	}
@@ -57,7 +57,6 @@ final class Compound_Validation {
 		if ( 'strength_unit' === $name && ! array_key_exists( $value, self::units() ) ) { return __( 'Select a valid strength unit.', 'pepselect-coa-archive' ); }
 		if ( 'compound_category' === $name && '' !== $value && ! array_key_exists( $value, self::categories() ) ) { return __( 'Select a valid compound category.', 'pepselect-coa-archive' ); }
 		if ( 'display_order' === $name && ( false === filter_var( $raw_value, FILTER_VALIDATE_INT ) || (int) $raw_value < 0 ) ) { return __( 'Display Order must be a whole number of zero or greater.', 'pepselect-coa-archive' ); }
-		if ( 'woocommerce_product_id' === $name && $value && ( 'product' !== get_post_type( (int) $value ) || 'trash' === get_post_status( (int) $value ) ) ) { return __( 'Select a valid WooCommerce product.', 'pepselect-coa-archive' ); }
 		return $valid;
 	}
 
@@ -101,7 +100,7 @@ final class Compound_Validation {
 
 	/** Returns stable field key/name mappings. @return array */
 	private static function field_keys() {
-		return array( 'field_ps_compound_display_name' => 'display_name', 'field_ps_compound_name' => 'compound_name', 'field_ps_compound_short_name' => 'short_name', 'field_ps_compound_strength_value' => 'strength_value', 'field_ps_compound_strength_unit' => 'strength_unit', 'field_ps_compound_category' => 'compound_category', 'field_ps_compound_woocommerce_product_id' => 'woocommerce_product_id', 'field_ps_compound_archive_description' => 'archive_description', 'field_ps_compound_image_id' => 'compound_image_id', 'field_ps_compound_display_order' => 'display_order', 'field_ps_compound_is_active' => 'is_active', 'field_ps_compound_is_featured' => 'is_featured', 'field_ps_compound_internal_notes' => 'internal_notes' );
+		return array( 'field_ps_compound_display_name' => 'display_name', 'field_ps_compound_name' => 'compound_name', 'field_ps_compound_short_name' => 'short_name', 'field_ps_compound_strength_value' => 'strength_value', 'field_ps_compound_strength_unit' => 'strength_unit', 'field_ps_compound_category' => 'compound_category', 'field_ps_compound_archive_description' => 'archive_description', 'field_ps_compound_image_id' => 'compound_image_id', 'field_ps_compound_display_order' => 'display_order', 'field_ps_compound_is_active' => 'is_active', 'field_ps_compound_is_featured' => 'is_featured', 'field_ps_compound_internal_notes' => 'internal_notes' );
 	}
 
 	/** Returns multibyte-safe string length when available. @param string $value Value. @return int */

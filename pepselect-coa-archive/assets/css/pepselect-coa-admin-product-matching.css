@@ -1,0 +1,26 @@
+.ps-coa-product-match { display: grid; gap: 16px; }
+.ps-coa-connected-notice { background: #edf8f3; border-left: 4px solid #008a5b; padding: 12px 14px; }
+.ps-coa-connected-notice p { margin: 5px 0 0; }
+.ps-coa-product-facts { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.ps-coa-product-facts div { background: #f6f7f7; border: 1px solid #dcdcde; padding: 9px 10px; }
+.ps-coa-product-facts dt { color: #50575e; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.ps-coa-product-facts dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.ps-coa-product-search > div:first-of-type { display: flex; gap: 8px; margin-top: 5px; }
+.ps-coa-product-search input[type="search"] { max-width: 560px; width: 100%; }
+.ps-coa-product-results { background: #fff; border: 1px solid #c3c4c7; list-style: none; margin: 8px 0 0; max-height: 260px; overflow: auto; padding: 0; }
+.ps-coa-product-results li + li { border-top: 1px solid #dcdcde; }
+.ps-coa-product-results button { display: grid; gap: 3px; padding: 9px 12px; text-align: left; width: 100%; }
+.ps-coa-product-results span, .ps-coa-product-selection span { color: #50575e; display: block; font-size: 12px; }
+.ps-coa-product-selection { border-left: 3px solid #2271b1; display: grid; gap: 3px; padding: 8px 10px; }
+.ps-coa-disconnect { color: #b32d2e; }
+.ps-coa-product-strength { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+.ps-coa-match-status { background: #f0f0f1; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; white-space: nowrap; }
+.ps-coa-match-status--connected, .ps-coa-match-status--ready-to-create { background: #dff3e9; color: #006b42; }
+.ps-coa-match-status--needs-review, .ps-coa-match-status--sku-changed, .ps-coa-match-status--missing-sku, .ps-coa-match-status--duplicate-sku, .ps-coa-match-status--duplicate-product-link { background: #fcf0d4; color: #7a4f00; }
+.ps-coa-match-status--product-missing, .ps-coa-match-status--woocommerce-inactive { background: #f7e2e2; color: #8a2424; }
+.ps-coa-product-table { min-width: 1450px; }
+.ps-coa-product-matching-page { overflow-x: auto; }
+.ps-coa-row-actions { min-width: 210px; }
+.ps-coa-row-actions > a, .ps-coa-connect-existing { display: block; margin: 0 0 6px; }
+.ps-coa-connect-existing select { max-width: 210px; width: 100%; }
+@media (max-width: 782px) { .ps-coa-product-facts { grid-template-columns: 1fr; } .ps-coa-product-strength { grid-template-columns: 1fr; } }

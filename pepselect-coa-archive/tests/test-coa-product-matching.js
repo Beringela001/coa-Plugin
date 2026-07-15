@@ -1,0 +1,23 @@
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.join(__dirname, '..');
+const service = fs.readFileSync(path.join(root, 'includes/class-product-matching.php'), 'utf8');
+const admin = fs.readFileSync(path.join(root, 'includes/class-product-matching-admin.php'), 'utf8');
+const ui = fs.readFileSync(path.join(root, 'assets/js/pepselect-coa-product-matching.js'), 'utf8');
+const lightbox = fs.readFileSync(path.join(root, 'assets/js/pepselect-coa-lightbox.js'), 'utf8');
+const css = fs.readFileSync(path.join(root, 'assets/css/pepselect-coa-frontend.css'), 'utf8');
+
+['woocommerce_product_id', 'related_woocommerce_sku', 'woocommerce_last_sync', 'woocommerce_sync_status'].forEach(value => assert.ok(service.includes(value), value));
+['create_and_connect', 'connect_existing', 'disconnect', 'backfill_existing_links', 'creation_in_progress'].forEach(value => assert.ok(service.includes(value), value));
+['Exact or partial SKU, title, or Product ID', 'Create and Connect', 'Connect Existing Compound', 'Sync Now', 'Product Missing'].forEach(value => assert.ok(admin.includes(value), value));
+['check_ajax_referer', 'check_admin_referer', "current_user_can( 'manage_ps_compounds' )"].forEach(value => assert.ok(admin.includes(value), value));
+['woocommerce_after_single_product_summary', 'woocommerce_single_product_summary'].forEach(value => assert.ok(!admin.includes(value), 'no public product hook ' + value));
+assert.ok(ui.includes('textContent'));
+assert.ok(!ui.includes('innerHTML'));
+assert.ok(lightbox.includes('doc.body.appendChild(lightbox)'));
+assert.ok(lightbox.includes('view.scrollTo(scrollState.x, scrollState.y)'));
+assert.ok(css.includes('height: 100vh; height: 100dvh'));
+assert.ok(css.includes('z-index: 2147483000'));
+console.log('COA_PRODUCT_MATCHING_STATIC_TESTS=PASS');

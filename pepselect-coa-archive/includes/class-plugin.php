@@ -28,6 +28,12 @@ final class Plugin {
 	/** @var Dependencies */
 	private $dependencies;
 
+	/** @var Product_Matching */
+	private $product_matching;
+
+	/** @var Product_Matching_Admin|null */
+	private $product_matching_admin;
+
 	/** @var COA_Test_Fields */
 	private $coa_test_fields;
 
@@ -69,6 +75,7 @@ final class Plugin {
 		$this->dependencies        = new Dependencies();
 		$this->compound_fields     = new Compound_Fields( $this->dependencies );
 		$this->compound_validation = new Compound_Validation();
+		$this->product_matching     = new Product_Matching( $this->dependencies );
 		$this->coa_test_fields      = new COA_Test_Fields( $this->dependencies );
 		$this->coa_test_validation  = new COA_Test_Validation();
 		$this->coa_test_service     = new COA_Test_Service();
@@ -107,6 +114,8 @@ final class Plugin {
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_future_date_notice' ) );
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_workflow_notices' ) );
 		if ( is_admin() ) {
+			$this->product_matching_admin = new Product_Matching_Admin( $this->product_matching );
+			$this->product_matching_admin->register_hooks();
 			$this->coa_test_form = new COA_Test_Form();
 			$this->coa_test_form->register_hooks();
 			$this->design_settings_admin = new Design_Settings_Admin();

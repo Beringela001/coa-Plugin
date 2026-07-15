@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.14
+Stable tag: 0.4.0-beta.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,13 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.14 redesigns the `/testing/` catalog around the approved compound cards with a navy technical hero, integrated server-rendered search, accurate result counts, a responsive three/two/one-column grid, and a contained no-results state. Search matches public compound display, base and short names, strength, and visible public batch numbers.
+Version 0.4.0-beta.15 makes WooCommerce the administrator-side source of truth for basic product identity. Product ID is canonical, SKU is the matching/audit key, existing scientific COA names and histories are preserved, eligible products can explicitly create one Draft compound, and controlled synchronization is limited to safe product-owned fields.
+
+The WooCommerce product editor includes an opt-in COA Archive panel with COA Display Name and confirmed strength fields. COA Archive > Product Matching lists products first, ranks SKU searches ahead of ID/title matches, supports deliberate existing-compound connections, reports duplicate/missing/changed states, and provides safe bulk review. Product deletion or WooCommerce deactivation never deletes compounds or historical documentation.
+
+Product images are fallback media only. Public priority is Batch Vial Photo, COA Test Featured Image, connected WooCommerce product image, Compound image, then the neutral local placeholder.
+
+The certificate lightbox now moves its existing single root under document.body so isolated theme/report contexts, the footer, admin bar, and floating widgets cannot paint above it after scrolling. It covers 100vw by 100vh/100dvh at an isolated high stacking level and restores the exact scroll position, inline overflow/padding styles, temporary class state, and launch focus on close.
 
 Archive cards preserve their approved structure and status behavior while sourcing their image from the latest approved completed report: Batch Vial Photo, COA Test Featured Image, related Compound image, then the bundled neutral vial. Previous Reports carousel behavior is unchanged; its controls now use fixed equal dimensions and non-shrinking circular geometry.
 
@@ -22,7 +28,7 @@ The exact Batch Vial Photo is optional through laboratory submission and require
 
 Report-specific views fall back from the exact batch image to the COA Test Featured Image, Compound image, then a bundled neutral placeholder. The redesigned responsive report follows the approved three-part hero, compact real-value metrics, truthful Full-QC strip and table, separate certificate and identity galleries, and dark final-document panel. Optional Fentanyl data never defaults to Pass.
 
-Private access/verification metadata and internal fields remain excluded from public output. Existing workflow privacy, archive grouping, failed transparency, search, CSV import, PDF/gallery/lightbox, design settings, capabilities, and non-destructive uninstall remain intact. Product-page cards, QR codes, SKU matching, Elementor widgets, and external integrations are not included.
+Private access/verification metadata and internal product relationship fields remain excluded from public REST output. Existing workflow privacy, archive grouping, failed transparency, search, CSV import, PDF/gallery behavior, design settings, capabilities, and non-destructive uninstall remain intact. Public product-page COA sections, QR codes, Elementor widgets, price/stock/order/checkout/shipping integrations are not included.
 
 == Installation ==
 
@@ -33,6 +39,13 @@ Private access/verification metadata and internal fields remain excluded from pu
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.15 =
+* Added canonical WooCommerce Product ID relationships with unique SKU snapshots, safe synchronization metadata, COA Display Name, confirmed strength, and non-destructive missing/inactive states.
+* Added product and compound edit panels, product-primary Product Matching audit/actions, deliberate Connect Existing, idempotent Draft creation, duplicate/race protection, and filtered bulk operations.
+* Inserted the WooCommerce product image into the approved fallback chain without replacing batch evidence or COA-owned compound media.
+* Moved the existing certificate viewer under document.body, raised its isolated viewport stacking layer, and added exact scroll/style restoration with scrollbar compensation.
+* Preserved all public COA designs and added no public product-page output, QR codes, pricing, inventory, order, checkout, or shipping behavior.
 
 = 0.4.0-beta.14 =
 * Rebuilt only the `/testing/` catalog surroundings with the approved navy hero, trust chips, integrated accessible search, result count, empty state, and responsive three/two/one-column grid.

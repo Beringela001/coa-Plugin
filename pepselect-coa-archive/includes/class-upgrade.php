@@ -11,13 +11,14 @@ final class Upgrade {
 	public static function maybe_upgrade() {
 		if ( PEPSELECT_COA_ARCHIVE_VERSION === get_option( self::VERSION_OPTION ) ) { return; }
 		self::migrate_archive_catalog_copy();
+		( new Product_Matching( new Dependencies() ) )->backfill_existing_links();
 		Archive_Cache::invalidate();
 		flush_rewrite_rules( false );
 		update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false );
 	}
 
 	/** Records activation after the activation transaction has flushed rules. @return void */
-	public static function mark_current() { self::migrate_archive_catalog_copy(); Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+	public static function mark_current() { self::migrate_archive_catalog_copy(); ( new Product_Matching( new Dependencies() ) )->backfill_existing_links(); Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
 
 	/** Replaces only untouched legacy archive defaults while preserving customized copy. @return void */
 	private static function migrate_archive_catalog_copy() {

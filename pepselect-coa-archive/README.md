@@ -1,7 +1,25 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.14 is the **COA-4G Archive Catalog Redesign and Carousel Arrow Correction** release. It rebuilds only the `/testing/` catalog surroundings around the approved compound cards and makes the existing Previous Reports controls resistant to theme-driven compression.
+Version 0.4.0-beta.15 is the **COA-5B WooCommerce Source-of-Truth and Lightbox Viewport** release. It adds an administrator-only product relationship and controlled synchronization foundation while preserving every approved COA page and all testing history.
+
+## WooCommerce source of truth
+
+The permanent relationship is the WooCommerce Product ID. The unique SKU is a matching and audit key, stored as a snapshot with the last successful synchronization time, product status, URL, title, and fallback image. The product title never automatically overwrites an existing scientific COA display name, base compound name, short name, description, slug, or public history. Products may define an optional **COA Display Name** so a storefront title such as `GLP-3 R` can create a draft compound named `Retatrutide`.
+
+The product edit screen provides **Include in COA Archive**, COA Display Name, confirmed Strength and Strength Unit, connection status, and explicit Create/Connect/Sync actions. Create and Connect requires a valid unique SKU, a reviewed scientific name, and confirmed structured strength; it is nonce- and capability-protected, uses an atomic creation lock, creates exactly one Draft compound, and never fabricates a batch, test, result, laboratory, PDF, or report.
+
+**COA Archive → Product Matching** uses WooCommerce products as primary rows. Exact SKU ranks first, followed by exact Product ID, SKU prefix, partial SKU, exact title, and partial title. Administrators can deliberately connect an existing compound, create an eligible draft, synchronize safe product-owned fields, disconnect without deleting history, or review Missing SKU, Duplicate SKU, Duplicate Product Link, SKU Changed, Needs Review, Product Missing, and WooCommerce Inactive states. Bulk inclusion, eligible draft creation, and connected-product synchronization skip ambiguous products.
+
+Synchronization is intentionally one-way and narrow: Product ID, SKU snapshot, product status/URL/title, product image fallback, confirmed strength/unit, last sync, and status. It never changes testing, batches, laboratories, PDFs, certificate images, Batch Vial Photos, cap/crimp data, public names, descriptions, categories, display order, slugs, prices, inventory, stock, orders, checkout, or shipping. Product deletion, trashing, privacy changes, or WooCommerce deactivation preserve the compound and historical documentation.
+
+Public image priority is now exact Batch Vial Photo, COA Test Featured Image, connected WooCommerce product image, Compound image, then the bundled neutral placeholder. The product image is only a fallback and never replaces saved batch evidence.
+
+## Certificate lightbox viewport correction
+
+The active viewer was nested inside the isolated report tree, so theme, Elementor, footer, and floating-widget stacking contexts could paint above it after the page was scrolled. The existing single lightbox node is now moved under `document.body` during initialization, with its approved design variables copied from the report. It remains `position: fixed`, `inset: 0`, `100vw`, `100vh`/`100dvh`, isolated at z-index `2147483000`, and route-scoped to full reports that contain certificate images.
+
+Opening stores the exact scroll coordinates and existing body/document overflow, padding, and class state. It locks background scrolling and compensates for scrollbar width without moving the document. Closing restores every previous inline style and class state, returns to the exact saved scroll position, and restores focus to the launching thumbnail. Counter, contain sizing, close/backdrop behavior, previous/next controls, arrow keys, Escape, and focus trapping are unchanged.
 
 ## Archive catalog
 
@@ -15,7 +33,7 @@ Previous Reports controls remain behaviorally unchanged but now have fixed equal
 
 ## Package verification
 
-The release archive is built from the `pepselect-coa-archive/` source directory, inspected entry by entry for forward-slash paths and a single top-level folder, then extracted to a temporary directory and compared with the source tree. The only valid activation path is `pepselect-coa-archive/pepselect-coa-archive.php`; nested duplicate plugin folders and bundled reference screenshots are rejected.
+The release archive is built from the `pepselect-coa-archive/` source directory, inspected entry by entry for forward-slash paths and a single top-level folder, then extracted to a temporary directory and hash-compared with the source tree. The only valid activation path is `pepselect-coa-archive/pepselect-coa-archive.php`; nested duplicate plugin folders, the ZIP itself, Graphify output, test artifacts, and reference screenshots are rejected.
 
 ## Exact batch identity
 

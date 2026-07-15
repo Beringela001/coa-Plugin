@@ -22,9 +22,6 @@ final class Compound_Fields {
 		if ( $this->group_registered || ! $this->dependencies->has_acf() ) { return; }
 		$this->group_registered = true;
 		$fields = $this->base_fields();
-		if ( $this->dependencies->has_woocommerce() ) {
-			array_splice( $fields, 6, 0, array( $this->product_field() ) );
-		}
 		acf_add_local_field_group( array( 'key' => 'group_ps_compound_details', 'title' => __( 'Compound Details', 'pepselect-coa-archive' ), 'fields' => $fields, 'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => Post_Types::COMPOUND ) ) ), 'position' => 'normal', 'style' => 'default', 'active' => true, 'show_in_rest' => 0 ) );
 	}
 
@@ -36,7 +33,7 @@ final class Compound_Fields {
 			'display_name' => 'string', 'compound_name' => 'string', 'short_name' => 'string',
 			'strength_value' => 'number', 'strength_unit' => 'string', 'compound_category' => 'string',
 			'archive_description' => 'string', 'compound_image_id' => 'integer', 'display_order' => 'integer',
-			'is_active' => 'boolean', 'is_featured' => 'boolean', 'woocommerce_product_id' => 'integer',
+			'is_active' => 'boolean', 'is_featured' => 'boolean',
 		);
 		foreach ( $schema as $key => $type ) {
 			register_post_meta( Post_Types::COMPOUND, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( $this, 'sanitize_rest_value' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
@@ -70,11 +67,6 @@ final class Compound_Fields {
 			$this->field( 'field_ps_compound_is_featured', 'is_featured', __( 'Featured', 'pepselect-coa-archive' ), 'true_false', array( 'default_value' => 0, 'ui' => 1 ) ),
 			$this->field( 'field_ps_compound_internal_notes', 'internal_notes', __( 'Internal Notes', 'pepselect-coa-archive' ), 'textarea', array( 'rows' => 4, 'instructions' => __( 'Administrative notes only. Never exposed through the public REST schema.', 'pepselect-coa-archive' ) ) ),
 		);
-	}
-
-	/** Returns the optional product selector. @return array */
-	private function product_field() {
-		return $this->field( 'field_ps_compound_woocommerce_product_id', 'woocommerce_product_id', __( 'Related WooCommerce Product', 'pepselect-coa-archive' ), 'post_object', array( 'post_type' => array( 'product' ), 'return_format' => 'id', 'allow_null' => 1, 'multiple' => 0 ) );
 	}
 
 	/** Builds an ACF field definition. @param string $key Key. @param string $name Name. @param string $label Label. @param string $type Type. @param array $options Options. @return array */
