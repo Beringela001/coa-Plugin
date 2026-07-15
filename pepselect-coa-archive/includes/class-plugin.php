@@ -47,6 +47,8 @@ final class Plugin {
 	private $coa_test_admin;
 	/** @var COA_Test_Form|null */
 	private $coa_test_form;
+	/** @var COA_Workflow_Requirements|null */
+	private $coa_workflow_requirements;
 
 	/** @var COA_Test_Importer|null */
 	private $coa_test_importer;
@@ -134,6 +136,8 @@ final class Plugin {
 			$this->product_matching_admin->register_hooks();
 			$this->coa_test_form = new COA_Test_Form();
 			$this->coa_test_form->register_hooks();
+			$this->coa_workflow_requirements = new COA_Workflow_Requirements();
+			$this->coa_workflow_requirements->register_hooks();
 			$this->design_settings_admin = new Design_Settings_Admin();
 			$this->design_settings_admin->register_hooks();
 			$this->compound_admin = new Compound_Admin();

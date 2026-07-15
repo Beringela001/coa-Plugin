@@ -16,17 +16,21 @@ assert.ok(admin.includes('ps-coa-product-facts ps-coa-product-facts--sidebar'));
 assert.ok(admin.includes('ps-coa-product-facts__status'));
 assert.ok(admin.includes('ps-coa-product-sidebar-actions'));
 assert.match(adminCss, /\.ps-coa-product-facts--sidebar \{[^}]*repeat\(2, minmax\(0, 1fr\)\)[^}]*min-width: 0[^}]*width: 100%/);
-assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-product-facts__status \{[^}]*grid-column: 1 \/ -1[^}]*overflow-wrap: anywhere[^}]*width: 100%/);
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-product-facts__status \{[^}]*grid-column: 1 \/ -1[^}]*overflow-wrap: break-word[^}]*width: 100%/);
 assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-match-status \{[^}]*white-space: normal/);
 assert.match(adminCss, /\.ps-coa-product-sidebar-actions \.button[^}]*display: block[^}]*width: 100%/);
 assert.ok(adminCss.includes('.ps-coa-product-facts.ps-coa-product-facts--sidebar { grid-template-columns: repeat(2, minmax(0, 1fr)); }'));
 
-assert.ok(fields.includes('Controls whether this compound is eligible to appear publicly in the COA archive and Vetting History pages. Turning it off does not delete its tests or reports.'));
+assert.ok(fields.includes('Controls whether this compound is eligible to appear publicly in the COA Archive and Vetting History pages. Turning it off does not delete its tests or reports.'));
+assert.ok(fields.includes('Active controls public eligibility.'));
 assert.ok(fields.includes('Gives this compound priority placement in supported archive or promotional sections. Featured does not control whether the compound is publicly visible.'));
+assert.ok(fields.includes('Featured controls priority or emphasis.'));
 assert.ok(validation.includes("array( 'submitted-to-lab', 'in-testing', 'complete' )"));
 assert.ok(!validation.includes("array( 'waiting-on-vendor', 'submitted-to-lab', 'in-testing', 'complete' )"));
-assert.ok(validation.includes("'batch_number' === $name && in_array( $stage, array( 'in-testing', 'complete' )"));
-assert.ok(validation.includes("'batch_vial_photo' === $name && ! $raw && in_array( $stage, array( 'in-testing', 'complete' )"));
+assert.ok(validation.includes("'batch_number' === $name && 'in-testing' === $stage"));
+assert.ok(validation.includes("'batch_number' === $name && 'complete' === $stage"));
+assert.ok(validation.includes("'batch_vial_photo' === $name && ! $raw && 'in-testing' === $stage"));
+assert.ok(validation.includes("'batch_vial_photo' === $name && ! $raw && 'complete' === $stage"));
 assert.ok(validation.includes("'batch_identity_photos' === $name && ! $this->valid_images"));
 
 assert.ok(service.includes('private function synchronize_title'));

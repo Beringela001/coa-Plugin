@@ -16,8 +16,8 @@ const adminCss = fs.readFileSync(path.join(root, 'assets/css/pepselect-coa-admin
 ['check_ajax_referer', 'check_admin_referer', "current_user_can( 'manage_ps_compounds' )"].forEach(value => assert.ok(admin.includes(value), value));
 ['ps-coa-product-facts--sidebar', 'ps-coa-product-facts__status', 'ps-coa-product-sidebar-actions'].forEach(value => assert.ok(admin.includes(value), value));
 assert.match(adminCss, /\.ps-coa-product-facts--sidebar \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)[^}]*min-width: 0[^}]*width: 100%/);
-assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-product-facts__status \{[^}]*grid-column: 1 \/ -1[^}]*overflow-wrap: anywhere[^}]*width: 100%/);
-assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-match-status \{[^}]*max-width: 100%[^}]*overflow-wrap: anywhere[^}]*white-space: normal/);
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-product-facts__status \{[^}]*grid-column: 1 \/ -1[^}]*overflow-wrap: break-word[^}]*width: 100%/);
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-match-status \{[^}]*max-width: 100%[^}]*overflow-wrap: break-word[^}]*white-space: normal/);
 assert.match(adminCss, /\.ps-coa-product-sidebar-actions \.button[^}]*width: 100%/);
 assert.ok(adminCss.includes('#pepselect-product-coa-archive .inside { overflow: hidden; }'));
 ['woocommerce_after_single_product_summary', 'woocommerce_single_product_summary'].forEach(value => assert.ok(!admin.includes(value), 'no public product hook ' + value));

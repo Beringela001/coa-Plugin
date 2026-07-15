@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.21
+Stable tag: 0.4.0-beta.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.21 adds a capability-protected COA Workflow Center to the standard WordPress Dashboard.
+Version 0.4.0-beta.22 polishes the Dashboard Workflow Center, COA Test list filters and timing indicators, validation guidance, Compound help text, and the WooCommerce COA sidebar without changing public pages or stored COA data.
 
 Authorized users receive active-stage counters, a timezone-aware overdue count, and up to ten urgency-sorted Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, or Verification in Progress records. Every row uses the linked Compound Display Name and exact COA Test edit permission. Complete, Approved historical, Failed, unrelated, and non-editable records are excluded.
 
@@ -65,6 +65,13 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.22 =
+* Corrected Dashboard word wrapping and Action geometry with purpose-sized columns plus a component-width stacked layout, preserving existing counters, record selection, timing, sorting, and destinations.
+* Added composable COA Test workflow, outcome, compound, laboratory, and timing filters; shared site-timezone Due Soon/Overdue classification; restrained Expected COA badges; and predictable chronological date/compound-name sorting.
+* Added a capability-protected, read-only Workflow Requirements metabox sourced from active validation conditions, with explicit Complete, Missing, Not required yet, and Optional states and clearer field/stage validation errors.
+* Added exact Active/Featured explanations and finalized the three-row WooCommerce COA sidebar layout without changing visibility, Product Matching, relationships, or write behavior.
+* Kept unsafe COA workflow Quick Edit/bulk transitions absent, scoped every new asset to its relevant admin screen, and preserved public pages, Elementor, real COA data, and commerce systems.
 
 = 0.4.0-beta.21 =
 * Added the standard WordPress Dashboard COA Workflow Center for users with edit_ps_coas, with per-record mapped edit checks and independently gated footer actions.

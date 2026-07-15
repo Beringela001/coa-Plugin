@@ -20,7 +20,8 @@ $ps_tones = array( 'vendor-vetting' => 'vendor', 'waiting-on-vendor' => 'waiting
 
 	<?php if ( $ps_coa_dashboard['rows'] ) : ?>
 		<table class="widefat striped ps-coa-dashboard-workflow__table">
-			<thead><tr><th><?php esc_html_e( 'Compound', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Stage', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Expected COA', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Batch', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Action', 'pepselect-coa-archive' ); ?></th></tr></thead>
+			<colgroup><col class="ps-coa-dashboard-workflow__col--compound"><col class="ps-coa-dashboard-workflow__col--stage"><col class="ps-coa-dashboard-workflow__col--expected"><col class="ps-coa-dashboard-workflow__col--batch"><col class="ps-coa-dashboard-workflow__col--action"></colgroup>
+			<thead><tr><th><?php esc_html_e( 'Compound', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Stage', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Expected COA', 'pepselect-coa-archive' ); ?></th><th><?php esc_html_e( 'Batch', 'pepselect-coa-archive' ); ?></th><th class="ps-coa-dashboard-workflow__action-heading"><?php esc_html_e( 'Action', 'pepselect-coa-archive' ); ?></th></tr></thead>
 			<tbody>
 			<?php foreach ( $ps_coa_dashboard['rows'] as $ps_row ) : ?>
 				<tr class="<?php echo $ps_row['overdue'] ? 'ps-coa-dashboard-workflow__row--overdue' : ''; ?>">
@@ -30,8 +31,8 @@ $ps_tones = array( 'vendor-vetting' => 'vendor', 'waiting-on-vendor' => 'waiting
 						<?php echo $ps_row['expected_label'] ? esc_html( $ps_row['expected_label'] ) : '&mdash;'; ?>
 						<?php if ( $ps_row['overdue'] ) : ?><span class="ps-coa-dashboard-workflow__urgency"><?php echo esc_html( sprintf( _n( 'Overdue by %d day', 'Overdue by %d days', $ps_row['overdue_days'], 'pepselect-coa-archive' ), $ps_row['overdue_days'] ) ); ?></span><?php elseif ( $ps_row['due_soon'] ) : ?><span class="ps-coa-dashboard-workflow__due-soon"><?php esc_html_e( 'Due soon', 'pepselect-coa-archive' ); ?></span><?php endif; ?>
 					</td>
-					<td data-label="<?php esc_attr_e( 'Batch', 'pepselect-coa-archive' ); ?>"><?php echo $ps_row['batch'] ? esc_html( $ps_row['batch'] ) : '&mdash;'; ?></td>
-					<td data-label="<?php esc_attr_e( 'Action', 'pepselect-coa-archive' ); ?>"><a class="button button-small" href="<?php echo esc_url( $ps_row['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'pepselect-coa-archive' ); ?></a></td>
+					<td class="ps-coa-dashboard-workflow__batch" data-label="<?php esc_attr_e( 'Batch', 'pepselect-coa-archive' ); ?>"><?php echo $ps_row['batch'] ? esc_html( $ps_row['batch'] ) : '&mdash;'; ?></td>
+					<td class="ps-coa-dashboard-workflow__action" data-label="<?php esc_attr_e( 'Action', 'pepselect-coa-archive' ); ?>"><a class="button button-small" href="<?php echo esc_url( $ps_row['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'pepselect-coa-archive' ); ?></a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

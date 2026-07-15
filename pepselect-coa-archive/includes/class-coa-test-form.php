@@ -37,7 +37,7 @@ final class COA_Test_Form {
 			'available' => self::availability(),
 			'resultFields' => self::result_fields(),
 			'legacyStatus' => in_array( $status, array( 'archived', 'superseded' ), true ) ? $status : '',
-			'batchPhotoRequired' => __( 'A photo of the exact tested vial is required before Verification in Progress or Complete can be saved.', 'pepselect-coa-archive' ),
+			'batchPhotoRequired' => __( 'Batch Vial Photo is required before moving this test to Verification in Progress or Completed.', 'pepselect-coa-archive' ),
 			'guidance' => array(
 				'vendor-vetting' => __( 'No testing fields are available while suppliers are being evaluated.', 'pepselect-coa-archive' ),
 				'waiting-on-vendor' => __( 'Testing fields will become available when a batch is received and submitted.', 'pepselect-coa-archive' ),

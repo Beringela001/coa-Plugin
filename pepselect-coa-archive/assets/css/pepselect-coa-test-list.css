@@ -1,0 +1,12 @@
+.post-type-ps_coa_test .tablenav.top .actions { align-items: center; display: flex; flex-wrap: wrap; gap: 4px; }
+.post-type-ps_coa_test .tablenav.top .actions select { max-width: 190px; }
+.post-type-ps_coa_test .column-expected_coa_date { min-width: 126px; }
+.post-type-ps_coa_test .column-workflow_stage { min-width: 132px; }
+.post-type-ps_coa_test .column-testing_lab { min-width: 105px; }
+.ps-coa-list-timing { border-radius: 999px; box-sizing: border-box; display: block; font-size: 11px; font-weight: 600; line-height: 1.4; margin-top: 4px; padding: 2px 7px; width: max-content; }
+.ps-coa-list-timing--overdue { background: #fcf0f1; color: #b32d2e; }
+.ps-coa-list-timing--due-soon { background: #fcf0c3; color: #614b00; }
+@media (max-width: 782px) {
+	.post-type-ps_coa_test .tablenav.top .actions { display: block; }
+	.post-type-ps_coa_test .tablenav.top .actions select { max-width: none; width: 100%; }
+}

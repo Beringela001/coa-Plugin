@@ -1,19 +1,25 @@
-.ps-coa-dashboard-workflow { margin: -1px -12px -12px; }
+.ps-coa-dashboard-workflow { container-name: ps-coa-workflow; container-type: inline-size; margin: -1px -12px -12px; }
 .ps-coa-dashboard-workflow__counters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-bottom: 1px solid #dcdcde; }
 .ps-coa-dashboard-workflow__counter { box-sizing: border-box; min-width: 0; padding: 14px 8px 12px; text-align: center; }
 .ps-coa-dashboard-workflow__counter + .ps-coa-dashboard-workflow__counter { border-left: 1px solid #dcdcde; }
 .ps-coa-dashboard-workflow__counter strong { display: block; color: #1d2327; font-size: 24px; line-height: 1; }
 .ps-coa-dashboard-workflow__counter span { display: block; margin-top: 5px; color: #50575e; font-size: 11px; line-height: 1.25; }
 .ps-coa-dashboard-workflow__counter--overdue strong { color: #b32d2e; }
-.ps-coa-dashboard-workflow__table { border: 0; box-shadow: none; }
+.ps-coa-dashboard-workflow__table { border: 0; box-shadow: none; table-layout: fixed; width: 100%; }
 .ps-coa-dashboard-workflow__table th { font-weight: 600; }
-.ps-coa-dashboard-workflow__table td, .ps-coa-dashboard-workflow__table th { min-width: 0; padding: 9px 10px; overflow-wrap: anywhere; vertical-align: middle; }
-.ps-coa-dashboard-workflow__table th:first-child { width: 27%; }
-.ps-coa-dashboard-workflow__table th:nth-child(2) { width: 22%; }
+.ps-coa-dashboard-workflow__table td, .ps-coa-dashboard-workflow__table th { min-width: 0; padding: 9px 10px; overflow-wrap: normal; vertical-align: middle; word-break: normal; }
+.ps-coa-dashboard-workflow__col--compound { width: 26%; }
+.ps-coa-dashboard-workflow__col--stage { width: 23%; }
+.ps-coa-dashboard-workflow__col--expected { width: 20%; }
+.ps-coa-dashboard-workflow__col--batch { width: 18%; }
+.ps-coa-dashboard-workflow__col--action { width: 76px; }
+.ps-coa-dashboard-workflow__action-heading, .ps-coa-dashboard-workflow__action { min-width: 76px; white-space: nowrap; }
+.ps-coa-dashboard-workflow__action .button { min-width: 52px; white-space: nowrap; }
+.ps-coa-dashboard-workflow__batch { overflow-wrap: break-word; word-break: normal; }
 .ps-coa-dashboard-workflow__row--overdue td:first-child { box-shadow: inset 3px 0 #d63638; }
 .ps-coa-dashboard-workflow__badge, .ps-coa-dashboard-workflow__urgency, .ps-coa-dashboard-workflow__due-soon { display: inline-block; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1.4; padding: 2px 7px; }
 .ps-coa-dashboard-workflow__badge { background: #f0f0f1; color: #3c434a; }
-.ps-coa-dashboard-workflow__badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.ps-coa-dashboard-workflow__badge { max-width: 100%; min-width: min(112px, 100%); box-sizing: border-box; line-height: 1.35; overflow-wrap: normal; text-align: center; white-space: normal; word-break: normal; }
 .ps-coa-dashboard-workflow__badge--waiting { background: #fcf0c3; color: #614b00; }
 .ps-coa-dashboard-workflow__badge--submitted { background: #e5f5fa; color: #135e96; }
 .ps-coa-dashboard-workflow__badge--testing { background: #e8f2ff; color: #0a4b78; }
@@ -24,15 +30,31 @@
 .ps-coa-dashboard-workflow__empty p { margin: 0 0 8px; }
 .ps-coa-dashboard-workflow__footer { display: flex; flex-wrap: wrap; gap: 8px 0; padding: 10px 12px; border-top: 1px solid #dcdcde; background: #f6f7f7; }
 .ps-coa-dashboard-workflow__footer a + a::before { content: "|"; margin: 0 8px; color: #a7aaad; }
+@container ps-coa-workflow (max-width: 620px) {
+	.ps-coa-dashboard-workflow__counters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.ps-coa-dashboard-workflow__counter + .ps-coa-dashboard-workflow__counter { border-left: 0; }
+	.ps-coa-dashboard-workflow__counter:nth-child(even) { border-left: 1px solid #dcdcde; }
+	.ps-coa-dashboard-workflow__counter:nth-child(n+3) { border-top: 1px solid #dcdcde; }
+	.ps-coa-dashboard-workflow__table colgroup, .ps-coa-dashboard-workflow__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+	.ps-coa-dashboard-workflow__table, .ps-coa-dashboard-workflow__table tbody, .ps-coa-dashboard-workflow__table tr, .ps-coa-dashboard-workflow__table td { display: block; width: 100%; box-sizing: border-box; }
+	.ps-coa-dashboard-workflow__table tr { padding: 7px 10px; border-bottom: 1px solid #dcdcde; }
+	.ps-coa-dashboard-workflow__table td { display: grid; grid-template-columns: minmax(86px, 34%) minmax(0, 1fr); gap: 8px; padding: 5px 0; border: 0; }
+	.ps-coa-dashboard-workflow__table td::before { content: attr(data-label); color: #50575e; font-weight: 600; }
+	.ps-coa-dashboard-workflow__action { min-width: 0; white-space: normal; }
+	.ps-coa-dashboard-workflow__action .button { justify-self: start; }
+	.ps-coa-dashboard-workflow__row--overdue td:first-child { box-shadow: none; }
+}
 @media (max-width: 782px) {
 	.ps-coa-dashboard-workflow__counters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.ps-coa-dashboard-workflow__counter + .ps-coa-dashboard-workflow__counter { border-left: 0; }
 	.ps-coa-dashboard-workflow__counter:nth-child(even) { border-left: 1px solid #dcdcde; }
 	.ps-coa-dashboard-workflow__counter:nth-child(n+3) { border-top: 1px solid #dcdcde; }
-	.ps-coa-dashboard-workflow__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+	.ps-coa-dashboard-workflow__table colgroup, .ps-coa-dashboard-workflow__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 	.ps-coa-dashboard-workflow__table, .ps-coa-dashboard-workflow__table tbody, .ps-coa-dashboard-workflow__table tr, .ps-coa-dashboard-workflow__table td { display: block; width: 100%; box-sizing: border-box; }
 	.ps-coa-dashboard-workflow__table tr { padding: 7px 10px; border-bottom: 1px solid #dcdcde; }
 	.ps-coa-dashboard-workflow__table td { display: grid; grid-template-columns: minmax(86px, 34%) minmax(0, 1fr); gap: 8px; padding: 5px 0; border: 0; }
 	.ps-coa-dashboard-workflow__table td::before { content: attr(data-label); color: #50575e; font-weight: 600; }
+	.ps-coa-dashboard-workflow__action { min-width: 0; white-space: normal; }
+	.ps-coa-dashboard-workflow__action .button { justify-self: start; }
 	.ps-coa-dashboard-workflow__row--overdue td:first-child { box-shadow: none; }
 }

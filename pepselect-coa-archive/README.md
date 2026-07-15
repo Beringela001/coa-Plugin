@@ -1,7 +1,34 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.21 is the **COA-5C WordPress Dashboard Workflow Center** release. It adds a permission-aware operational summary to the standard WordPress Dashboard without changing public COA pages, product presentation, or stored workflow data.
+Version 0.4.0-beta.22 is the **COA-5D Dashboard and Admin Workflow Polish** release. It improves the existing administrative workflow surfaces without changing public COA pages, product-page COA cards, Elementor, commerce behavior, or stored COA data.
+
+## COA-5D dashboard and admin workflow polish
+
+The Dashboard Workflow Center retains its existing counters, active-record selection, urgency sorting, dates, edit links, and footer actions. Its table now uses purpose-sized columns, word-boundary wrapping, protected Action geometry, and a component-width container query that changes narrow widgets into labeled stacked records without horizontal scrolling. Dashboard CSS remains scoped to `index.php`.
+
+COA Tests retain the WordPress list table and gain composable Workflow Stage, COA Status, Compound, Laboratory, and Timing Status filters. Due Soon and Overdue use one read-only classifier shared with the Dashboard, based on valid Expected COA dates and WordPress site-local calendar days. Date sorting normalizes supported ACF `Ymd` and ISO fallback values, puts missing values predictably after valid dates, and does not make urgency the list default. List CSS loads only on the COA Test list.
+
+COA Test Add/Edit screens now include a read-only **Workflow Requirements** metabox. It evaluates saved evidence against the same stage/status conditions as `COA_Test_Validation`, updates guidance immediately when the selected stage, status, or laboratory changes, reports Complete, Missing, Not required yet, or Optional in text and icons, and never duplicates or writes form fields. Validation messages name the exact field, stage, and reason; invalid transitions still fail through normal ACF validation without partial workflow writes. The panel stylesheet and lightweight controller load only on COA Test Add/Edit screens.
+
+The current COA Test schema has no separate Report Type field, so beta.22 does not fabricate one or impose a new Full-QC requirement matrix. It reports the evidence actually enforced today: Approved documentation/date/laboratory requirements, Complete-stage Fentanyl method/specification rules, the stricter Approved ILS Fentanyl result, and the Failed Release Decision Note.
+
+Compound Active and Featured instructions now include the exact public-eligibility and priority definitions. Featured still cannot override an inactive Compound. The WooCommerce sidebar keeps SKU and Product ID in row one, Connection Status across row two, and its action across row three with safe word wrapping. Product Matching logic, relationships, and write handlers are unchanged.
+
+No COA Test Quick Edit or workflow bulk transition was added. Standard WordPress non-workflow operations remain available; bulk Approve, Complete, Verification in Progress, laboratory-result, batch, purity, and report-URL changes remain deliberately absent because they could bypass the existing field-specific validation matrix. Admin views read live post/meta state and add no secondary cache, so normal WordPress cache invalidation and the existing archive invalidation hooks remain authoritative.
+
+Deployment requires only uploading and replacing the plugin ZIP, confirming activation, clearing Kinsta cache if needed, and reloading WordPress admin. No Elementor or public-page edit is required.
+
+### COA-5D deployment-site manual QA
+
+The local source workspace does not include a running WordPress/WooCommerce site, so the following deployment checks are intentionally documented for the installed beta.22 package rather than marked as locally executed:
+
+1. Dashboard: check full-width counter/headings, one-line Action, visible Edit controls, word-boundary stage wrapping, then move the widget to a narrow column and verify labeled stacking, no horizontal scroll, unchanged counts/sorting, Due Soon, and Overdue results.
+2. COA Tests: exercise Verification in Progress, Pending, Compound, Laboratory, Due Soon, Overdue, and combined filters; repeat with search and pagination; clear filters and confirm the full list returns.
+3. Workflow Requirements: inspect Vendor Vetting and Waiting on Vendor; verify physical-batch fields are not required; safely move a test to Verification in Progress, satisfy listed fields, and confirm save; attempt Approved without Lab Report URL, confirm the specific validation block, add the URL, and confirm a valid save.
+4. Compound controls: verify both complete Active/Featured descriptions; with Featured on and Active off, confirm public ineligibility; restore the original values.
+5. WooCommerce product editor: verify SKU/Product ID row one, full-width Connection Status row two, full-width action row three, safe long-status wrapping, and idempotent handling of an existing connection.
+6. Regression: inspect `/testing/`, Vetting History, a Full Report, certificate lightbox, desktop/mobile product COA cards, the existing top COA button, add to cart, and stock notifier. Confirm no Elementor, price, stock, inventory, order, checkout, or shipping change.
 
 ## COA-5C WordPress Dashboard Workflow Center
 

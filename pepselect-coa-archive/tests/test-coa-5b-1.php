@@ -19,8 +19,10 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 
 	public function test_active_and_featured_explanations_are_exact() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-compound-fields.php' );
-		$this->assertStringContainsString( 'Controls whether this compound is eligible to appear publicly in the COA archive and Vetting History pages. Turning it off does not delete its tests or reports.', $source );
+		$this->assertStringContainsString( 'Controls whether this compound is eligible to appear publicly in the COA Archive and Vetting History pages. Turning it off does not delete its tests or reports.', $source );
+		$this->assertStringContainsString( 'Active controls public eligibility.', $source );
 		$this->assertStringContainsString( 'Gives this compound priority placement in supported archive or promotional sections. Featured does not control whether the compound is publicly visible.', $source );
+		$this->assertStringContainsString( 'Featured controls priority or emphasis.', $source );
 	}
 
 	public function test_inactive_featured_compound_and_its_tests_are_retained_but_not_public() {

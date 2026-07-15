@@ -51,7 +51,7 @@ final class Dashboard_Workflow {
 		if ( ! is_admin() || ! current_user_can( 'edit_ps_coas' ) ) { return $model; }
 
 		$timezone = wp_timezone();
-		$today = $today ? $today->setTimezone( $timezone )->setTime( 0, 0, 0 ) : current_datetime()->setTime( 0, 0, 0 );
+		$today = COA_Admin_Workflow::today( $today );
 		$rows = $this->active_rows( $today );
 		usort( $rows, array( $this, 'compare_rows' ) );
 		foreach ( $rows as $row ) {
@@ -96,22 +96,21 @@ final class Dashboard_Workflow {
 			$post = get_post( $id );
 			$compound_id = absint( get_post_meta( $id, 'compound_id', true ) );
 			$compound = $compound_id ? get_post( $compound_id ) : null;
-			$expected = $this->parse_date( get_post_meta( $id, 'expected_coa_date', true ) );
-			$overdue = $expected && in_array( $stage, array( 'submitted-to-lab', 'in-testing' ), true ) && $expected < $today;
-			$days_until = $expected ? (int) $today->diff( $expected )->format( '%r%a' ) : null;
+			$timing = COA_Admin_Workflow::timing( $id, $today );
+			$expected = $timing['date'];
 			$rows[] = array(
 				'id' => $id,
 				'compound_id' => $compound_id,
 				'compound_name' => $this->compound_name( $compound, $post ),
 				'stage' => $stage,
-				'stage_label' => $this->stage_label( $stage ),
-				'stage_tone' => $this->stage_tone( $stage ),
+				'stage_label' => COA_Admin_Workflow::stage_label( $stage ),
+				'stage_tone' => COA_Admin_Workflow::stage_tone( $stage ),
 				'batch' => trim( (string) get_post_meta( $id, 'batch_number', true ) ),
 				'expected_date' => $expected,
 				'expected_label' => $expected ? wp_date( 'M j, Y', $expected->getTimestamp(), wp_timezone() ) : '',
-				'overdue' => (bool) $overdue,
-				'overdue_days' => $overdue ? abs( $days_until ) : 0,
-				'due_soon' => ! $overdue && null !== $days_until && $days_until >= 0 && $days_until <= 3,
+				'overdue' => 'overdue' === $timing['status'],
+				'overdue_days' => 'overdue' === $timing['status'] ? abs( $timing['days'] ) : 0,
+				'due_soon' => 'due-soon' === $timing['status'],
 				'modified' => $post ? (string) $post->post_modified_gmt : '',
 				'edit_url' => get_edit_post_link( $id, 'raw' ),
 			);
@@ -137,16 +136,6 @@ final class Dashboard_Workflow {
 		return 0 !== $modified ? $modified : ( $right['id'] <=> $left['id'] );
 	}
 
-	/** Parses ACF Ymd and ISO dates strictly in the WordPress site timezone. @param mixed $value Stored date. @return \DateTimeImmutable|null */
-	private function parse_date( $value ) {
-		$value = trim( (string) $value );
-		$format = preg_match( '/^\d{8}$/', $value ) ? '!Ymd' : ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ? '!Y-m-d' : '' );
-		if ( ! $format ) { return null; }
-		$date = \DateTimeImmutable::createFromFormat( $format, $value, wp_timezone() );
-		$errors = \DateTimeImmutable::getLastErrors();
-		return $date && ( false === $errors || ( 0 === $errors['warning_count'] && 0 === $errors['error_count'] ) ) ? $date : null;
-	}
-
 	/** Returns the administrative compound display name without enforcing public visibility. @return string */
 	private function compound_name( $compound, $test ) {
 		if ( $compound && Post_Types::COMPOUND === $compound->post_type ) {
@@ -156,18 +145,6 @@ final class Dashboard_Workflow {
 			if ( '' !== $name ) { return $name; }
 		}
 		return $test && trim( (string) $test->post_title ) ? trim( (string) $test->post_title ) : __( 'Unknown compound', 'pepselect-coa-archive' );
-	}
-
-	/** Returns dashboard-specific normalized labels without changing public workflow copy. @return string */
-	private function stage_label( $stage ) {
-		$labels = array( 'vendor-vetting' => __( 'Vendor Vetting', 'pepselect-coa-archive' ), 'waiting-on-vendor' => __( 'Waiting on Vendor', 'pepselect-coa-archive' ), 'submitted-to-lab' => __( 'Submitted to Laboratory', 'pepselect-coa-archive' ), 'in-testing' => __( 'Verification in Progress', 'pepselect-coa-archive' ) );
-		return isset( $labels[ $stage ] ) ? $labels[ $stage ] : $stage;
-	}
-
-	/** Returns a presentation-only class suffix that does not expose stored stage keys. @return string */
-	private function stage_tone( $stage ) {
-		$tones = array( 'vendor-vetting' => 'vendor', 'waiting-on-vendor' => 'waiting', 'submitted-to-lab' => 'submitted', 'in-testing' => 'testing' );
-		return isset( $tones[ $stage ] ) ? $tones[ $stage ] : 'neutral';
 	}
 
 	/** Returns only actions the current user may perform. @return array */
