@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.12
+Stable tag: 0.4.0-beta.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.12 rebuilds compound Vetting History pages to the approved mockup, adds an accessible ten-report carousel, and adds safe reusable laboratory logos.
+Version 0.4.0-beta.13 makes the Previous Reports carousel controls easier to see and slightly increases compact category-result text for readability, while preserving the approved carousel behavior and card structure.
 
 The exact Batch Vial Photo is optional through laboratory submission and required during Verification in Progress and Complete. An optional ordered Batch Identity Photos gallery provides supporting views. Published legacy reports remain public and receive a non-destructive admin warning until an exact image is added.
 
@@ -29,6 +29,10 @@ Private access/verification metadata and internal fields remain excluded from pu
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.13 =
+* Enlarged and strengthened the Previous Reports carousel controls with a clearer border, shadow, and hover state.
+* Increased compact category-result text by about one pixel while preserving truncation and category-label hierarchy.
 
 = 0.4.0-beta.12 =
 * Rebuilt the compound Vetting History route with scoped, responsive mockup-matching templates.

@@ -344,7 +344,8 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-history-carousel__slide[hidden] { display: none; }
 .ps-coa-history-carousel__slide:not([hidden]) { animation: ps-history-card-in .18s ease-out both; }
 @keyframes ps-history-card-in { from { opacity: .65; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-.ps-coa-history-carousel__control { align-items: center; background: #fff !important; border: 1px solid var(--ps-history-border) !important; border-radius: 50% !important; color: var(--ps-history-navy) !important; cursor: pointer; display: flex; font-size: 1.4rem; height: 44px; justify-content: center; padding: 0 !important; position: absolute; top: calc(50% - 22px); width: 44px; z-index: 2; }
+.ps-coa-history-carousel__control { align-items: center; background: #fff !important; border: 1px solid #b8cad7 !important; border-radius: 50% !important; box-shadow: 0 5px 14px rgba(24, 53, 79, .14); color: var(--ps-history-navy) !important; cursor: pointer; display: flex; font-size: 1.5rem; font-weight: 700; height: 48px; justify-content: center; line-height: 1; padding: 0 !important; position: absolute; top: calc(50% - 24px); width: 48px; z-index: 2; }
+.ps-coa-history-carousel__control:not(:disabled):hover { border-color: #8fa8ba !important; box-shadow: 0 7px 17px rgba(24, 53, 79, .2); }
 .ps-coa-history-carousel__control:disabled { cursor: default; opacity: .35; }
 .ps-coa-history-carousel__control--previous { left: -54px; }
 .ps-coa-history-carousel__control--next { right: -54px; }
@@ -365,7 +366,7 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-history-previous__results li { align-items: center; display: grid; gap: 2px 7px; grid-template-columns: 18px minmax(0, 1fr); min-width: 0; }
 .ps-coa-history-previous__results li > span { grid-row: 1 / 3; height: 18px; width: 18px; }
 .ps-coa-history-previous__results li strong { color: var(--ps-history-navy); font-size: .58rem; }
-.ps-coa-history-previous__results li small { color: var(--ps-history-muted); font-size: .5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ps-coa-history-previous__results li small { color: var(--ps-history-muted); font-size: .56rem; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ps-coa-history-previous__actions { align-content: center; display: grid; gap: 13px; }
 .ps-coa-history-previous__actions > p { color: var(--ps-history-muted); font-size: .72rem; line-height: 1.5; margin: 0; }
 .ps-coa-history-previous__actions .ps-coa-button { min-height: 40px; }
