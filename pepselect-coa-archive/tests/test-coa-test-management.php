@@ -48,7 +48,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'pending', 'field_ps_coa_test_workflow_stage' => 'vendor-vetting' );
 		foreach ( array( 'batch_number', 'testing_lab', 'vial_crimp_color', 'vial_cap_color' ) as $name ) { $this->assertTrue( $this->validate( '', $name ) ); }
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'waiting-on-vendor';
-		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'submitted-to-lab';
 		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'in-testing';
@@ -167,11 +167,15 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		update_post_meta( $second, 'is_current', 0 ); ( new PepSelect\COAArchive\COA_Test_Service() )->after_save( $second ); $this->assertSame( '0', get_post_meta( $first, 'is_current', true ) );
 	}
 
-	public function test_empty_title_initializes_and_manual_title_remains() {
+	public function test_title_is_maintained_for_stage_and_batch_changes() {
 		PepSelect\COAArchive\Capabilities::grant_to_administrators(); $user = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $user );
 		$compound = self::factory()->post->create( array( 'post_type' => 'ps_compound', 'post_title' => 'Retatrutide 30mg' ) ); update_post_meta( $compound, 'display_name', 'Retatrutide 30mg' );
-		$id = $this->test_post( $compound, 'RT30-0726-A', false ); $service = new PepSelect\COAArchive\COA_Test_Service(); $service->after_save( $id );
-		$this->assertSame( 'Retatrutide 30mg — Batch RT30-0726-A', get_post( $id )->post_title ); wp_update_post( array( 'ID' => $id, 'post_title' => 'Manual' ) ); $service->after_save( $id ); $this->assertSame( 'Manual', get_post( $id )->post_title );
+		$id = $this->test_post( $compound, 'RT30-0726-A', false, 'submitted-to-lab' ); $service = new PepSelect\COAArchive\COA_Test_Service(); $service->after_save( $id );
+		$this->assertSame( 'Retatrutide 30mg', get_post( $id )->post_title );
+		update_post_meta( $id, 'workflow_stage', 'in-testing' ); $service->after_save( $id );
+		$this->assertSame( 'Retatrutide 30mg — Batch RT30-0726-A', get_post( $id )->post_title );
+		update_post_meta( $id, 'batch_number', 'RT30-0726-B' ); wp_update_post( array( 'ID' => $id, 'post_title' => 'Manual' ) ); $service->after_save( $id );
+		$this->assertSame( 'Retatrutide 30mg — Batch RT30-0726-B', get_post( $id )->post_title );
 	}
 
 	public function test_private_fields_are_not_in_rest_schema() {
@@ -186,5 +190,5 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	}
 
 	private function validate( $value, $name ) { return $this->validator->validate( true, $value, array( 'name' => $name ), '' ); }
-	private function test_post( $compound, $batch, $current ) { $id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_title' => '' ) ); update_post_meta( $id, 'compound_id', $compound ); update_post_meta( $id, 'batch_number', $batch ); update_post_meta( $id, 'is_current', $current ? 1 : 0 ); return $id; }
+	private function test_post( $compound, $batch, $current, $stage = 'vendor-vetting' ) { $id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_title' => '' ) ); update_post_meta( $id, 'compound_id', $compound ); update_post_meta( $id, 'batch_number', $batch ); update_post_meta( $id, 'workflow_stage', $stage ); update_post_meta( $id, 'is_current', $current ? 1 : 0 ); return $id; }
 }

@@ -83,7 +83,8 @@ final class Product_Matching_Admin {
 		echo '<div class="ps-coa-product-strength"><p><label><strong>' . esc_html__( 'Strength', 'pepselect-coa-archive' ) . '</strong><input class="widefat" type="number" min="0.000001" step="0.000001" name="pepselect_coa_strength" value="' . esc_attr( 'dedicated' === ( isset( $strength['source'] ) ? $strength['source'] : '' ) ? $strength['value'] : '' ) . '"></label></p><p><label><strong>' . esc_html__( 'Strength Unit', 'pepselect-coa-archive' ) . '</strong><select class="widefat" name="pepselect_coa_strength_unit"><option value="">—</option>';
 		foreach ( Compound_Validation::units() as $value => $label ) { printf( '<option value="%1$s"%2$s>%3$s</option>', esc_attr( $value ), selected( 'dedicated' === ( isset( $strength['source'] ) ? $strength['source'] : '' ) ? $strength['unit'] : '', $value, false ), esc_html( $label ) ); }
 		echo '</select></label></p></div>';
-		printf( '<dl class="ps-coa-product-facts"><div><dt>%s</dt><dd>%s</dd></div><div><dt>%s</dt><dd>%d</dd></div><div><dt>%s</dt><dd><span class="ps-coa-match-status ps-coa-match-status--%s">%s</span></dd></div></dl>', esc_html__( 'Product SKU', 'pepselect-coa-archive' ), esc_html( isset( $summary['sku'] ) && $summary['sku'] ? $summary['sku'] : '—' ), esc_html__( 'Product ID', 'pepselect-coa-archive' ), $post->ID, esc_html__( 'COA connection status', 'pepselect-coa-archive' ), esc_attr( $status['key'] ), esc_html( $status['label'] ) );
+		printf( '<dl class="ps-coa-product-facts ps-coa-product-facts--sidebar"><div><dt>%s</dt><dd>%s</dd></div><div><dt>%s</dt><dd>%d</dd></div><div class="ps-coa-product-facts__status"><dt>%s</dt><dd><span class="ps-coa-match-status ps-coa-match-status--%s">%s</span></dd></div></dl>', esc_html__( 'Product SKU', 'pepselect-coa-archive' ), esc_html( isset( $summary['sku'] ) && $summary['sku'] ? $summary['sku'] : '—' ), esc_html__( 'Product ID', 'pepselect-coa-archive' ), $post->ID, esc_html__( 'COA connection status', 'pepselect-coa-archive' ), esc_attr( $status['key'] ), esc_html( $status['label'] ) );
+		echo '<div class="ps-coa-product-sidebar-actions">';
 		if ( $compound_id ) {
 			printf( '<p><strong>%s:</strong> <a href="%s">%s</a></p>', esc_html__( 'Connected COA Compound', 'pepselect-coa-archive' ), esc_url( get_edit_post_link( $compound_id, 'raw' ) ), esc_html( get_the_title( $compound_id ) ) );
 			$this->action_link( 'sync', $post->ID, $compound_id, __( 'Sync Now', 'pepselect-coa-archive' ), 'button' );
@@ -91,6 +92,7 @@ final class Product_Matching_Admin {
 			if ( 'publish' === get_post_status( $compound_id ) ) { printf( ' <a class="button" href="%s">%s</a>', esc_url( $this->compound_public_url( $compound_id ) ), esc_html__( 'View Vetting History', 'pepselect-coa-archive' ) ); }
 		} elseif ( 'ready-to-create' === $status['key'] ) { $this->action_link( 'create', $post->ID, 0, __( 'Create and Connect', 'pepselect-coa-archive' ), 'button button-primary' ); }
 		elseif ( 'needs-review' === $status['key'] ) { echo '<p class="description">' . esc_html__( 'Complete the scientific name and confirmed strength fields, save the product, then create the draft compound.', 'pepselect-coa-archive' ) . '</p>'; }
+		echo '</div>';
 		$last = $compound_id ? get_post_meta( $compound_id, Product_Matching::LAST_SYNC_META, true ) : '';
 		if ( $last ) { echo '<p class="description">' . esc_html__( 'Last synchronized:', 'pepselect-coa-archive' ) . ' ' . esc_html( $last ) . '</p>'; }
 	}

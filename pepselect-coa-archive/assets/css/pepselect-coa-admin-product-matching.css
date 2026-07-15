@@ -15,6 +15,13 @@
 .ps-coa-disconnect { color: #b32d2e; }
 .ps-coa-product-strength { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
 .ps-coa-match-status { background: #f0f0f1; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; white-space: nowrap; }
+#pepselect-product-coa-archive .inside { overflow: hidden; }
+.ps-coa-product-facts--sidebar { box-sizing: border-box; grid-template-columns: repeat(2, minmax(0, 1fr)); min-width: 0; width: 100%; }
+.ps-coa-product-facts--sidebar > div { box-sizing: border-box; min-width: 0; width: 100%; }
+.ps-coa-product-facts--sidebar .ps-coa-product-facts__status { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; width: 100%; }
+.ps-coa-product-facts--sidebar .ps-coa-match-status { box-sizing: border-box; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+.ps-coa-product-sidebar-actions { box-sizing: border-box; display: grid; gap: 8px; margin-top: 10px; min-width: 0; overflow-wrap: anywhere; width: 100%; }
+.ps-coa-product-sidebar-actions .button, .ps-coa-product-sidebar-actions .button-link-delete { box-sizing: border-box; display: block; height: auto; margin: 0; max-width: 100%; min-width: 0; overflow-wrap: anywhere; text-align: center; white-space: normal; width: 100%; }
 .ps-coa-match-status--connected, .ps-coa-match-status--ready-to-create { background: #dff3e9; color: #006b42; }
 .ps-coa-match-status--needs-review, .ps-coa-match-status--sku-changed, .ps-coa-match-status--missing-sku, .ps-coa-match-status--duplicate-sku, .ps-coa-match-status--duplicate-product-link { background: #fcf0d4; color: #7a4f00; }
 .ps-coa-match-status--product-missing, .ps-coa-match-status--woocommerce-inactive { background: #f7e2e2; color: #8a2424; }
@@ -23,4 +30,4 @@
 .ps-coa-row-actions { min-width: 210px; }
 .ps-coa-row-actions > a, .ps-coa-connect-existing { display: block; margin: 0 0 6px; }
 .ps-coa-connect-existing select { max-width: 210px; width: 100%; }
-@media (max-width: 782px) { .ps-coa-product-facts { grid-template-columns: 1fr; } .ps-coa-product-strength { grid-template-columns: 1fr; } }
+@media (max-width: 782px) { .ps-coa-product-facts { grid-template-columns: 1fr; } .ps-coa-product-facts.ps-coa-product-facts--sidebar { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ps-coa-product-strength { grid-template-columns: 1fr; } }

@@ -1,7 +1,17 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.15 is the **COA-5B WooCommerce Source-of-Truth and Lightbox Viewport** release. It adds an administrator-only product relationship and controlled synchronization foundation while preserving every approved COA page and all testing history.
+Version 0.4.0-beta.16 is the **COA-5B.1 Admin Workflow and Validation Corrections** release. It corrects the WooCommerce COA sidebar layout, clarifies Compound visibility controls, aligns batch-identity validation with physical workflow stages, and maintains scientific COA Test titles without changing published slugs.
+
+## COA-5B.1 admin workflow corrections
+
+The WooCommerce product-edit COA Archive panel now places Product SKU and Product ID in two equal first-row columns, Connection Status on a wrapping full-width second row, and its Create/Connect or connected actions in a full-width third row. Sidebar-specific sizing prevents horizontal overflow without changing Product Matching, nonces, permissions, or synchronization behavior.
+
+Compound **Active** controls public archive and Vetting History eligibility without deleting the Compound, its tests, reports, or WooCommerce relationship. **Featured** provides priority placement only in supported sections and cannot make an inactive Compound public. The edit controls now explain those definitions directly.
+
+Vendor Vetting and Waiting on Vendor no longer require a batch number, cap color, crimp color, exact vial photo, or optional identity gallery. Submitted to Laboratory preserves its established cap/crimp and expected-date requirements while keeping final results and documents unavailable. Verification in Progress requires Batch Number, Exact Batch Vial Photo, Cap Color, and Crimp Color, but not final PDF or final results. Complete retains the existing strict Approved/Failed documentation, laboratory URL, and truthful-result validation. The additional Batch Identity Photos gallery remains optional at every stage.
+
+COA Test titles are maintained from the linked Compound Display Name. Vendor, waiting, and submitted records use the compound-only name; Verification in Progress and Complete records with a batch use `{Compound Display Name} — Batch {Batch Number}` for Pending, Approved, and Failed outcomes. Batch changes and normal Compound Display Name saves update linked test titles only when needed. Existing published `post_name` values and public URLs are preserved. The one-record CSV importer keeps its headers and preview/apply flow; its normal WordPress/ACF save invokes the same title synchronization.
 
 ## WooCommerce source of truth
 

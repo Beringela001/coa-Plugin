@@ -8,16 +8,28 @@ final class COA_Test_Service {
 	/** @var bool */
 	private $running = false;
 
-	/** Initializes an empty title and enforces one current COA per compound. @param int|string $post_id Post ID. @return void */
+	/** Maintains the administrative title and enforces one current COA per compound. @param int|string $post_id Post ID. @return void */
 	public function after_save( $post_id ) {
 		$post_id = absint( $post_id );
 		if ( ! $post_id || $this->running || Post_Types::COA_TEST !== get_post_type( $post_id ) || wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) { return; }
 		$this->running = true;
-		$this->initialize_title( $post_id );
+		$this->synchronize_title( $post_id );
 		$this->apply_ils_verification_default( $post_id );
 		if ( get_post_meta( $post_id, 'is_current', true ) ) { $this->clear_other_current_tests( $post_id, absint( get_post_meta( $post_id, 'compound_id', true ) ) ); }
 		$this->flag_future_date( $post_id );
 		$this->flag_workflow_guidance( $post_id );
+		$this->running = false;
+	}
+
+	/** Updates linked test titles after a compound display name changes. @param int|string $post_id Compound ID. @return void */
+	public function after_compound_save( $post_id ) {
+		$post_id = absint( $post_id );
+		if ( ! $post_id || $this->running || Post_Types::COMPOUND !== get_post_type( $post_id ) || wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) { return; }
+		$test_ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future' ), 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true, 'meta_key' => 'compound_id', 'meta_value' => $post_id ) );
+		$this->running = true;
+		foreach ( $test_ids as $test_id ) {
+			if ( current_user_can( 'edit_post', $test_id ) ) { $this->synchronize_title( $test_id ); }
+		}
 		$this->running = false;
 	}
 
@@ -60,15 +72,21 @@ final class COA_Test_Service {
 		foreach ( $others as $other_id ) { update_post_meta( $other_id, 'is_current', 0 ); }
 	}
 
-	/** Creates the initial administrative title without overwriting a manual title. @param int $post_id Test ID. @return void */
-	private function initialize_title( $post_id ) {
-		$post = get_post( $post_id ); if ( ! $post || '' !== trim( $post->post_title ) ) { return; }
+	/** Maintains the visible title without changing a published report slug. @param int $post_id Test ID. @return void */
+	private function synchronize_title( $post_id ) {
+		$post = get_post( $post_id ); if ( ! $post || Post_Types::COA_TEST !== $post->post_type ) { return; }
 		$compound_id = absint( get_post_meta( $post_id, 'compound_id', true ) );
-		$batch = trim( (string) get_post_meta( $post_id, 'batch_number', true ) );
-		if ( ! $compound_id || '' === $batch ) { return; }
+		if ( ! $compound_id || Post_Types::COMPOUND !== get_post_type( $compound_id ) ) { return; }
 		$name = trim( (string) get_post_meta( $compound_id, 'display_name', true ) );
-		if ( '' === $name ) { $name = get_the_title( $compound_id ); }
-		if ( '' !== $name ) { wp_update_post( array( 'ID' => $post_id, 'post_title' => sprintf( __( '%1$s — Batch %2$s', 'pepselect-coa-archive' ), $name, $batch ) ) ); }
+		if ( '' === $name ) { $name = trim( (string) get_the_title( $compound_id ) ); }
+		if ( '' === $name ) { return; }
+		$stage = COA_Workflow::stage( $post_id );
+		$batch = trim( (string) get_post_meta( $post_id, 'batch_number', true ) );
+		$title = in_array( $stage, array( 'in-testing', 'complete' ), true ) && '' !== $batch ? sprintf( __( '%1$s — Batch %2$s', 'pepselect-coa-archive' ), $name, $batch ) : $name;
+		if ( $title === $post->post_title ) { return; }
+		$update = array( 'ID' => $post_id, 'post_title' => $title );
+		if ( '' !== $post->post_name || 'publish' === $post->post_status ) { $update['post_name'] = $post->post_name; }
+		wp_update_post( $update );
 	}
 
 	/** Records a short-lived future-date warning for the saving administrator. @param int $post_id Test ID. @return void */

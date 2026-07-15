@@ -8,11 +8,18 @@ const admin = fs.readFileSync(path.join(root, 'includes/class-product-matching-a
 const ui = fs.readFileSync(path.join(root, 'assets/js/pepselect-coa-product-matching.js'), 'utf8');
 const lightbox = fs.readFileSync(path.join(root, 'assets/js/pepselect-coa-lightbox.js'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/css/pepselect-coa-frontend.css'), 'utf8');
+const adminCss = fs.readFileSync(path.join(root, 'assets/css/pepselect-coa-admin-product-matching.css'), 'utf8');
 
 ['woocommerce_product_id', 'related_woocommerce_sku', 'woocommerce_last_sync', 'woocommerce_sync_status'].forEach(value => assert.ok(service.includes(value), value));
 ['create_and_connect', 'connect_existing', 'disconnect', 'backfill_existing_links', 'creation_in_progress'].forEach(value => assert.ok(service.includes(value), value));
 ['Exact or partial SKU, title, or Product ID', 'Create and Connect', 'Connect Existing Compound', 'Sync Now', 'Product Missing'].forEach(value => assert.ok(admin.includes(value), value));
 ['check_ajax_referer', 'check_admin_referer', "current_user_can( 'manage_ps_compounds' )"].forEach(value => assert.ok(admin.includes(value), value));
+['ps-coa-product-facts--sidebar', 'ps-coa-product-facts__status', 'ps-coa-product-sidebar-actions'].forEach(value => assert.ok(admin.includes(value), value));
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)[^}]*min-width: 0[^}]*width: 100%/);
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-product-facts__status \{[^}]*grid-column: 1 \/ -1[^}]*overflow-wrap: anywhere[^}]*width: 100%/);
+assert.match(adminCss, /\.ps-coa-product-facts--sidebar \.ps-coa-match-status \{[^}]*max-width: 100%[^}]*overflow-wrap: anywhere[^}]*white-space: normal/);
+assert.match(adminCss, /\.ps-coa-product-sidebar-actions \.button[^}]*width: 100%/);
+assert.ok(adminCss.includes('#pepselect-product-coa-archive .inside { overflow: hidden; }'));
 ['woocommerce_after_single_product_summary', 'woocommerce_single_product_summary'].forEach(value => assert.ok(!admin.includes(value), 'no public product hook ' + value));
 assert.ok(ui.includes('textContent'));
 assert.ok(!ui.includes('innerHTML'));

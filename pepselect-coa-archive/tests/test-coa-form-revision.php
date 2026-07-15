@@ -36,13 +36,13 @@ class PepSelect_COA_Archive_COA_Form_Revision_Test extends WP_UnitTestCase {
 
 	public function test_stage_validation_requires_only_available_operational_data() {
 		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'pending', 'field_ps_coa_test_workflow_stage' => 'vendor-vetting' );
-		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'waiting-on-vendor';
-		$this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 'blue', 'vial_cap_color' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'submitted-to-lab';
-		$this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) );
+		$this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) ); $this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'in-testing';
-		$this->assertNotTrue( $this->validate( '', 'batch_number' ) ); $this->assertNotTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) );
+		$this->assertNotTrue( $this->validate( '', 'batch_number' ) ); $this->assertNotTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertNotTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) ); $this->assertTrue( $this->validate( '', 'purity_percentage' ) );
 	}
 
 	public function test_partial_results_gate_controls_result_editability_without_deleting_values() {

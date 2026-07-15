@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.15
+Stable tag: 0.4.0-beta.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,13 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.15 makes WooCommerce the administrator-side source of truth for basic product identity. Product ID is canonical, SKU is the matching/audit key, existing scientific COA names and histories are preserved, eligible products can explicitly create one Draft compound, and controlled synchronization is limited to safe product-owned fields.
+Version 0.4.0-beta.16 corrects the WooCommerce COA sidebar layout, explains Active and Featured, aligns batch-identity validation with the physical testing workflow, and maintains scientific COA Test titles while preserving published slugs and URLs.
+
+Product SKU and Product ID now share the sidebar's first row; Connection Status and Create/Connect actions each receive a safe full-width row with wrapping and overflow protection. Existing matching, nonce, permission, and synchronization behavior is unchanged.
+
+Vendor Vetting and Waiting on Vendor do not require unavailable batch identity values. Submitted to Laboratory preserves its established validation. Verification in Progress requires Batch Number, Exact Batch Vial Photo, Cap Color, and Crimp Color without requiring final results or documents. Complete keeps strict Approved/Failed rules. The optional Batch Identity Photos gallery remains optional throughout.
+
+Early-stage tests use their linked Compound Display Name. Verification and Complete records with a batch use `{Compound Display Name} — Batch {Batch Number}` regardless of Pending, Approved, or Failed outcome. Batch and Compound Display Name changes update visible titles without rewriting existing published slugs. The existing one-record CSV preview/apply workflow triggers the same formatter on normal save and retains all CSV headers.
 
 The WooCommerce product editor includes an opt-in COA Archive panel with COA Display Name and confirmed strength fields. COA Archive > Product Matching lists products first, ranks SKU searches ahead of ID/title matches, supports deliberate existing-compound connections, reports duplicate/missing/changed states, and provides safe bulk review. Product deletion or WooCommerce deactivation never deletes compounds or historical documentation.
 
@@ -39,6 +45,13 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.16 =
+* Reflowed the product-edit COA Archive facts and actions into safe two-column and full-width sidebar rows without changing Product Matching behavior.
+* Added exact Active and Featured explanations while preserving existing public visibility rules and stored records.
+* Made packaging identity optional during Vendor Vetting and Waiting on Vendor, retained Submitted behavior, and preserved strict Verification/Complete requirements with an always-optional identity gallery.
+* Maintained COA Test titles from scientific Compound Display Names and batches after normal ACF/CSV saves while preserving published slugs and URLs.
+* Rebuilt and extraction-verified the installable archive with one top-level plugin folder and forward-slash ZIP paths.
 
 = 0.4.0-beta.15 =
 * Added canonical WooCommerce Product ID relationships with unique SKU snapshots, safe synchronization metadata, COA Display Name, confirmed strength, and non-destructive missing/inactive states.
