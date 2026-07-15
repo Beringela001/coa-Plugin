@@ -46,7 +46,7 @@ const card = read('templates/partials/history-previous-card.php');
 const script = read('assets/js/pepselect-coa-history-carousel.js');
 const router = read('includes/class-frontend-router.php');
 
-assert.match(css, /\.ps-coa-history-carousel__control \{[^}]*font-size: 1\.5rem;[^}]*height: 48px;[^}]*top: calc\(50% - 24px\);[^}]*width: 48px;/s);
+assert.match(css, /\.ps-coa-history-carousel__control \{[^}]*aspect-ratio: 1 \/ 1;[^}]*flex: 0 0 48px;[^}]*font-size: 1\.5rem;[^}]*height: 48px !important;[^}]*min-width: 48px;[^}]*top: calc\(50% - 24px\);[^}]*width: 48px !important;/s);
 assert.match(css, /\.ps-coa-history-previous__results li strong \{[^}]*font-size: \.58rem;/s);
 assert.match(css, /\.ps-coa-history-previous__results li small \{[^}]*font-size: \.56rem;[^}]*line-height: 1\.35;[^}]*overflow: hidden;[^}]*text-overflow: ellipsis;[^}]*white-space: nowrap;/s);
 assert.strictEqual((carousel.match(/data-ps-history-previous/g) || []).length, 1);

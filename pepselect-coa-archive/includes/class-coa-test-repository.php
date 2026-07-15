@@ -56,6 +56,21 @@ final class COA_Test_Repository {
 		return array_values( array_map( 'absint', array_keys( array_filter( $states, static function ( $state ) use ( $show_failed_only ) { return $state['primary'] || ( $show_failed_only && $state['failed'] ); } ) ) ) );
 	}
 
+	/** Returns compound IDs with a visible batch number matching the archive search. @param string $search Search term. @param int[] $compound_ids Eligible compounds. @return int[] */
+	public function compound_ids_matching_public_batch( $search, $compound_ids ) {
+		$search = Frontend_Query::normalize_search( $search );
+		$compound_ids = array_values( array_unique( array_filter( array_map( 'absint', $compound_ids ) ) ) );
+		if ( '' === $search || ! $compound_ids ) { return array(); }
+		$matches = array();
+		foreach ( $this->eligible_ids( $compound_ids ) as $test_id ) {
+			$stage = COA_Workflow::stage( $test_id );
+			if ( ! in_array( $stage, array( 'in-testing', 'complete' ), true ) ) { continue; }
+			$batch = trim( (string) get_post_meta( $test_id, 'batch_number', true ) );
+			if ( '' !== $batch && false !== stripos( $batch, $search ) ) { $matches[] = absint( get_post_meta( $test_id, 'compound_id', true ) ); }
+		}
+		return array_values( array_unique( array_filter( $matches ) ) );
+	}
+
 	/** Finds an eligible test by ID and optional expected compound. @param int $test_id Test ID. @param int $compound_id Expected compound. @return \WP_Post|null */
 	public function find_public_by_id( $test_id, $compound_id = 0 ) {
 		$post = get_post( absint( $test_id ) );

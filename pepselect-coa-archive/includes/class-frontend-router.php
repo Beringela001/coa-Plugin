@@ -35,14 +35,16 @@ final class Frontend_Router {
 	public function build_archive( $page = 1, $search = '' ) {
 		$search = Frontend_Query::normalize_search( $search );
 		$settings = Design_Settings::get();
-		$result = $this->compounds->archive_page( $this->tests->compound_ids_with_public_tests( ! empty( $settings['show_failed_only_compounds'] ) ), $page, 24, $search );
+		$eligible_ids = $this->tests->compound_ids_with_public_tests( ! empty( $settings['show_failed_only_compounds'] ) );
+		$batch_matches = $this->tests->compound_ids_matching_public_batch( $search, $eligible_ids );
+		$result = $this->compounds->archive_page( $eligible_ids, $page, 24, $search, $batch_matches );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();
 		foreach ( $result['posts'] as $compound ) { $items[] = $this->view_model->archive_compound( $compound, isset( $grouped[ $compound->ID ] ) ? $grouped[ $compound->ID ] : array() ); }
 		$archive_url = $this->view_model->archive_url();
 		$canonical_args = array_filter( array( 'coa_search' => $search, 'paged' => $result['page'] > 1 ? $result['page'] : null ) );
 		$canonical = $canonical_args ? add_query_arg( $canonical_args, $archive_url ) : $archive_url;
-		return array( 'view' => 'archive', 'template' => 'archive-testing.php', 'canonical' => $canonical, 'archive_url' => $archive_url, 'search' => $search, 'compounds' => $items, 'pagination' => array( 'page' => $result['page'], 'pages' => $result['pages'], 'total' => $result['total'] ) );
+		return array( 'view' => 'archive', 'template' => 'archive-testing.php', 'canonical' => $canonical, 'archive_url' => $archive_url, 'search' => $search, 'compounds' => $items, 'pagination' => array( 'page' => $result['page'], 'pages' => $result['pages'], 'total' => $result['total'], 'available_total' => isset( $result['available_total'] ) ? $result['available_total'] : $result['total'], 'displayed' => count( $items ) ) );
 	}
 
 	/** Builds a visible compound history by slug or ID. @param string $slug Slug. @param int $id ID. @param int $page Page. @return array */

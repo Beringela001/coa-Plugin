@@ -13,10 +13,25 @@ final class Frontend_View_Model {
 		usort( $approved, array( $this, 'compare_by_test_date' ) ); usort( $incoming, array( $this, 'compare_incoming' ) ); usort( $failed, array( $this, 'compare_by_test_date' ) );
 		$latest = $approved ? $approved[0] : null;
 		$summary = $latest ? $this->test_summary( $latest, $compound ) : array();
+		$completed = array_values( array_filter( $approved, static function ( $test ) { return 'complete' === COA_Workflow::stage( $test ); } ) );
+		$archive_image_summary = $completed ? $this->test_summary( $completed[0], $compound ) : array();
 		$status_test = $latest ?: ( $incoming ? $incoming[0] : ( $failed ? $failed[0] : null ) );
 		$status_summary = $status_test ? $this->test_summary( $status_test, $compound ) : array();
 		$preview = array(); if ( $latest ) { $preview[] = $latest; } foreach ( array_merge( $incoming, array_slice( $approved, 1 ), $failed ) as $candidate ) { if ( count( $preview ) >= 3 ) { break; } $preview[] = $candidate; }
-		return array_merge( $this->compound( $compound ), array(
+		$compound_model = $this->compound( $compound );
+		if ( $archive_image_summary ) {
+			$archive_image_url = $archive_image_summary['vial_image_id'] ? $this->image_url( $archive_image_summary['vial_image_id'], 'medium' ) : '';
+			$compound_model['compound_image_id'] = $archive_image_summary['vial_image_id'];
+			$compound_model['compound_image_url'] = $archive_image_url ?: $archive_image_summary['vial_image_url'];
+			$compound_model['compound_image_srcset'] = $archive_image_summary['vial_image_id'] ? $this->image_srcset( $archive_image_summary['vial_image_id'], 'medium' ) : '';
+			$compound_model['compound_image_sizes'] = $archive_image_summary['vial_image_id'] ? $this->image_sizes( $archive_image_summary['vial_image_id'], 'medium' ) : '';
+			$compound_model['compound_image_alt'] = $archive_image_summary['vial_image_alt'];
+			$compound_model['archive_image_source'] = $archive_image_summary['vial_image_source'];
+		} else {
+			$compound_model['archive_image_source'] = $compound_model['compound_image_url'] ? 'compound-image' : 'local-placeholder';
+			if ( ! $compound_model['compound_image_url'] ) { $compound_model['compound_image_url'] = plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE ); $compound_model['compound_image_alt'] = sprintf( __( '%s vial', 'pepselect-coa-archive' ), $compound_model['public_name'] ); }
+		}
+		return array_merge( $compound_model, array(
 			'approved_test_count' => count( $approved ),
 			'public_report_count' => count( $tests ),
 			'incoming_report_count' => count( $incoming ),

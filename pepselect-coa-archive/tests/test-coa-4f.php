@@ -55,7 +55,7 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 
 	public function test_coa_4f_1_carousel_polish_preserves_controls_behavior_and_card_structure() {
 		$root = dirname( __DIR__ ); $css = file_get_contents( $root . '/assets/css/pepselect-coa-frontend.css' ); $carousel = file_get_contents( $root . '/templates/partials/history-previous-carousel.php' ); $card = file_get_contents( $root . '/templates/partials/history-previous-card.php' ); $script = file_get_contents( $root . '/assets/js/pepselect-coa-history-carousel.js' ); $router = file_get_contents( $root . '/includes/class-frontend-router.php' );
-		$this->assertMatchesRegularExpression( '/\\.ps-coa-history-carousel__control \\{[^}]*font-size: 1\\.5rem;[^}]*height: 48px;[^}]*top: calc\\(50% - 24px\\);[^}]*width: 48px;/s', $css );
+		$this->assertMatchesRegularExpression( '/\\.ps-coa-history-carousel__control \\{[^}]*aspect-ratio: 1 \/ 1;[^}]*flex: 0 0 48px;[^}]*font-size: 1\\.5rem;[^}]*height: 48px !important;[^}]*min-width: 48px;[^}]*top: calc\\(50% - 24px\\);[^}]*width: 48px !important;/s', $css );
 		$this->assertStringContainsString( 'box-shadow: 0 5px 14px rgba(24, 53, 79, .14)', $css );
 		$this->assertMatchesRegularExpression( '/\\.ps-coa-history-previous__results li strong \\{[^}]*font-size: \\.58rem;/s', $css );
 		$this->assertMatchesRegularExpression( '/\\.ps-coa-history-previous__results li small \\{[^}]*font-size: \\.56rem;[^}]*line-height: 1\\.35;[^}]*overflow: hidden;[^}]*text-overflow: ellipsis;[^}]*white-space: nowrap;/s', $css );

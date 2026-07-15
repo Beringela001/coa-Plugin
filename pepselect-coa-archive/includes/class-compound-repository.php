@@ -23,30 +23,34 @@ final class Compound_Repository {
 		return $this->visibility->is_compound_public( $post ) ? $post : null;
 	}
 
-	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @param string $search Search term. @return array */
-	public function archive_page( $eligible_ids, $page = 1, $per_page = 24, $search = '' ) {
+	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @param string $search Search term. @param int[] $public_batch_matches Compounds whose public batch number matches. @return array */
+	public function archive_page( $eligible_ids, $page = 1, $per_page = 24, $search = '', $public_batch_matches = array() ) {
 		$ids = array_values( array_unique( array_filter( array_map( 'absint', $eligible_ids ) ) ) );
-		if ( ! $ids ) { return array( 'posts' => array(), 'total' => 0, 'pages' => 0, 'page' => 1 ); }
+		if ( ! $ids ) { return array( 'posts' => array(), 'total' => 0, 'available_total' => 0, 'pages' => 0, 'page' => 1 ); }
 		$search = Frontend_Query::normalize_search( $search );
+		$public_batch_matches = array_values( array_unique( array_filter( array_map( 'absint', $public_batch_matches ) ) ) );
 		$cached = Archive_Cache::get( $search, $page, $per_page, $ids );
 		if ( null !== $cached ) { return $cached; }
 		$posts = get_posts( array( 'post_type' => Post_Types::COMPOUND, 'post_status' => 'publish', 'post__in' => $ids, 'posts_per_page' => -1, 'no_found_rows' => true, 'suppress_filters' => false ) );
 		$posts = array_values( array_filter( $posts, array( $this->visibility, 'is_compound_public' ) ) );
 		if ( $posts ) { update_meta_cache( 'post', wp_list_pluck( $posts, 'ID' ) ); }
+		$available_total = count( $posts );
 		if ( '' !== $search ) {
-			$posts = array_values( array_filter( $posts, static function ( $post ) use ( $search ) {
+			$posts = array_values( array_filter( $posts, static function ( $post ) use ( $search, $public_batch_matches ) {
+				$strength = trim( (string) get_post_meta( $post->ID, 'strength_value', true ) . ' ' . (string) get_post_meta( $post->ID, 'strength_unit', true ) );
 				$haystack = implode( ' ', array(
 					(string) $post->post_title,
 					(string) get_post_meta( $post->ID, 'display_name', true ),
 					(string) get_post_meta( $post->ID, 'compound_name', true ),
 					(string) get_post_meta( $post->ID, 'short_name', true ),
+					$strength,
 				) );
-				return false !== stripos( $haystack, $search );
+				return in_array( $post->ID, $public_batch_matches, true ) || false !== stripos( $haystack, $search );
 			} ) );
 		}
 		usort( $posts, array( $this, 'compare_compounds' ) );
 		$total = count( $posts ); $pages = (int) ceil( $total / $per_page ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
-		$result = array( 'posts' => array_slice( $posts, ( $page - 1 ) * $per_page, $per_page ), 'total' => $total, 'pages' => $pages, 'page' => $page );
+		$result = array( 'posts' => array_slice( $posts, ( $page - 1 ) * $per_page, $per_page ), 'total' => $total, 'available_total' => $available_total, 'pages' => $pages, 'page' => $page );
 		Archive_Cache::set( $search, $page, $per_page, $ids, $result );
 		return $result;
 	}

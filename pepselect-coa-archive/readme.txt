@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.13
+Stable tag: 0.4.0-beta.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,11 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.13 makes the Previous Reports carousel controls easier to see and slightly increases compact category-result text for readability, while preserving the approved carousel behavior and card structure.
+Version 0.4.0-beta.14 redesigns the `/testing/` catalog around the approved compound cards with a navy technical hero, integrated server-rendered search, accurate result counts, a responsive three/two/one-column grid, and a contained no-results state. Search matches public compound display, base and short names, strength, and visible public batch numbers.
+
+Archive cards preserve their approved structure and status behavior while sourcing their image from the latest approved completed report: Batch Vial Photo, COA Test Featured Image, related Compound image, then the bundled neutral vial. Previous Reports carousel behavior is unchanged; its controls now use fixed equal dimensions and non-shrinking circular geometry.
+
+The installable archive is entry-inspected and temporary-extraction verified with one top-level `pepselect-coa-archive/` folder and the activation path `pepselect-coa-archive/pepselect-coa-archive.php`.
 
 The exact Batch Vial Photo is optional through laboratory submission and required during Verification in Progress and Complete. An optional ordered Batch Identity Photos gallery provides supporting views. Published legacy reports remain public and receive a non-destructive admin warning until an exact image is added.
 
@@ -29,6 +33,12 @@ Private access/verification metadata and internal fields remain excluded from pu
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.14 =
+* Rebuilt only the `/testing/` catalog surroundings with the approved navy hero, trust chips, integrated accessible search, result count, empty state, and responsive three/two/one-column grid.
+* Extended server-rendered search to strength and visible public batch numbers without weakening visibility rules or requiring JavaScript.
+* Preserved the approved card partial while switching its image data to the latest completed report’s safe four-step fallback chain.
+* Prevented Previous Reports controls from shrinking by enforcing equal fixed dimensions, a square aspect ratio, and circular clipping.
 
 = 0.4.0-beta.13 =
 * Enlarged and strengthened the Previous Reports carousel controls with a clearer border, shadow, and hover state.

@@ -10,11 +10,26 @@ final class Upgrade {
 	/** Flushes rewrite rules once per installed plugin version. @return void */
 	public static function maybe_upgrade() {
 		if ( PEPSELECT_COA_ARCHIVE_VERSION === get_option( self::VERSION_OPTION ) ) { return; }
+		self::migrate_archive_catalog_copy();
 		Archive_Cache::invalidate();
 		flush_rewrite_rules( false );
 		update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false );
 	}
 
 	/** Records activation after the activation transaction has flushed rules. @return void */
-	public static function mark_current() { Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+	public static function mark_current() { self::migrate_archive_catalog_copy(); Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+
+	/** Replaces only untouched legacy archive defaults while preserving customized copy. @return void */
+	private static function migrate_archive_catalog_copy() {
+		$settings = get_option( Design_Settings::OPTION, array() );
+		if ( ! is_array( $settings ) ) { return; }
+		$replacements = array(
+			'archive_title' => array( 'Testing & Documentation', 'Every batch. Every peptide. Independently verified.' ),
+			'archive_intro' => array( 'Independent laboratory reports organized by compound and batch.', 'Pep Select doesn’t ask you to take our word for it. Third-party labs test every release — purity, mass, sterility — and we publish the certificates raw. No cropping, no marketing gloss, no missing pages. Search a compound, open a batch, read the same report our chemists do.' ),
+			'search_placeholder_copy' => array( 'Search compounds...', 'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B' ),
+		);
+		$changed = false;
+		foreach ( $replacements as $key => $copy ) { if ( isset( $settings[ $key ] ) && $copy[0] === $settings[ $key ] ) { $settings[ $key ] = $copy[1]; $changed = true; } }
+		if ( $changed ) { update_option( Design_Settings::OPTION, $settings, false ); Design_Settings::clear_cache(); }
+	}
 }

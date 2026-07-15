@@ -1,7 +1,9 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <article class="ps-coa-card ps-coa-compound-card">
 	<div class="ps-coa-compound-card__media">
-		<?php if ( $compound['compound_image_url'] ) : ?>
+		<?php if ( $compound['compound_image_id'] ) : ?>
+			<?php echo wp_get_attachment_image( $compound['compound_image_id'], 'medium', false, array( 'alt' => $compound['compound_image_alt'], 'loading' => 'lazy', 'sizes' => $compound['compound_image_sizes'] ?: '(max-width: 640px) 100vw, 33vw' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core returns escaped attachment markup. ?>
+		<?php elseif ( $compound['compound_image_url'] ) : ?>
 			<img src="<?php echo esc_url( $compound['compound_image_url'] ); ?>"<?php if ( $compound['compound_image_srcset'] ) : ?> srcset="<?php echo esc_attr( $compound['compound_image_srcset'] ); ?>"<?php endif; ?><?php if ( $compound['compound_image_sizes'] ) : ?> sizes="<?php echo esc_attr( $compound['compound_image_sizes'] ); ?>"<?php endif; ?> alt="<?php echo esc_attr( $compound['compound_image_alt'] ); ?>" loading="lazy">
 		<?php else : ?>
 			<span class="ps-coa-image-fallback" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M18 5h12v5l-2 3v5.5c5.5 1.7 9.5 6.8 9.5 12.8V39c0 2.2-1.8 4-4 4h-19c-2.2 0-4-1.8-4-4v-7.7c0-6 4-11.1 9.5-12.8V13l-2-3V5Z"/><path d="M16 30h16"/></svg></span>

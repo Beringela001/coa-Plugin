@@ -1,7 +1,21 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.13 is the **COA-4F.1 Previous Reports Carousel Final Polish** release. It improves carousel-control visibility and the readability of compact category results without changing report data, ordering, navigation behavior, or card structure.
+Version 0.4.0-beta.14 is the **COA-4G Archive Catalog Redesign and Carousel Arrow Correction** release. It rebuilds only the `/testing/` catalog surroundings around the approved compound cards and makes the existing Previous Reports controls resistant to theme-driven compression.
+
+## Archive catalog
+
+The archive now uses a route-scoped navy technical hero, integrated accessible search, a live server-rendered “Showing X of Y compounds” count, a contained no-results state, and a responsive three/two/one-column grid. The approved compound-card partial and its wording, statuses, recent-batch limit, report counts, spacing, and destinations remain unchanged.
+
+Core search works without JavaScript and preserves the sanitized query in the URL. It matches public compound display names, base names, short names, strength plus unit, and visible batch numbers from eligible public completed or in-testing reports. Draft, private, inactive, archived, and otherwise ineligible records remain excluded.
+
+Archive-card images now follow the latest approved completed report, preferring its Batch Vial Photo, then its COA Test Featured Image, then the related Compound image, and finally the bundled neutral vial. Incoming reports and unrelated compounds cannot supply the card image.
+
+Previous Reports controls remain behaviorally unchanged but now have fixed equal dimensions, an explicit square aspect ratio, non-shrinking flex constraints, circular clipping, centered glyphs, and the existing hover, focus, disabled, keyboard, and reduced-motion behavior.
+
+## Package verification
+
+The release archive is built from the `pepselect-coa-archive/` source directory, inspected entry by entry for forward-slash paths and a single top-level folder, then extracted to a temporary directory and compared with the source tree. The only valid activation path is `pepselect-coa-archive/pepselect-coa-archive.php`; nested duplicate plugin folders and bundled reference screenshots are rejected.
 
 ## Exact batch identity
 
