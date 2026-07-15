@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.18
+Stable tag: 0.4.0-beta.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,13 +12,13 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.18 adds `[pepselect_product_coa_carousel]`, an Elementor-compatible WooCommerce single-product carousel for the latest six Approved/Complete reports connected through the canonical Product ID relationship.
+Version 0.4.0-beta.19 extends `[pepselect_product_coa_carousel]` with a server-selected Current/Latest, one Incoming, and Previous report hierarchy connected through the canonical Product ID relationship.
 
-The shortcode renders a new compact product-page card rather than reusing archive or history cards. Reports sort by test date, publication date, and post ID. Fully Vetted requires seven documented categories and explicit successful statuses; successful partial panels say QC Passed. Failed categories are excluded, Reported/Pending/Not Tested never become Pass, and missing purity displays no fabricated value.
+The first eligible Approved/Complete report is the explicit Current report or, when none is marked current, the newest report labeled Latest Report. One active Incoming record may follow, prioritized by Verification in Progress, Submitted to Laboratory, Waiting on Vendor, then Vendor Vetting. Previous approved records fill the remaining positions. Failed, draft, private, unpublished, superseded, abandoned, inactive-compound, and wrong-compound/strength records never become product cards.
 
-Three cards display on desktop, two on tablet, and one on mobile. Native swipe/scroll snapping, circular previous/next buttons, end-state disabling, resize recalculation, visible focus, reduced motion, and no autoplay provide an accessible dependency-free carousel. Dedicated assets load only after the shortcode produces report cards on a single-product request.
+The carousel receives at most four cards and displays three on desktop, two on tablet, and one on mobile. Current uses a pale-green primary treatment, Incoming uses neutral blue without purity or passing claims, and Previous uses muted green-gray. Current/Previous link to exact full reports; Incoming links only to Vetting History. Native swipe, circular controls, responsive end states, visible focus, reduced motion, and no autoplay remain unchanged. Dedicated assets load only after the shortcode produces cards on a single-product request.
 
-In Elementor, open Templates > Theme Builder > Single Product > Edit with Elementor. Place a Shortcode widget after Product Data Tabs and before You may also like, enter `[pepselect_product_coa_carousel]`, then update the template. The existing View Latest COA button remains unchanged.
+No new Elementor work is required. Upload and replace the plugin, confirm activation, clear Kinsta cache, and reload the product page. The installed shortcode and existing View Latest COA button remain unchanged.
 
 Catalog cards use CSS Grid stretching and vertical flex layout so their unchanged View All Reports footers align at the bottom. Mobile returns to natural one-column height. No fake content, fixed card height, or JavaScript measurement is used.
 
@@ -57,6 +57,13 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.19 =
+* Added Current/Latest, one Incoming, and Previous server-side card roles with a strict four-card order and limit.
+* Added advanced-stage Incoming selection, future-date/modified/ID tie-breakers, exact stage copy, privacy-safe fields, and Vetting History-only destinations.
+* Added restrained green, neutral-blue, and muted green-gray role surfaces without changing approved card dimensions or carousel behavior.
+* Excluded Failed and failed-category records from product cards while preserving existing Vetting History transparency and all non-public visibility rules.
+* Preserved the shortcode, Elementor placement, three/two/one responsive behavior, route-scoped assets, product page, pricing, stock, inventory, orders, checkout, shipping, and QR-free behavior.
 
 = 0.4.0-beta.18 =
 * Added `[pepselect_product_coa_carousel]` with exact WooCommerce Product ID relationship resolution and no title/SKU fallback.

@@ -25,19 +25,30 @@ assert.ok(!coordinator.includes('coa_name('));
 assert.ok(!coordinator.includes('sku('));
 assert.ok(!coordinator.includes('search('));
 assert.ok(!/query_posts|setup_postdata|wp_reset_postdata/.test(coordinator));
-assert.ok(coordinator.includes("if ( 6 === count( $reports ) )"));
+assert.ok(coordinator.includes("if ( 4 === count( $reports ) )"));
+assert.ok(coordinator.includes("$this->tests->for_product_carousel"));
+assert.ok(coordinator.includes("$lead['role'] = 'current'"));
+assert.ok(coordinator.includes("$previous['role'] = 'previous'"));
+assert.ok(coordinator.includes("$reports[] = $incoming"));
 assert.ok(coordinator.includes('$this->rendered_product_ids'));
 
 assert.ok(repository.includes('public function approved_for_product_carousel'));
+assert.ok(repository.includes('public function for_product_carousel'));
 assert.ok(repository.includes("$this->visibility->is_approved( $test )"));
+assert.ok(repository.includes("$this->visibility->is_incoming( $test )"));
 assert.ok(repository.includes("'complete' === COA_Workflow::stage( $test )"));
 const comparator = repository.slice(repository.indexOf('private function compare_product_carousel'));
+assert.ok(comparator.includes("get_post_meta( $right->ID, 'is_current'"));
 assert.ok(comparator.includes("get_post_meta( $left->ID, 'test_date'"));
 assert.ok(comparator.includes('$right_published'));
 assert.ok(comparator.includes('$right->ID <=> $left->ID'));
-assert.ok(!comparator.includes('is_current'));
+assert.ok(comparator.includes('compare_product_carousel_incoming'));
+assert.ok(comparator.includes('COA_Workflow::priority'));
+assert.ok(comparator.includes('future_expected_date'));
+assert.ok(comparator.includes('$right_modified'));
 
 assert.ok(viewModel.includes('public function product_carousel_report'));
+assert.ok(viewModel.includes('public function product_carousel_incoming'));
 assert.ok(viewModel.includes('$this->history_report( $test, $compound, false )'));
 assert.ok(viewModel.includes("'fail' ==="));
 assert.ok(viewModel.includes("'pass' ==="));
@@ -46,9 +57,13 @@ assert.ok(viewModel.includes("'QC Passed'"));
 assert.ok(viewModel.includes("'Report Published'"));
 assert.ok(viewModel.includes("'product-purity'"));
 assert.ok(viewModel.includes("'net-content' !== $row['key']"));
+['Vendor Vetting', 'Waiting on Vendor', 'Submitted to Laboratory', 'Verification in Progress'].forEach(value => assert.ok(viewModel.includes(value)));
+['We are currently vetting vendors for this compound.', 'We are currently waiting on a new batch from our vendor.', 'Samples have been shipped to the testing laboratory.', 'Independent testing is underway.'].forEach(value => assert.ok(viewModel.includes(value)));
+assert.ok(viewModel.includes("$this->compound_url( $compound )"));
 
 ['aria-labelledby', 'aria-roledescription="carousel"', 'aria-controls', '<button', 'disabled(', 'data-ps-coa-product-carousel'].forEach(value => assert.ok(template.includes(value)));
-['<a class="ps-coa-product-carousel__card"', 'esc_url', 'esc_attr', 'esc_html', 'Latest Report', 'Not reported', 'View full batch report'].forEach(value => assert.ok(card.includes(value)));
+['<a class="ps-coa-product-carousel__card ps-coa-product-carousel__card--', 'esc_url', 'esc_attr', 'esc_html', 'Not reported', 'View full batch report', 'VIEW VETTING STATUS', 'Vetting status'].forEach(value => assert.ok(card.includes(value)));
+assert.ok(card.includes('$ps_role'));
 ['lab_report_url', 'pdf_url', 'qr'].forEach(value => assert.ok(!card.toLowerCase().includes(value)));
 
 assert.match(css, /--ps-coa-product-visible:\s*3/);
@@ -60,6 +75,10 @@ assert.match(css, /\.ps-coa-product-carousel__viewport \{[\s\S]*overflow-x:\s*au
 assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
 assert.ok(css.includes('.ps-coa-product-carousel__card:focus-visible'));
 assert.ok(css.includes('.ps-coa-product-carousel__control:focus-visible'));
+['.ps-coa-product-carousel__card--current', '.ps-coa-product-carousel__card--incoming', '.ps-coa-product-carousel__card--previous'].forEach(value => assert.ok(css.includes(value)));
+assert.match(css, /card--current[\s\S]*#f1fbf6/);
+assert.match(css, /card--incoming[\s\S]*#f3fafd/);
+assert.match(css, /card--previous[\s\S]*#f8faf8/);
 assert.ok(!css.includes('position: fixed'));
 
 assert.ok(script.includes("querySelectorAll(selector).forEach(initialize)"));

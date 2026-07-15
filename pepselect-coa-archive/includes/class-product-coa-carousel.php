@@ -22,7 +22,7 @@ final class Product_COA_Carousel {
 	/** Registers the Elementor-compatible shortcode. @return void */
 	public function register_hooks() { add_shortcode( 'pepselect_product_coa_carousel', array( $this, 'shortcode' ) ); }
 
-	/** Renders up to six truthful approved reports for the exact connected product. @param array $attributes Shortcode attributes. @return string */
+	/** Renders up to four truthful Current, Incoming, and Previous cards for the exact connected product. @param array $attributes Shortcode attributes. @return string */
 	public function shortcode( $attributes = array() ) {
 		$attributes = shortcode_atts( array( 'product_id' => 0 ), $attributes, 'pepselect_product_coa_carousel' );
 		$product_id = $this->resolve_product_id( absint( $attributes['product_id'] ) );
@@ -33,13 +33,31 @@ final class Product_COA_Carousel {
 		$compound = $this->compounds->find_public_by_id( $compound_ids[0] );
 		if ( ! $compound ) { return ''; }
 
-		$reports = array();
-		foreach ( $this->tests->approved_for_product_carousel( $compound->ID ) as $test ) {
+		$records = $this->tests->for_product_carousel( $compound->ID );
+		$documented = array();
+		foreach ( $records['documented'] as $test ) {
 			$report = $this->view_model->product_carousel_report( $test, $compound );
 			if ( ! $report ) { continue; }
-			$report['is_latest'] = ! $reports;
-			$reports[] = $report;
-			if ( 6 === count( $reports ) ) { break; }
+			$documented[] = $report;
+			if ( 4 === count( $documented ) ) { break; }
+		}
+
+		$reports = array();
+		if ( $documented ) {
+			$lead = array_shift( $documented );
+			$lead['role'] = 'current';
+			$lead['role_label'] = $lead['is_current'] ? __( 'Current Batch', 'pepselect-coa-archive' ) : __( 'Latest Report', 'pepselect-coa-archive' );
+			$reports[] = $lead;
+		}
+		if ( $records['incoming'] ) {
+			$incoming = $this->view_model->product_carousel_incoming( $records['incoming'], $compound );
+			if ( $incoming ) { $reports[] = $incoming; }
+		}
+		foreach ( $documented as $previous ) {
+			if ( 4 === count( $reports ) ) { break; }
+			$previous['role'] = 'previous';
+			$previous['role_label'] = __( 'Previous Report', 'pepselect-coa-archive' );
+			$reports[] = $previous;
 		}
 		if ( ! $reports ) { return ''; }
 

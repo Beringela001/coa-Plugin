@@ -35,21 +35,40 @@ final class COA_Test_Repository {
 	/**
 	 * Returns approved, completed public reports for the product-page carousel.
 	 *
-	 * Selection stays compound-exact and uses test date, publication date, then
-	 * post ID for deterministic newest-first ordering. Result truthfulness is
-	 * projected by Frontend_View_Model before the six-card limit is applied.
+	 * Selection stays compound-exact and uses the explicit current flag, test
+	 * date, publication date, then post ID. Result truthfulness and the final
+	 * four-card role limit are projected by the existing frontend path.
 	 *
 	 * @param int $compound_id Compound ID.
 	 * @return \WP_Post[]
 	 */
 	public function approved_for_product_carousel( $compound_id ) {
-		$posts = array();
+		$records = $this->for_product_carousel( $compound_id );
+		return $records['documented'];
+	}
+
+	/**
+	 * Returns the canonical product-card candidates from one public query.
+	 *
+	 * Documented reports are current-first and newest-first. Incoming contains
+	 * only the single most advanced active public record. Failed, superseded,
+	 * abandoned, private, draft, unpublished, and inactive-compound records are
+	 * removed by the centralized visibility and workflow rules before sorting.
+	 *
+	 * @param int $compound_id Compound ID.
+	 * @return array{documented:\WP_Post[],incoming:\WP_Post|null}
+	 */
+	public function for_product_carousel( $compound_id ) {
+		$documented = array(); $incoming = array();
 		foreach ( $this->eligible_ids( array( absint( $compound_id ) ) ) as $test_id ) {
 			$test = get_post( $test_id );
-			if ( $test && $this->visibility->is_approved( $test ) && 'complete' === COA_Workflow::stage( $test ) ) { $posts[] = $test; }
+			if ( ! $test ) { continue; }
+			if ( $this->visibility->is_approved( $test ) && 'complete' === COA_Workflow::stage( $test ) ) { $documented[] = $test; }
+			elseif ( $this->visibility->is_incoming( $test ) ) { $incoming[] = $test; }
 		}
-		usort( $posts, array( $this, 'compare_product_carousel' ) );
-		return $posts;
+		usort( $documented, array( $this, 'compare_product_carousel' ) );
+		usort( $incoming, array( $this, 'compare_product_carousel_incoming' ) );
+		return array( 'documented' => $documented, 'incoming' => $incoming ? $incoming[0] : null );
 	}
 
 	/** Returns eligible tests grouped by compound ID. @param int[] $compound_ids Compound IDs. @return array */
@@ -172,8 +191,10 @@ final class COA_Test_Repository {
 		return 0 !== $priority ? $priority : strcmp( $right->post_date_gmt, $left->post_date_gmt );
 	}
 
-	/** Sorts product carousel reports by test date, publication date, then ID. @return int */
+	/** Sorts product carousel reports current-first, then by test date, publication date, and ID. @return int */
 	private function compare_product_carousel( $left, $right ) {
+		$current = absint( get_post_meta( $right->ID, 'is_current', true ) ) <=> absint( get_post_meta( $left->ID, 'is_current', true ) );
+		if ( 0 !== $current ) { return $current; }
 		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) );
 		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
 		$date = strcmp( $right_date, $left_date );
@@ -182,5 +203,26 @@ final class COA_Test_Repository {
 		$right_published = '0000-00-00 00:00:00' !== $right->post_date_gmt ? $right->post_date_gmt : $right->post_date;
 		$published = strcmp( $right_published, $left_published );
 		return 0 !== $published ? $published : ( $right->ID <=> $left->ID );
+	}
+
+	/** Sorts incoming cards by stage, nearest future date, modified date, then ID. @return int */
+	private function compare_product_carousel_incoming( $left, $right ) {
+		$priority = COA_Workflow::priority( COA_Workflow::stage( $left ) ) <=> COA_Workflow::priority( COA_Workflow::stage( $right ) );
+		if ( 0 !== $priority ) { return $priority; }
+		$left_date = $this->future_expected_date( $left ); $right_date = $this->future_expected_date( $right );
+		if ( $left_date && $right_date && $left_date !== $right_date ) { return strcmp( $left_date, $right_date ); }
+		if ( $left_date && ! $right_date ) { return -1; }
+		if ( ! $left_date && $right_date ) { return 1; }
+		$left_modified = '0000-00-00 00:00:00' !== $left->post_modified_gmt ? $left->post_modified_gmt : $left->post_modified;
+		$right_modified = '0000-00-00 00:00:00' !== $right->post_modified_gmt ? $right->post_modified_gmt : $right->post_modified;
+		$modified = strcmp( $right_modified, $left_modified );
+		return 0 !== $modified ? $modified : ( $right->ID <=> $left->ID );
+	}
+
+	/** Returns a sortable valid today-or-future expected date, or an empty value. @return string */
+	private function future_expected_date( $test ) {
+		$date = preg_replace( '/\D/', '', (string) get_post_meta( $test->ID, 'expected_coa_date', true ) );
+		if ( 8 !== strlen( $date ) || ! checkdate( (int) substr( $date, 4, 2 ), (int) substr( $date, 6, 2 ), (int) substr( $date, 0, 4 ) ) ) { return ''; }
+		return $date >= current_time( 'Ymd' ) ? $date : '';
 	}
 }
