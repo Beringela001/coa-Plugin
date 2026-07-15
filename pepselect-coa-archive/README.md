@@ -1,7 +1,15 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.16 is the **COA-5B.1 Admin Workflow and Validation Corrections** release. It corrects the WooCommerce COA sidebar layout, clarifies Compound visibility controls, aligns batch-identity validation with physical workflow stages, and maintains scientific COA Test titles without changing published slugs.
+Version 0.4.0-beta.17 is the **COA-5B.2 Archive Card Alignment and Workflow Status Sorting** release. It keeps the approved `/testing/` card design intact while aligning card footers within desktop/tablet rows and ordering compounds by their current public documentation state.
+
+## COA-5B.2 archive alignment and sorting
+
+The existing catalog grid now stretches its real card items within each desktop three-column and tablet two-column row. Each card remains a vertical flex container at full row height, its body consumes available space, and the unchanged View All Reports footer sits at the bottom. No placeholder content, fake batch pills, truncation, JavaScript measurement, or rigid fixed card height is used. At the single-column mobile breakpoint, cards return to natural content height to avoid excess whitespace and horizontal overflow.
+
+The archive builds one batched public-test index before compound pagination. Compounds sort by: current approved Complete report; Verification in Progress; Submitted to Laboratory; Waiting on Vendor; Vendor Vetting; then no current approved or active incoming public record. A current approved release remains first even when a replacement batch is incoming. Without one, the most advanced public incoming stage wins. Failed reports and non-current historical approvals never create documented priority; draft, private, inactive, and otherwise non-public records cannot influence sorting.
+
+Within each status group, Compound Display Order sorts ascending, followed by Display Name and WordPress post ID. Status priority always overrides Display Order, and no stored order or test metadata is rewritten. Search uses the same batched priority map before filtering/pagination, so matching results retain status order and accurate counts. The cache key includes the public priority scope, while existing Compound/COA Test save, ACF save, trash, untrash, and delete hooks continue to advance the archive namespace when ordering data changes.
 
 ## COA-5B.1 admin workflow corrections
 

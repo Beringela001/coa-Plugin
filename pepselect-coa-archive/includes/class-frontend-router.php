@@ -35,9 +35,8 @@ final class Frontend_Router {
 	public function build_archive( $page = 1, $search = '' ) {
 		$search = Frontend_Query::normalize_search( $search );
 		$settings = Design_Settings::get();
-		$eligible_ids = $this->tests->compound_ids_with_public_tests( ! empty( $settings['show_failed_only_compounds'] ) );
-		$batch_matches = $this->tests->compound_ids_matching_public_batch( $search, $eligible_ids );
-		$result = $this->compounds->archive_page( $eligible_ids, $page, 24, $search, $batch_matches );
+		$index = $this->tests->archive_index( $search, ! empty( $settings['show_failed_only_compounds'] ) );
+		$result = $this->compounds->archive_page( $index['compound_ids'], $page, 24, $search, $index['batch_matches'], $index['sort_priorities'] );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();
 		foreach ( $result['posts'] as $compound ) { $items[] = $this->view_model->archive_compound( $compound, isset( $grouped[ $compound->ID ] ) ? $grouped[ $compound->ID ] : array() ); }

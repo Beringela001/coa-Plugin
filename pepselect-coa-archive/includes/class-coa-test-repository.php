@@ -47,13 +47,34 @@ final class COA_Test_Repository {
 
 	/** Returns unique compound IDs that own eligible tests. @return int[] */
 	public function compound_ids_with_public_tests( $show_failed_only = false ) {
-		$states = array();
+		$index = $this->archive_index( '', $show_failed_only );
+		return $index['compound_ids'];
+	}
+
+	/** Batch-loads the public archive eligibility, batch-search, and workflow sort index. @param string $search Search term. @param bool $show_failed_only Include compounds represented only by failed reports. @return array */
+	public function archive_index( $search = '', $show_failed_only = false ) {
+		$search = Frontend_Query::normalize_search( $search );
+		$states = array(); $batch_matches = array();
 		foreach ( $this->eligible_ids() as $test_id ) {
 			$compound_id = absint( get_post_meta( $test_id, 'compound_id', true ) ); if ( ! $compound_id ) { continue; }
-			if ( ! isset( $states[ $compound_id ] ) ) { $states[ $compound_id ] = array( 'primary' => false, 'failed' => false ); }
-			if ( $this->visibility->is_failed( $test_id ) ) { $states[ $compound_id ]['failed'] = true; } else { $states[ $compound_id ]['primary'] = true; }
+			if ( ! isset( $states[ $compound_id ] ) ) { $states[ $compound_id ] = array( 'primary' => false, 'failed' => false, 'priority' => 6 ); }
+			$outcome = COA_Workflow::outcome( $test_id ); $stage = COA_Workflow::stage( $test_id );
+			if ( 'failed' === $outcome ) { $states[ $compound_id ]['failed'] = true; }
+			else { $states[ $compound_id ]['primary'] = true; }
+			if ( 'approved' === $outcome && 'complete' === $stage && absint( get_post_meta( $test_id, 'is_current', true ) ) ) {
+				$states[ $compound_id ]['priority'] = 1;
+			} elseif ( 1 !== $states[ $compound_id ]['priority'] && 'pending' === $outcome && COA_Workflow::is_incoming_stage( $stage ) ) {
+				$states[ $compound_id ]['priority'] = min( $states[ $compound_id ]['priority'], 2 + COA_Workflow::priority( $stage ) );
+			}
+			if ( '' !== $search && in_array( $stage, array( 'in-testing', 'complete' ), true ) ) {
+				$batch = trim( (string) get_post_meta( $test_id, 'batch_number', true ) );
+				if ( '' !== $batch && false !== stripos( $batch, $search ) ) { $batch_matches[] = $compound_id; }
+			}
 		}
-		return array_values( array_map( 'absint', array_keys( array_filter( $states, static function ( $state ) use ( $show_failed_only ) { return $state['primary'] || ( $show_failed_only && $state['failed'] ); } ) ) ) );
+		$states = array_filter( $states, static function ( $state ) use ( $show_failed_only ) { return $state['primary'] || ( $show_failed_only && $state['failed'] ); } );
+		$compound_ids = array_values( array_map( 'absint', array_keys( $states ) ) ); $sort_priorities = array();
+		foreach ( $states as $compound_id => $state ) { $sort_priorities[ absint( $compound_id ) ] = absint( $state['priority'] ); }
+		return array( 'compound_ids' => $compound_ids, 'batch_matches' => array_values( array_unique( array_intersect( $compound_ids, array_map( 'absint', $batch_matches ) ) ) ), 'sort_priorities' => $sort_priorities );
 	}
 
 	/** Returns compound IDs with a visible batch number matching the archive search. @param string $search Search term. @param int[] $compound_ids Eligible compounds. @return int[] */
@@ -61,14 +82,8 @@ final class COA_Test_Repository {
 		$search = Frontend_Query::normalize_search( $search );
 		$compound_ids = array_values( array_unique( array_filter( array_map( 'absint', $compound_ids ) ) ) );
 		if ( '' === $search || ! $compound_ids ) { return array(); }
-		$matches = array();
-		foreach ( $this->eligible_ids( $compound_ids ) as $test_id ) {
-			$stage = COA_Workflow::stage( $test_id );
-			if ( ! in_array( $stage, array( 'in-testing', 'complete' ), true ) ) { continue; }
-			$batch = trim( (string) get_post_meta( $test_id, 'batch_number', true ) );
-			if ( '' !== $batch && false !== stripos( $batch, $search ) ) { $matches[] = absint( get_post_meta( $test_id, 'compound_id', true ) ); }
-		}
-		return array_values( array_unique( array_filter( $matches ) ) );
+		$index = $this->archive_index( $search, true );
+		return array_values( array_intersect( $compound_ids, $index['batch_matches'] ) );
 	}
 
 	/** Finds an eligible test by ID and optional expected compound. @param int $test_id Test ID. @param int $compound_id Expected compound. @return \WP_Post|null */

@@ -23,13 +23,13 @@ final class Compound_Repository {
 		return $this->visibility->is_compound_public( $post ) ? $post : null;
 	}
 
-	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @param string $search Search term. @param int[] $public_batch_matches Compounds whose public batch number matches. @return array */
-	public function archive_page( $eligible_ids, $page = 1, $per_page = 24, $search = '', $public_batch_matches = array() ) {
+	/** Returns an ordered, paginated public compound result. @param int[] $eligible_ids IDs with tests. @param int $page Page. @param int $per_page Page size. @param string $search Search term. @param int[] $public_batch_matches Compounds whose public batch number matches. @param int[] $sort_priorities Public workflow priority keyed by compound ID. @return array */
+	public function archive_page( $eligible_ids, $page = 1, $per_page = 24, $search = '', $public_batch_matches = array(), $sort_priorities = array() ) {
 		$ids = array_values( array_unique( array_filter( array_map( 'absint', $eligible_ids ) ) ) );
 		if ( ! $ids ) { return array( 'posts' => array(), 'total' => 0, 'available_total' => 0, 'pages' => 0, 'page' => 1 ); }
 		$search = Frontend_Query::normalize_search( $search );
 		$public_batch_matches = array_values( array_unique( array_filter( array_map( 'absint', $public_batch_matches ) ) ) );
-		$cached = Archive_Cache::get( $search, $page, $per_page, $ids );
+		$cached = Archive_Cache::get( $search, $page, $per_page, $ids, $sort_priorities );
 		if ( null !== $cached ) { return $cached; }
 		$posts = get_posts( array( 'post_type' => Post_Types::COMPOUND, 'post_status' => 'publish', 'post__in' => $ids, 'posts_per_page' => -1, 'no_found_rows' => true, 'suppress_filters' => false ) );
 		$posts = array_values( array_filter( $posts, array( $this->visibility, 'is_compound_public' ) ) );
@@ -48,21 +48,22 @@ final class Compound_Repository {
 				return in_array( $post->ID, $public_batch_matches, true ) || false !== stripos( $haystack, $search );
 			} ) );
 		}
-		usort( $posts, array( $this, 'compare_compounds' ) );
+		usort( $posts, function ( $left, $right ) use ( $sort_priorities ) { return $this->compare_compounds( $left, $right, $sort_priorities ); } );
 		$total = count( $posts ); $pages = (int) ceil( $total / $per_page ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
 		$result = array( 'posts' => array_slice( $posts, ( $page - 1 ) * $per_page, $per_page ), 'total' => $total, 'available_total' => $available_total, 'pages' => $pages, 'page' => $page );
-		Archive_Cache::set( $search, $page, $per_page, $ids, $result );
+		Archive_Cache::set( $search, $page, $per_page, $ids, $result, $sort_priorities );
 		return $result;
 	}
 
-	/** Sorts featured desc, display order asc, display name asc. @return int */
-	private function compare_compounds( $left, $right ) {
-		$featured = absint( get_post_meta( $right->ID, 'is_featured', true ) ) <=> absint( get_post_meta( $left->ID, 'is_featured', true ) );
-		if ( 0 !== $featured ) { return $featured; }
+	/** Sorts public workflow priority, display order, display name, then post ID. @param \WP_Post $left Left compound. @param \WP_Post $right Right compound. @param int[] $sort_priorities Priorities keyed by compound ID. @return int */
+	private function compare_compounds( $left, $right, $sort_priorities ) {
+		$priority = ( isset( $sort_priorities[ $left->ID ] ) ? absint( $sort_priorities[ $left->ID ] ) : 6 ) <=> ( isset( $sort_priorities[ $right->ID ] ) ? absint( $sort_priorities[ $right->ID ] ) : 6 );
+		if ( 0 !== $priority ) { return $priority; }
 		$order = absint( get_post_meta( $left->ID, 'display_order', true ) ) <=> absint( get_post_meta( $right->ID, 'display_order', true ) );
 		if ( 0 !== $order ) { return $order; }
 		$left_name = get_post_meta( $left->ID, 'display_name', true ) ?: $left->post_title;
 		$right_name = get_post_meta( $right->ID, 'display_name', true ) ?: $right->post_title;
-		return strnatcasecmp( $left_name, $right_name );
+		$name = strnatcasecmp( $left_name, $right_name );
+		return 0 !== $name ? $name : $left->ID <=> $right->ID;
 	}
 }

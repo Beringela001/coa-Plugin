@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.16
+Stable tag: 0.4.0-beta.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,13 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.16 corrects the WooCommerce COA sidebar layout, explains Active and Featured, aligns batch-identity validation with the physical testing workflow, and maintains scientific COA Test titles while preserving published slugs and URLs.
+Version 0.4.0-beta.17 aligns approved archive cards within desktop/tablet rows and sorts `/testing/` compounds by current public documentation workflow without changing card content, public visibility, or other COA pages.
+
+Catalog cards use CSS Grid stretching and vertical flex layout so their unchanged View All Reports footers align at the bottom. Mobile returns to natural one-column height. No fake content, fixed card height, or JavaScript measurement is used.
+
+Public order is: current approved Complete, Verification in Progress, Submitted to Laboratory, Waiting on Vendor, Vendor Vetting, then no active current public record. Current approved releases outrank replacement batches; otherwise the most advanced public incoming stage wins. Failed and non-current historical approvals do not create Completed priority. Display Order, Display Name, and post ID provide stable ordering inside each group. Search retains the same order and counts.
+
+One batched public-test index supplies eligibility, batch matching, and priority before pagination. Sorting does not mutate Compound or COA Test data. Existing record lifecycle invalidation remains active, and priority scope is included in the archive cache key.
 
 Product SKU and Product ID now share the sidebar's first row; Connection Status and Create/Connect actions each receive a safe full-width row with wrapping and overflow protection. Existing matching, nonce, permission, and synchronization behavior is unchanged.
 
@@ -45,6 +51,13 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.17 =
+* Aligned unchanged archive-card footers with catalog-scoped CSS Grid stretching and flex growth on desktop/tablet, while restoring natural height on mobile.
+* Added batched public workflow indexing and stable Completed, Verification, Submitted, Waiting, Vendor, and no-active-record ordering before pagination.
+* Preserved Display Order within status groups, with Display Name and post ID tie-breakers; failed/non-current/private records cannot elevate public order.
+* Preserved search fields and counts while applying the same workflow order to filtered results.
+* Reused lifecycle cache invalidation, added priority scope to cache keys, and verified the extracted installable package structure.
 
 = 0.4.0-beta.16 =
 * Reflowed the product-edit COA Archive facts and actions into safe two-column and full-width sidebar rows without changing Product Matching behavior.

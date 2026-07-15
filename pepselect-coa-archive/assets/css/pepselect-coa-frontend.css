@@ -229,8 +229,10 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-archive-catalog__header .ps-coa-eyebrow { color: #183d64; margin-bottom: .35rem; }
 .ps-coa-archive-catalog__header h2 { color: #102b47; font-size: clamp(1.8rem, 3vw, 2.35rem); margin: 0; }
 .ps-coa-archive-catalog__count { color: #617487; flex: 0 0 auto; font-size: .86rem; margin: 0 0 .3rem; }
-.ps-coa-archive--catalog-layout .ps-coa-compound-grid { align-items: start; gap: clamp(1.1rem, 2vw, 1.6rem); grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.ps-coa-archive--catalog-layout .ps-coa-compound-card { align-self: start; width: 100%; }
+.ps-coa-archive--catalog-layout .ps-coa-compound-grid { align-items: stretch; gap: clamp(1.1rem, 2vw, 1.6rem); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ps-coa-archive--catalog-layout .ps-coa-compound-card { align-self: stretch; box-sizing: border-box; height: 100%; width: 100%; }
+.ps-coa-archive--catalog-layout .ps-coa-compound-card__body { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; min-width: 0; }
+.ps-coa-archive--catalog-layout .ps-coa-compound-card__footer { margin-top: auto; }
 .ps-coa-archive-empty { background: #fff; border: 1px solid #d7e1e9; border-radius: var(--ps-coa-card-radius); box-shadow: 0 10px 26px rgba(25, 52, 76, .06); min-height: 190px; padding: clamp(1.5rem, 4vw, 2.5rem); }
 .ps-coa-archive-empty h3 { color: #17324e; font-size: 1.35rem; margin-bottom: .5rem; }
 .ps-coa-archive-empty .ps-coa-button { margin-top: 1.15rem; }
@@ -245,7 +247,8 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 	.ps-coa-archive-trust { align-items: flex-start; flex-direction: column; }
 	.ps-coa-archive-catalog__header { align-items: flex-start; flex-direction: column; gap: .65rem; }
 	.ps-coa-archive-catalog__count { margin: 0; }
-	.ps-coa-archive--catalog-layout .ps-coa-compound-grid { grid-template-columns: 1fr; }
+	.ps-coa-archive--catalog-layout .ps-coa-compound-grid { align-items: start; grid-template-columns: 1fr; }
+	.ps-coa-archive--catalog-layout .ps-coa-compound-card { align-self: start; height: auto; }
 }
 
 @media (min-width: 1180px) { .ps-coa-compound-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

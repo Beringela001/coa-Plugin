@@ -25,15 +25,15 @@ assert.match(compounds, /public_batch_matches/);
 assert.match(tests, /compound_ids_matching_public_batch/);
 assert.match(tests, /array\( 'in-testing', 'complete' \)/);
 assert.match(router, /available_total/);
-assert.match(router, /compound_ids_matching_public_batch/);
+assert.match(router, /archive_index/);
 ['batch-vial-photo', 'featured-image', 'compound-image', 'local-placeholder'].forEach(source => assert.ok(view.includes(source)));
 assert.match(view, /archive_image_source/);
 
-assert.match(css, /\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{[^}]*align-items: start;[^}]*repeat\(3, minmax\(0, 1fr\)\)/s);
+assert.match(css, /\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{[^}]*align-items: stretch;[^}]*repeat\(3, minmax\(0, 1fr\)\)/s);
 assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
-assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{ grid-template-columns: 1fr; \}/);
+assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{ align-items: start; grid-template-columns: 1fr; \}/);
 assert.match(css, /\.ps-coa-history-carousel__control \{[^}]*aspect-ratio: 1 \/ 1;[^}]*flex: 0 0 48px;[^}]*height: 48px !important;[^}]*min-width: 48px;[^}]*width: 48px !important;/s);
-assert.match(main, /Version:\s+0\.4\.0-beta\.16/);
+assert.match(main, /Version:\s+0\.4\.0-beta\.17/);
 
 const implementation = [compounds, tests, router, view].join('\n').toLowerCase();
 assert.doesNotMatch(implementation, /woocommerce_single_product|qrcode/);
