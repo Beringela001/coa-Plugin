@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.19
+Stable tag: 0.4.0-beta.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,13 +12,17 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.19 extends `[pepselect_product_coa_carousel]` with a server-selected Current/Latest, one Incoming, and Previous report hierarchy connected through the canonical Product ID relationship.
+Version 0.4.0-beta.20 repairs the one-card mobile viewport and automates the existing Elementor top COA button from canonical public COA data.
+
+The carousel now uses one shared three/two/one cards-per-view property at desktop, tablet, and mobile breakpoints. At 767px and below, the viewport spans flexible full-width grid tracks, every slide is 100% and non-shrinking, cards use natural height, and the circular 44px controls sit beneath the card without compressing it. ResizeObserver, resize, orientation change, and Elementor initialization recalculate the actual viewport and clamp navigation state. Desktop styling and the approved Current/Incoming/Previous hierarchy are unchanged.
+
+The existing ACF-backed Elementor Button is filtered in place. Current or newest eligible Approved/Complete reports display View Latest COA and link to the exact full report. Incoming-only products display View Vetting Status and link to Vetting History. With no eligible record the existing button renders no content, and stale saved URLs are ignored. No duplicate button or Elementor template edit is introduced.
 
 The first eligible Approved/Complete report is the explicit Current report or, when none is marked current, the newest report labeled Latest Report. One active Incoming record may follow, prioritized by Verification in Progress, Submitted to Laboratory, Waiting on Vendor, then Vendor Vetting. Previous approved records fill the remaining positions. Failed, draft, private, unpublished, superseded, abandoned, inactive-compound, and wrong-compound/strength records never become product cards.
 
 The carousel receives at most four cards and displays three on desktop, two on tablet, and one on mobile. Current uses a pale-green primary treatment, Incoming uses neutral blue without purity or passing claims, and Previous uses muted green-gray. Current/Previous link to exact full reports; Incoming links only to Vetting History. Native swipe, circular controls, responsive end states, visible focus, reduced motion, and no autoplay remain unchanged. Dedicated assets load only after the shortcode produces cards on a single-product request.
 
-No new Elementor work is required. Upload and replace the plugin, confirm activation, clear Kinsta cache, and reload the product page. The installed shortcode and existing View Latest COA button remain unchanged.
+No new Elementor work is required. Upload and replace the plugin, confirm activation, clear Kinsta and browser caches, and reload the product page. The installed shortcode and existing button remain in place.
 
 Catalog cards use CSS Grid stretching and vertical flex layout so their unchanged View All Reports footers align at the bottom. Mobile returns to natural one-column height. No fake content, fixed card height, or JavaScript measurement is used.
 
@@ -57,6 +61,12 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.20 =
+* Fixed the mobile squeeze at its root by spanning the carousel viewport across flexible full-width grid tracks and enforcing one full-width, non-shrinking, natural-height slide at 767px and below.
+* Unified exact desktop/tablet/mobile card counts at 3/2/1 and added viewport ResizeObserver, resize, orientation, Elementor-init, stale-style cleanup, and index-clamping behavior without changing the approved desktop cards.
+* Automated the existing ACF-backed Elementor top COA button from the canonical Product ID relationship, with exact current/latest report, Incoming Vetting History, and no-record hidden behavior.
+* Excluded failed and non-public records, preserved all unrelated Elementor buttons and the shortcode, and added no duplicate button, template edit, QR code, pricing, stock, inventory, order, checkout, or shipping change.
 
 = 0.4.0-beta.19 =
 * Added Current/Latest, one Incoming, and Previous server-side card roles with a strict four-card order and limit.

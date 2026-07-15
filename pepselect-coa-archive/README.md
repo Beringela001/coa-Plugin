@@ -1,7 +1,17 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.19 is the **COA-5.1 Product Page Current, Incoming, and Previous COA Cards** release. It extends the approved Elementor-compatible product carousel without changing its shortcode, placement, dimensions, responsive behavior, navigation, or the surrounding WooCommerce product page.
+Version 0.4.0-beta.20 is the **COA-5.2 Mobile Product Carousel Repair and Latest COA Button Automation** release. It repairs the mobile viewport calculation while preserving the approved desktop cards, and connects the existing Elementor top button to the canonical Product ID relationship without adding or moving a button.
+
+## COA-5.2 mobile repair and existing-button automation
+
+The mobile squeeze was caused by the carousel shell changing to two fixed 44px grid columns for the navigation row while the viewport also spanned those same columns. A one-card slide was therefore 100% of an approximately control-width viewport instead of 100% of the product section. The corrected shell keeps two flexible full-width tracks, lets the viewport span their complete width, and places the unchanged 44px circular controls at the centered inner edges below the viewport. Slides are three-per-view at 1024px and above, two at 768–1023px, and one at 767px and below. Mobile slides are explicitly full-width and non-shrinking, cards use natural height, and the viewport remains the source of scroll offsets.
+
+The JavaScript reads the same `--ps-coa-cards-per-view` property as CSS, measures the actual viewport, clears stale sizing properties, clamps the active index, and recalculates after initial layout, ResizeObserver updates, window resize, orientation change, and Elementor frontend initialization. Native swipe, scroll snap, disabled states, per-instance state, reduced motion, circular controls, and the no-autoplay policy remain intact.
+
+The existing Elementor Button widget remains in place and retains its classes, icon, typography, colors, hover treatment, and placement. Its existing ACF URL source is `view_latest_co`; the plugin filters that exact value and the exact ACF-backed Button output only. The canonical resolution is WooCommerce Product ID → exactly one active public Compound → explicit Current Approved/Complete report, newest eligible Approved/Complete fallback, or one public Incoming record. Approved reports keep the label **View Latest COA** and link to `/testing/{compound}/{batch}/`. Incoming-only products use **View Vetting Status** and `/testing/{compound}/`. Products with no eligible record render no button content, so stale manual URLs and dead links cannot survive. Failed, draft, private, unpublished, inactive, ambiguous, and other-strength records are never selected.
+
+The resolver is computed from current public records on every render; it does not introduce a second destination cache. Existing Compound and COA Test save, ACF save, trash, untrash, and delete hooks continue to invalidate the plugin archive namespace, while normal WordPress meta/post cache invalidation makes Product Matching and workflow transitions visible without re-saving the Elementor template. Deployment requires only replacing the ZIP, activating, clearing Kinsta and browser caches, and reloading the product page. No Elementor edit is required.
 
 ## COA-5.1 product report hierarchy
 
@@ -21,7 +31,7 @@ The dedicated stylesheet and script enqueue only after the shortcode has resolve
 
 ### Deployment and existing Elementor placement
 
-No Elementor edit is required for beta.19. Upload the updated ZIP, replace and activate the existing plugin, clear Kinsta cache, and reload the product page. The installed `[pepselect_product_coa_carousel]` widget remains in place.
+No Elementor edit is required for beta.20. Upload the updated ZIP, replace and activate the existing plugin, clear Kinsta and browser caches, and reload the product page. The installed `[pepselect_product_coa_carousel]` widget and the existing ACF-backed top Button remain in place.
 
 1. Open **Templates**.
 2. Open **Theme Builder**.
@@ -32,7 +42,7 @@ No Elementor edit is required for beta.19. Upload the updated ZIP, replace and a
 7. Enter `[pepselect_product_coa_carousel]`.
 8. Update the template.
 
-The plugin does not edit Elementor JSON or the template database record. The existing top **View Latest COA** button and its ACF URL remain unchanged and independent.
+The plugin does not edit Elementor JSON or the template database record. It filters only the existing Button's `view_latest_co` dynamic URL and rendered label/visibility.
 
 ## COA-5B.2 archive alignment and sorting
 

@@ -86,7 +86,8 @@ final class Product_COA_Carousel {
 	private function ensure_assets() {
 		wp_enqueue_style( 'pepselect-coa-product-carousel', plugins_url( 'assets/css/pepselect-coa-product-carousel.css', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION );
 		if ( ! $this->variables_added ) { wp_add_inline_style( 'pepselect-coa-product-carousel', Design_Settings::inline_css() ); $this->variables_added = true; }
-		wp_enqueue_script( 'pepselect-coa-product-carousel', plugins_url( 'assets/js/pepselect-coa-product-carousel.js', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION, true );
+		$dependencies = wp_script_is( 'elementor-frontend', 'registered' ) ? array( 'elementor-frontend' ) : array();
+		wp_enqueue_script( 'pepselect-coa-product-carousel', plugins_url( 'assets/js/pepselect-coa-product-carousel.js', PEPSELECT_COA_ARCHIVE_FILE ), $dependencies, PEPSELECT_COA_ARCHIVE_VERSION, true );
 		if ( did_action( 'wp_head' ) && ! wp_style_is( 'pepselect-coa-product-carousel', 'done' ) ) { wp_print_styles( 'pepselect-coa-product-carousel' ); }
 	}
 

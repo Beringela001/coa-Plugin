@@ -172,7 +172,58 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 		$this->assertSame( '', $carousel->shortcode() );
 	}
 
+	public function test_existing_product_button_uses_current_or_latest_report_and_never_another_strength() {
+		$product = $this->product( 'Retatrutide 30', 'RETA30' ); $compound = $this->compound( 'Retatrutide 30 mg', $product );
+		$older = $this->record( $compound, 'OLDER', '2026-07-01' ); $current = $this->record( $compound, 'CURRENT', '2026-07-10', array( 'is_current' => 1 ) );
+		$other_product = $this->product( 'Retatrutide 20', 'RETA20' ); $other = $this->compound( 'Retatrutide 20 mg', $other_product ); $this->record( $other, 'WRONG-STRENGTH', '2026-07-15', array( 'is_current' => 1 ) );
+		$destination = $this->button()->destination_for_product( $product );
+		$this->assertSame( 'report', $destination['kind'] ); $this->assertSame( $current, $destination['test_id'] ); $this->assertSame( 'View Latest COA', $destination['label'] );
+		$this->assertStringContainsString( '/current/', strtolower( $destination['url'] ) ); $this->assertStringNotContainsString( 'wrong-strength', strtolower( $destination['url'] ) );
+		update_post_meta( $current, 'is_current', 0 ); update_post_meta( $older, 'test_date', '2026-08-01' );
+		$this->assertSame( $older, $this->button()->destination_for_product( $product )['test_id'] );
+	}
+
+	public function test_existing_product_button_uses_vetting_history_for_incoming_and_hides_without_records() {
+		$product = $this->product( 'Compound', 'CMP10' ); $compound = $this->compound( 'Compound 10 mg', $product );
+		$incoming = $this->record( $compound, 'INCOMING', '', array( 'coa_status' => 'pending', 'workflow_stage' => 'in-testing', 'expected_coa_date' => '2099-08-01' ) );
+		$destination = $this->button()->destination_for_product( $product );
+		$this->assertSame( 'incoming', $destination['kind'] ); $this->assertSame( $incoming, $destination['test_id'] ); $this->assertSame( 'View Vetting Status', $destination['label'] );
+		$this->assertSame( $this->view_model->compound_url( get_post( $compound ) ), $destination['url'] );
+		update_post_meta( $incoming, 'coa_status', 'approved' ); update_post_meta( $incoming, 'workflow_stage', 'complete' ); update_post_meta( $incoming, 'test_date', '2026-08-01' );
+		$completed = $this->button()->destination_for_product( $product );
+		$this->assertSame( 'report', $completed['kind'] ); $this->assertSame( 'View Latest COA', $completed['label'] ); $this->assertStringContainsString( '/incoming/', strtolower( $completed['url'] ) );
+		wp_update_post( array( 'ID' => $incoming, 'post_status' => 'draft' ) );
+		$this->assertSame( array(), $this->button()->destination_for_product( $product ) );
+		$this->assertSame( '', $this->button()->filter_acf_url( 'https://stale.example/report', $product ) );
+	}
+
+	public function test_existing_product_button_excludes_failed_and_nonpublic_reports_then_tracks_relationship_changes() {
+		$product = $this->product( 'Compound', 'CMP10' ); $compound = $this->compound( 'Compound 10 mg', $product );
+		$eligible = $this->record( $compound, 'ELIGIBLE', '2026-07-01' );
+		$this->record( $compound, 'FAILED-CURRENT', '2026-07-15', array( 'coa_status' => 'failed', 'is_current' => 1 ) );
+		$this->record( $compound, 'DRAFT-CURRENT', '2026-07-16', array( 'post_status' => 'draft', 'is_current' => 1 ) );
+		$this->record( $compound, 'PRIVATE-CURRENT', '2026-07-17', array( 'post_status' => 'private', 'is_current' => 1 ) );
+		$this->assertSame( $eligible, $this->button()->destination_for_product( $product )['test_id'] );
+		delete_post_meta( $compound, PepSelect\COAArchive\Product_Matching::PRODUCT_ID_META );
+		$this->assertSame( array(), $this->button()->destination_for_product( $product ) );
+		$replacement = $this->compound( 'Replacement 10 mg', $product ); $replacement_report = $this->record( $replacement, 'REPLACEMENT', '2026-07-18' );
+		$this->assertSame( $replacement_report, $this->button()->destination_for_product( $product )['test_id'] );
+		$this->assertSame( $this->button()->destination_for_product( $product )['url'], $this->button()->filter_acf_url( 'https://stale.example', 'post_' . $product ) );
+	}
+
+	public function test_existing_elementor_button_content_changes_in_place_without_touching_other_buttons() {
+		$product = $this->product( 'Compound', 'CMP10' ); $compound = $this->compound( 'Compound 10 mg', $product ); $this->record( $compound, 'BATCH-ONE', '2026-07-10' );
+		$this->go_to( get_permalink( $product ) );
+		$target = new class() { public function get_name() { return 'button'; } public function get_settings() { return array( '__dynamic__' => array( 'link' => '[elementor-tag name="acf-url" settings="view_latest_co"]' ) ); } };
+		$other = new class() { public function get_name() { return 'button'; } public function get_settings() { return array( 'link' => array( 'url' => '/shop/' ) ); } };
+		$html = '<a class="elementor-button" href="https://stale.example"><span class="elementor-button-content-wrapper"><span class="elementor-button-icon">ICON</span><span class="elementor-button-text">view latest COA</span></span></a>';
+		$filtered = $this->button()->filter_widget_content( $html, $target );
+		$this->assertStringContainsString( '/batch-one/', strtolower( $filtered ) ); $this->assertStringContainsString( '>View Latest COA</span>', $filtered ); $this->assertStringContainsString( 'elementor-button-icon">ICON', $filtered );
+		$this->assertSame( $html, $this->button()->filter_widget_content( $html, $other ) );
+	}
+
 	private function carousel() { return new PepSelect\COAArchive\Product_COA_Carousel( $this->matching, $this->compounds, $this->tests, $this->view_model ); }
+	private function button() { return new PepSelect\COAArchive\Product_COA_Button( $this->matching, $this->compounds, $this->tests, $this->view_model ); }
 	private function product( $title, $sku ) { $id = self::factory()->post->create( array( 'post_type' => 'product', 'post_status' => 'publish', 'post_title' => $title ) ); update_post_meta( $id, '_sku', $sku ); return $id; }
 	private function compound( $title, $product_id ) { $id = self::factory()->post->create( array( 'post_type' => 'ps_compound', 'post_status' => 'publish', 'post_title' => $title ) ); update_post_meta( $id, 'display_name', $title ); update_post_meta( $id, 'is_active', 1 ); if ( $product_id ) { update_post_meta( $id, PepSelect\COAArchive\Product_Matching::PRODUCT_ID_META, $product_id ); } return $id; }
 	private function record( $compound_id, $batch, $date, $args = array() ) {

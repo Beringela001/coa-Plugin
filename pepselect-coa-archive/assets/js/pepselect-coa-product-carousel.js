@@ -2,6 +2,7 @@
 	'use strict';
 
 	var selector = '[data-ps-coa-product-carousel]';
+	var elementorHookRegistered = false;
 
 	function initialize(root) {
 		if (!root || root.dataset.psCoaInitialized === 'true') { return; }
@@ -9,16 +10,24 @@
 		var cards = Array.prototype.slice.call(root.querySelectorAll('.ps-coa-product-carousel__card'));
 		var previous = root.querySelector('.ps-coa-product-carousel__previous');
 		var next = root.querySelector('.ps-coa-product-carousel__next');
-		if (!viewport || !cards.length || !previous || !next) { return; }
+		var track = root.querySelector('.ps-coa-product-carousel__track');
+		if (!viewport || !track || !cards.length || !previous || !next) { return; }
 		root.dataset.psCoaInitialized = 'true';
 
 		var index = 0;
 		var frame = 0;
+		var resizeFrame = 0;
 		var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 		function visibleCount() {
-			var value = parseInt(window.getComputedStyle(root).getPropertyValue('--ps-coa-product-visible'), 10);
+			var value = parseInt(window.getComputedStyle(root).getPropertyValue('--ps-coa-cards-per-view'), 10);
 			return Math.max(1, isNaN(value) ? 1 : value);
+		}
+
+		function cardsPerViewForWidth(width) {
+			if (width <= 767) { return 1; }
+			if (width <= 1023) { return 2; }
+			return 3;
 		}
 
 		function maxIndex() { return Math.max(0, cards.length - visibleCount()); }
@@ -67,17 +76,53 @@
 			if (focusedIndex >= 0) { moveTo(Math.min(focusedIndex, maxIndex()), false); }
 		});
 
-		function resize() { moveTo(Math.min(index, maxIndex()), false); }
-		if ('ResizeObserver' in window) {
-			var observer = new ResizeObserver(resize);
-			observer.observe(viewport);
-		} else {
-			window.addEventListener('resize', resize, { passive: true });
+		function clearStaleSizing() {
+			['width', 'max-width', 'min-width', 'flex-basis', 'transform'].forEach(function (property) { track.style.removeProperty(property); });
+			cards.forEach(function (card) {
+				['width', 'max-width', 'min-width', 'flex-basis', 'transform'].forEach(function (property) { card.style.removeProperty(property); });
+			});
 		}
+
+		function resize() {
+			resizeFrame = 0;
+			clearStaleSizing();
+			var componentWidth = root.getBoundingClientRect().width;
+			var viewportWidth = viewport.getBoundingClientRect().width;
+			if (componentWidth <= 0 || viewportWidth <= 0) { updateControls(); return; }
+			root.style.setProperty('--ps-coa-cards-per-view', cardsPerViewForWidth(componentWidth));
+			moveTo(Math.min(index, maxIndex()), false);
+		}
+
+		function scheduleResize() {
+			if (!resizeFrame) { resizeFrame = window.requestAnimationFrame(resize); }
+		}
+		if ('ResizeObserver' in window) {
+			var observer = new ResizeObserver(scheduleResize);
+			observer.observe(viewport);
+		}
+		window.addEventListener('resize', scheduleResize, { passive: true });
+		window.addEventListener('orientationchange', scheduleResize, { passive: true });
 		updateControls();
+		scheduleResize();
 	}
 
-	function initializeAll() { document.querySelectorAll(selector).forEach(initialize); }
+	function initializeWithin(scope) {
+		if (!scope) { return; }
+		if (scope.matches && scope.matches(selector)) { initialize(scope); }
+		if (scope.querySelectorAll) { scope.querySelectorAll(selector).forEach(initialize); }
+	}
+
+	function initializeAll() { initializeWithin(document); }
+
+	function registerElementorHook() {
+		if (elementorHookRegistered || !window.elementorFrontend || !window.elementorFrontend.hooks) { return; }
+		elementorHookRegistered = true;
+		window.elementorFrontend.hooks.addAction('frontend/element_ready/global', function (scope) {
+			initializeWithin(scope && scope[0] ? scope[0] : scope);
+		});
+	}
 	if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initializeAll, { once: true }); }
 	else { initializeAll(); }
+	registerElementorHook();
+	window.addEventListener('elementor/frontend/init', registerElementorHook, { once: true });
 }());
