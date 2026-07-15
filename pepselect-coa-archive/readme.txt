@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.11
+Stable tag: 0.4.0-beta.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.11 finalizes truthful partial-QC states, hero metadata order, and the responsive fullscreen certificate viewer.
+Version 0.4.0-beta.12 rebuilds compound Vetting History pages to the approved mockup, adds an accessible ten-report carousel, and adds safe reusable laboratory logos.
 
 The exact Batch Vial Photo is optional through laboratory submission and required during Verification in Progress and Complete. An optional ordered Batch Identity Photos gallery provides supporting views. Published legacy reports remain public and receive a non-destructive admin warning until an exact image is added.
 
@@ -29,6 +29,11 @@ Private access/verification metadata and internal fields remain excluded from pu
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.12 =
+* Rebuilt the compound Vetting History route with scoped, responsive mockup-matching templates.
+* Added truthful fixed seven-category summaries, incoming empty states, and a non-destructive ten-report carousel.
+* Added the optional Laboratory Logo field, reusable same-lab fallback, and bundled ILS Labs logo.
 
 = 0.4.0-beta.11 =
 * Preserved all seven QC positions with truthful full, partial, missing, and failed states.

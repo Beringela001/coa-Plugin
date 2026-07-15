@@ -47,6 +47,7 @@ final class Frontend_Router {
 
 	/** Builds a visible compound history by slug or ID. @param string $slug Slug. @param int $id ID. @param int $page Page. @return array */
 	public function build_compound( $slug = '', $id = 0, $page = 1 ) {
+		unset( $page );
 		$compound = $id ? $this->compounds->find_public_by_id( $id ) : $this->compounds->find_public_by_slug( $slug );
 		if ( ! $compound ) { return array(); }
 		$classified = $this->tests->classified_for_compound( $compound->ID );
@@ -55,17 +56,24 @@ final class Frontend_Router {
 		$latest = $approved ? array_shift( $approved ) : null;
 		$previous_all = array_merge( $approved, $classified['failed'] );
 		usort( $previous_all, static function ( $left, $right ) { $ld = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) ); $rd = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) ); $date = strcmp( $rd, $ld ); return 0 !== $date ? $date : strcmp( $right->post_date_gmt, $left->post_date_gmt ); } );
-		$total = count( $previous_all ); $pages = (int) ceil( $total / 20 ); $page = min( max( 1, absint( $page ) ), max( 1, $pages ) );
-		$previous = array_slice( $previous_all, ( $page - 1 ) * 20, 20 );
+		$total = count( $previous_all );
+		$previous = array_slice( $previous_all, 0, 10 );
 		$compound_model = $this->view_model->compound( $compound );
 		$compound_model['approved_test_count'] = count( $approved ) + ( $latest ? 1 : 0 );
 		$compound_model['latest_test_date'] = $latest ? get_post_meta( $latest->ID, 'test_date', true ) : '';
 		$compound_model['latest_batch_number'] = $latest ? get_post_meta( $latest->ID, 'batch_number', true ) : '';
 		$compound_model['latest_purity'] = $latest ? get_post_meta( $latest->ID, 'purity_percentage', true ) : '';
-		$compound_model['current_approved_test'] = $latest && absint( get_post_meta( $latest->ID, 'is_current', true ) ) ? $this->view_model->test_summary( $latest, $compound ) : null;
-		$compound_model['previous_approved_tests'] = array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $previous );
-		$canonical = $page > 1 ? add_query_arg( 'paged', $page, $compound_model['url'] ) : $compound_model['url'];
-		return array( 'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $canonical, 'archive_url' => $this->view_model->archive_url(), 'compound' => $compound_model, 'latest_report' => $latest ? $this->view_model->test_summary( $latest, $compound ) : null, 'incoming_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $incoming ), 'previous_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $previous ), 'pagination' => array( 'page' => $page, 'pages' => $pages, 'total' => $total ) );
+		$latest_model = $latest ? $this->view_model->history_report( $latest, $compound ) : null;
+		$current_model = $latest_model && $latest_model['is_current'] ? $latest_model : null;
+		$compound_model['current_approved_test'] = $current_model;
+		$compound_model['previous_approved_tests'] = array_map( function ( $test ) use ( $compound ) { return $this->view_model->history_report( $test, $compound ); }, $previous );
+		$hero_image = $latest_model ? array( 'id' => $latest_model['vial_image_id'], 'url' => $latest_model['vial_image_url'], 'srcset' => $latest_model['vial_image_srcset'], 'sizes' => $latest_model['vial_image_sizes'], 'alt' => $latest_model['vial_image_alt'], 'source' => $latest_model['vial_image_source'] ) : array( 'id' => $compound_model['compound_image_id'], 'url' => $compound_model['compound_image_url'] ?: plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE ), 'srcset' => $compound_model['compound_image_srcset'], 'sizes' => $compound_model['compound_image_sizes'], 'alt' => $compound_model['compound_image_alt'], 'source' => $compound_model['compound_image_url'] ? 'compound-image' : 'local-placeholder' );
+		return array(
+			'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $compound_model['url'], 'archive_url' => $this->view_model->archive_url(),
+			'compound' => $compound_model, 'hero_image' => $hero_image, 'current_report' => $current_model, 'latest_report' => $latest_model,
+			'incoming_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $incoming ),
+			'previous_reports' => $compound_model['previous_approved_tests'], 'previous_report_total' => $total, 'previous_report_limit' => 10,
+		);
 	}
 
 	/** Builds a visible report by route slugs. @param string $compound_slug Compound. @param string $batch_slug Batch. @return array */

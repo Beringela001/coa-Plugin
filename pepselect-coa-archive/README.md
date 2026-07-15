@@ -1,7 +1,7 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.11 is the **COA-4E.3 Final Report Logic, Metadata Order, and Certificate Viewer** milestone. The supplied report and certificate-page references are authoritative visual targets; they are not distributed with the plugin.
+Version 0.4.0-beta.12 is the **COA-4F Exact Vetting History Redesign and Laboratory Logo Support** milestone. The supplied history, report, and laboratory-logo references are authoritative visual targets; design-reference screenshots are not distributed with the plugin.
 
 ## Exact batch identity
 

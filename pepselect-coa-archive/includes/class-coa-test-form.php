@@ -90,7 +90,7 @@ final class COA_Test_Form {
 		$vendor = array_merge( $identity, array( 'vendor_status_note' ) );
 		$colors = array( 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color' );
 		$waiting = array_merge( $vendor, array( 'expected_coa_date', 'vials_submitted', 'vials_tested' ), $colors );
-		$submitted = array_merge( $identity, array( 'expected_coa_date', 'batch_number', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'pending_lab_url', 'vials_submitted', 'vials_tested', 'sample_appearance' ), $colors );
+		$submitted = array_merge( $identity, array( 'expected_coa_date', 'batch_number', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'lab_accession_number', 'pending_lab_url', 'vials_submitted', 'vials_tested', 'sample_appearance' ), $colors );
 		$testing = array_merge( $submitted, array( 'internal_batch_id', 'test_date', 'date_received', 'partial_results_available' ) );
 		return array( 'vendor-vetting' => $vendor, 'waiting-on-vendor' => $waiting, 'submitted-to-lab' => $submitted, 'in-testing' => $testing, 'complete' => array( '*' ) );
 	}

@@ -72,6 +72,7 @@ final class COA_Test_Fields {
 			$this->number( 'vials_submitted', 'Vials Submitted', 0, 1 ),
 			$this->number( 'vials_tested', 'Vials Tested', 1, 1, false ),
 			$this->f( 'testing_lab', 'Testing Laboratory', 'select', array( 'choices' => self::labs(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required during verification and for approved reports.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'laboratory_logo', 'Laboratory Logo', 'image', array( 'return_format' => 'id', 'preview_size' => 'thumbnail', 'library' => 'all', 'mime_types' => 'jpg,jpeg,png,webp,gif,svg', 'instructions' => __( 'Optional logo for the testing laboratory shown on the public report. Upload a transparent PNG, SVG supported safely by WordPress policy, or another appropriately sized image.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'other_testing_lab', 'Other Laboratory Name', 'text', array( 'maxlength' => 120, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_testing_lab', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
 			$this->f( 'lab_accession_number', 'Lab Accession Number', 'text', array( 'maxlength' => 120 ) ),
 			$this->tab( 'sample', __( 'Sample Information', 'pepselect-coa-archive' ) ),

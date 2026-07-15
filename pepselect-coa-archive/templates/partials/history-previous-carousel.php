@@ -1,0 +1,9 @@
+<?php if ( ! defined( 'ABSPATH' ) ) { exit; } $reports = $ps_context['previous_reports']; ?>
+<?php if ( ! $reports ) : ?><div class="ps-coa-history-previous-empty"><?php esc_html_e( 'No previous completed reports are available.', 'pepselect-coa-archive' ); ?></div><?php else : ?>
+<div class="ps-coa-history-carousel" role="region" aria-roledescription="<?php esc_attr_e( 'carousel', 'pepselect-coa-archive' ); ?>" aria-label="<?php esc_attr_e( 'Previous completed reports', 'pepselect-coa-archive' ); ?>" data-ps-history-carousel tabindex="0">
+	<button class="ps-coa-history-carousel__control ps-coa-history-carousel__control--previous" type="button" aria-label="<?php esc_attr_e( 'Show previous report', 'pepselect-coa-archive' ); ?>" data-ps-history-previous disabled><span aria-hidden="true">‹</span></button>
+	<div class="ps-coa-history-carousel__viewport"><?php foreach ( $reports as $index => $report ) : ?><div class="ps-coa-history-carousel__slide" role="group" aria-roledescription="<?php esc_attr_e( 'slide', 'pepselect-coa-archive' ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Report %1$d of %2$d', 'pepselect-coa-archive' ), $index + 1, count( $reports ) ) ); ?>" data-ps-history-slide<?php if ( $index ) : ?> hidden<?php endif; ?>><?php include pepselect_coa_template_path( 'partials/history-previous-card.php' ); ?></div><?php endforeach; ?></div>
+	<button class="ps-coa-history-carousel__control ps-coa-history-carousel__control--next" type="button" aria-label="<?php esc_attr_e( 'Show next report', 'pepselect-coa-archive' ); ?>" data-ps-history-next<?php if ( count( $reports ) < 2 ) : ?> disabled<?php endif; ?>><span aria-hidden="true">›</span></button>
+	<p class="screen-reader-text" aria-live="polite" data-ps-history-status><?php echo esc_html( sprintf( __( 'Report 1 of %d', 'pepselect-coa-archive' ), count( $reports ) ) ); ?></p>
+</div>
+<?php endif; ?>

@@ -103,6 +103,9 @@ final class Frontend_View_Model {
 		$full_qc = $this->is_full_qc_documented( $test );
 		$public_status = $this->public_status( $coa_status, $workflow_stage, $full_qc );
 		$public_note = trim( (string) get_post_meta( $test->ID, 'public_status_note', true ) ); if ( $public_note ) { $public_status['copy'] = $public_note; }
+		$testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'testing_lab', true ) : '';
+		$other_testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'other_testing_lab', true ) : '';
+		$laboratory = $lab_public ? $this->laboratory_name( $testing_lab, $other_testing_lab ) : '';
 		$batch_image_id = absint( get_post_meta( $test->ID, 'batch_vial_photo', true ) );
 		$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
 		$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
@@ -119,7 +122,7 @@ final class Frontend_View_Model {
 			'expected_coa_date_label' => $expected_public ? $this->date_label( get_post_meta( $test->ID, 'expected_coa_date', true ) ) : '',
 			'date_received' => $complete ? (string) get_post_meta( $test->ID, 'date_received', true ) : '',
 			'date_received_label' => $complete ? $this->date_label( get_post_meta( $test->ID, 'date_received', true ) ) : '',
-			'laboratory' => $lab_public ? $this->laboratory_name( get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ) : '',
+			'laboratory' => $laboratory,
 			'coa_status' => $coa_status, 'coa_status_data' => $this->status( $coa_status ),
 			'workflow_stage' => $workflow_stage, 'workflow_stage_label' => isset( COA_Workflow::stages()[ $workflow_stage ] ) ? COA_Workflow::stages()[ $workflow_stage ] : '',
 			'public_status_label' => $public_status['label'], 'public_status_copy' => $public_status['copy'], 'public_status_tone' => $public_status['tone'],
@@ -159,9 +162,45 @@ final class Frontend_View_Model {
 		);
 	}
 
+	/** Builds the compact, truthful data required by the compound-history cards. @return array */
+	public function history_report( $test, $compound ) {
+		$model = $this->test_summary( $test, $compound );
+		$results = 'complete' === $model['workflow_stage'] || $model['has_partial_results'];
+		$model['purity_method'] = $results ? (string) get_post_meta( $test->ID, 'purity_method', true ) : '';
+		$model['identity_method'] = $results ? (string) get_post_meta( $test->ID, 'identity_method', true ) : '';
+		$model['heavy_metals_summary'] = $results ? trim( (string) get_post_meta( $test->ID, 'heavy_metals_summary', true ) ) : '';
+		$model['sterility_result'] = $results ? trim( (string) get_post_meta( $test->ID, 'sterility_result', true ) ) : '';
+		$fentanyl = $results ? sanitize_key( (string) get_post_meta( $test->ID, 'fentanyl_status', true ) ) : '';
+		$model['fentanyl_result'] = 'pass' === $fentanyl ? __( 'Not detected', 'pepselect-coa-archive' ) : ( 'fail' === $fentanyl ? __( 'Detected', 'pepselect-coa-archive' ) : '' );
+		$model['fentanyl_method'] = in_array( $fentanyl, array( 'pass', 'fail', 'not-tested' ), true ) ? 'Immunoassay' : '';
+		$model['fentanyl_specification'] = in_array( $fentanyl, array( 'pass', 'fail', 'not-tested' ), true ) ? '50 ng/mL cutoff' : '';
+		$model['fentanyl_status'] = $this->status( $fentanyl );
+		$model['result_rows'] = $results ? $this->result_rows( $test, $model ) : array();
+		$model['qc_strip_rows'] = $this->qc_strip_rows( $model['result_rows'], $model );
+		$model['reported_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ); } ) );
+		$model['successful_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ) && ! empty( $row['status']['success'] ); } ) );
+		$model['all_reported_successful'] = $model['reported_category_count'] > 0 && $model['reported_category_count'] === $model['successful_category_count'];
+		$model['is_full_qc_documented'] = 'approved' === $model['coa_status'] && 7 === $model['reported_category_count'] && 7 === $model['successful_category_count'];
+		$model['history_report_type'] = $this->history_report_type( $model );
+		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Full-QC testing passed.', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'QC testing passed.', 'pepselect-coa-archive' ) : __( 'QC testing results.', 'pepselect-coa-archive' ) );
+		$model['history_qc_summary'] = sprintf( __( '%1$d of 7 laboratory categories reported. %2$s', 'pepselect-coa-archive' ), $model['reported_category_count'], 'failed' === $model['coa_status'] ? __( 'Release review did not pass.', 'pepselect-coa-archive' ) : __( 'Independent documentation on file.', 'pepselect-coa-archive' ) );
+		$model['history_status_label'] = 'failed' === $model['coa_status'] ? __( 'Did not pass release review', 'pepselect-coa-archive' ) : ( $model['is_full_qc_documented'] ? __( 'Full-QC documented', 'pepselect-coa-archive' ) : __( 'QC documented', 'pepselect-coa-archive' ) );
+		$model['history_context'] = 'failed' === $model['coa_status'] ? __( 'This batch did not pass release review and was not released for sale.', 'pepselect-coa-archive' ) : __( 'Independent testing record with published batch documentation.', 'pepselect-coa-archive' );
+		$model['history_claims'] = array();
+		if ( $model['laboratory'] ) { $model['history_claims'][] = __( 'Independently tested', 'pepselect-coa-archive' ); }
+		$model['pdf_attachment_id'] = 'complete' === $model['workflow_stage'] ? absint( get_post_meta( $test->ID, 'coa_pdf_id', true ) ) : 0;
+		$model['pdf_url'] = $this->pdf_url( $model['pdf_attachment_id'] );
+		if ( $model['pdf_url'] ) { $model['history_claims'][] = __( 'Documentation available', 'pepselect-coa-archive' ); }
+		if ( ! empty( $model['identity_status']['success'] ) ) { $model['history_claims'][] = __( 'Identity confirmed', 'pepselect-coa-archive' ); }
+		return $model;
+	}
+
 	/** Returns full public report data including validated attachments. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @return array */
 	public function report( $test, $compound ) {
 		$model = $this->test_summary( $test, $compound );
+		$laboratory_logo = $model['laboratory'] ? $this->laboratory_logo( $test, get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ) : $this->empty_laboratory_logo();
+		$model['laboratory_logo_id'] = $laboratory_logo['attachment_id']; $model['laboratory_logo_url'] = $laboratory_logo['url'];
+		$model['laboratory_logo_source'] = $laboratory_logo['source']; $model['laboratory_logo_alt'] = $laboratory_logo['alt'];
 		$results = 'complete' === $model['workflow_stage'] || $model['has_partial_results']; $complete = 'complete' === $model['workflow_stage'];
 		$model['purity_method'] = $results ? (string) get_post_meta( $test->ID, 'purity_method', true ) : '';
 		$model['identity_method'] = $results ? (string) get_post_meta( $test->ID, 'identity_method', true ) : '';
@@ -320,6 +359,50 @@ final class Frontend_View_Model {
 		return $row['status']['label'];
 	}
 
+	/** Returns an accurate compact report type for history cards. @return string */
+	private function history_report_type( $model ) {
+		if ( 7 === $model['reported_category_count'] ) { return __( 'Full-QC', 'pepselect-coa-archive' ); }
+		$reported = array_values( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ); } ) );
+		$keys = wp_list_pluck( $reported, 'key' );
+		if ( array( 'purity' ) === $keys ) { return __( 'Purity', 'pepselect-coa-archive' ); }
+		if ( 2 === count( $keys ) && in_array( 'purity', $keys, true ) && in_array( 'identity', $keys, true ) ) { return __( 'Purity + Identity', 'pepselect-coa-archive' ); }
+		return __( 'Partial QC', 'pepselect-coa-archive' );
+	}
+
+	/** Resolves a safe reusable laboratory logo without remote requests. @return array */
+	private function laboratory_logo( $test, $stored_lab, $other_lab ) {
+		$name = $this->laboratory_name( $stored_lab, $other_lab );
+		$id = absint( get_post_meta( $test->ID, 'laboratory_logo', true ) );
+		if ( ! $this->valid_laboratory_logo_id( $id ) ) { $id = $this->reusable_laboratory_logo_id( $stored_lab, $other_lab, $test->ID ); }
+		if ( $this->valid_laboratory_logo_id( $id ) ) {
+			return array( 'attachment_id' => $id, 'url' => $this->laboratory_logo_url( $id ), 'source' => 'attachment', 'alt' => sprintf( __( '%s logo', 'pepselect-coa-archive' ), $name ) );
+		}
+		if ( 'ils-labs' === sanitize_key( $stored_lab ) || 'ils-labs' === sanitize_title( $name ) ) {
+			return array( 'attachment_id' => 0, 'url' => plugins_url( 'assets/images/ils-labs-logo.png', PEPSELECT_COA_ARCHIVE_FILE ), 'source' => 'bundled-ils', 'alt' => __( 'ILS Labs logo', 'pepselect-coa-archive' ) );
+		}
+		return $this->empty_laboratory_logo();
+	}
+
+	/** Reuses the newest valid logo assigned to the same normalized laboratory. @return int */
+	private function reusable_laboratory_logo_id( $stored_lab, $other_lab, $exclude_id ) {
+		static $cache = array();
+		$normalized = sanitize_title( $this->laboratory_name( $stored_lab, $other_lab ) );
+		if ( isset( $cache[ $normalized ] ) ) { return $cache[ $normalized ]; }
+		$cache[ $normalized ] = 0;
+		if ( ! $normalized ) { return 0; }
+		$ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => array( 'publish', 'private', 'draft', 'pending' ), 'posts_per_page' => 50, 'fields' => 'ids', 'orderby' => 'modified', 'order' => 'DESC', 'post__not_in' => array( absint( $exclude_id ) ), 'meta_key' => 'testing_lab', 'meta_value' => (string) $stored_lab, 'no_found_rows' => true, 'suppress_filters' => false ) );
+		if ( $ids ) { _prime_post_caches( $ids, false, false ); update_meta_cache( 'post', $ids ); }
+		foreach ( $ids as $test_id ) {
+			$candidate_name = $this->laboratory_name( get_post_meta( $test_id, 'testing_lab', true ), get_post_meta( $test_id, 'other_testing_lab', true ) );
+			$candidate_id = absint( get_post_meta( $test_id, 'laboratory_logo', true ) );
+			if ( $normalized === sanitize_title( $candidate_name ) && $this->valid_laboratory_logo_id( $candidate_id ) ) { $cache[ $normalized ] = $candidate_id; break; }
+		}
+		return $cache[ $normalized ];
+	}
+
+	/** Returns the neutral logo model used by the template's local icon fallback. @return array */
+	private function empty_laboratory_logo() { return array( 'attachment_id' => 0, 'url' => '', 'source' => 'neutral', 'alt' => '' ); }
+
 	/** Requires the explicit successful Fentanyl Screen status. @return bool */
 	private function fentanyl_is_documented_success( $status ) { return 'pass' === sanitize_key( (string) $status ); }
 
@@ -339,6 +422,13 @@ final class Frontend_View_Model {
 	private function http_url( $url ) { $url = trim( (string) $url ); return $url && wp_http_validate_url( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : ''; }
 	private function product_url( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'product' === $post->post_type && 'publish' === $post->post_status ? get_permalink( $post ) : ''; }
 	private function valid_image_id( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && wp_attachment_is_image( $id ); }
+	private function valid_laboratory_logo_id( $id ) {
+		$post = $id ? get_post( $id ) : null; if ( ! $post || 'attachment' !== $post->post_type || 'inherit' !== $post->post_status ) { return false; }
+		$mime = get_post_mime_type( $id );
+		if ( in_array( $mime, array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ), true ) ) { return wp_attachment_is_image( $id ); }
+		return 'image/svg+xml' === $mime && in_array( 'image/svg+xml', array_values( get_allowed_mime_types() ), true ) && (bool) wp_get_attachment_url( $id );
+	}
+	private function laboratory_logo_url( $id ) { return 'image/svg+xml' === get_post_mime_type( $id ) ? (string) wp_get_attachment_url( $id ) : $this->image_url( $id, 'thumbnail' ); }
 	private function image_url( $id, $size ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && wp_attachment_is_image( $id ) ? (string) wp_get_attachment_image_url( $id, $size ) : ''; }
 	private function image_srcset( $id, $size ) { return $this->image_url( $id, $size ) ? (string) wp_get_attachment_image_srcset( $id, $size ) : ''; }
 	private function image_sizes( $id, $size ) { return $this->image_url( $id, $size ) ? (string) wp_get_attachment_image_sizes( $id, $size ) : ''; }

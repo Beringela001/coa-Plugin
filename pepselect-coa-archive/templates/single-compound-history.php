@@ -5,25 +5,20 @@ $ps_embedded = isset( $ps_embedded ) && $ps_embedded;
 $compound = $ps_context['compound'];
 if ( ! $ps_embedded ) { get_header(); }
 ?>
-<main class="ps-coa ps-coa-app ps-coa-history" id="ps-coa-main">
+<main class="ps-coa ps-coa-app ps-coa-history ps-coa-history--mockup-layout" id="ps-coa-main">
 	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li aria-current="page"><?php echo esc_html( $compound['display_name'] ); ?></li></ol></nav>
-	<header class="ps-coa-history-header">
-		<div class="ps-coa-history-header__media">
-			<?php if ( $compound['compound_image_url'] ) : ?><img src="<?php echo esc_url( $compound['compound_image_url'] ); ?>"<?php if ( $compound['compound_image_srcset'] ) : ?> srcset="<?php echo esc_attr( $compound['compound_image_srcset'] ); ?>"<?php endif; ?><?php if ( $compound['compound_image_sizes'] ) : ?> sizes="<?php echo esc_attr( $compound['compound_image_sizes'] ); ?>"<?php endif; ?> alt="<?php echo esc_attr( $compound['compound_image_alt'] ); ?>"><?php else : ?><span class="ps-coa-image-fallback" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M18 5h12v5l-2 3v5.5c5.5 1.7 9.5 6.8 9.5 12.8V39c0 2.2-1.8 4-4 4h-19c-2.2 0-4-1.8-4-4v-7.7c0-6 4-11.1 9.5-12.8V13l-2-3V5Z"/><path d="M16 30h16"/></svg></span><?php endif; ?>
-		</div>
-		<div class="ps-coa-history-header__content">
-			<p class="ps-coa-eyebrow"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'history_eyebrow' ) ); ?></p>
-			<h1><?php echo esc_html( trim( $compound['public_name'] . ' ' . \PepSelect\COAArchive\Design_Settings::copy( 'history_suffix' ) ) ); ?></h1>
-			<?php if ( $compound['strength_value_display'] && $compound['display_strength_separately'] ) : ?><p class="ps-coa-strength"><span><?php echo esc_html( trim( $compound['strength_value_display'] . ' ' . $compound['strength_unit'] ) ); ?></span></p><?php endif; ?>
-			<p class="ps-coa-history-header__latest"><?php echo esc_html( sprintf( __( 'Latest report: %s', 'pepselect-coa-archive' ), $ps_context['latest_report'] && $ps_context['latest_report']['test_date_label'] ? $ps_context['latest_report']['test_date_label'] : __( 'In progress', 'pepselect-coa-archive' ) ) ); ?></p>
-		</div>
-	</header>
-	<?php if ( $compound['archive_description'] ) : ?><div class="ps-coa-history-description ps-coa-prose"><?php echo wp_kses_post( wpautop( $compound['archive_description'] ) ); ?></div><?php endif; ?>
-	<?php if ( $ps_context['latest_report'] ) : ?><section class="ps-coa-section" aria-labelledby="ps-latest-report"><div class="ps-coa-section-heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Current documented release', 'pepselect-coa-archive' ); ?></p><h2 id="ps-latest-report"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'latest_label' ) ); ?></h2></div><?php $report = $ps_context['latest_report']; include pepselect_coa_template_path( 'partials/latest-report-card.php' ); ?></section><?php endif; ?>
-	<?php if ( ! empty( $ps_context['incoming_reports'] ) ) : ?><section class="ps-coa-section" aria-labelledby="ps-incoming-reports"><div class="ps-coa-section-heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Active batch vetting', 'pepselect-coa-archive' ); ?></p><h2 id="ps-incoming-reports"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'incoming_heading' ) ); ?></h2></div><div class="ps-coa-incoming-grid"><?php foreach ( $ps_context['incoming_reports'] as $report ) { include pepselect_coa_template_path( 'partials/incoming-report-card.php' ); } ?></div></section><?php endif; ?>
-	<section class="ps-coa-section" aria-labelledby="ps-previous-reports"><div class="ps-coa-section-heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Complete transparent record', 'pepselect-coa-archive' ); ?></p><h2 id="ps-previous-reports"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'previous_heading' ) ); ?></h2></div>
-		<?php if ( empty( $ps_context['previous_reports'] ) ) : ?><p class="ps-coa-empty ps-coa-empty--quiet"><?php esc_html_e( 'No previous approved or failed reports are available.', 'pepselect-coa-archive' ); ?></p><?php else : ?><div class="ps-coa-report-grid"><?php foreach ( $ps_context['previous_reports'] as $report ) { include pepselect_coa_template_path( 'partials/previous-report-card.php' ); } ?></div><?php endif; ?>
+	<?php include pepselect_coa_template_path( 'partials/history-hero.php' ); ?>
+	<section class="ps-coa-history-section" aria-labelledby="ps-history-latest">
+		<header class="ps-coa-history-section__heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Current documented release', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-latest"><?php esc_html_e( 'Latest report', 'pepselect-coa-archive' ); ?></h2></header>
+		<?php if ( $ps_context['latest_report'] ) { $report = $ps_context['latest_report']; include pepselect_coa_template_path( 'partials/history-latest-report.php' ); } else { ?><div class="ps-coa-history-empty"><strong><?php esc_html_e( 'No completed report is currently documented.', 'pepselect-coa-archive' ); ?></strong></div><?php } ?>
 	</section>
-	<?php if ( $ps_context['pagination']['pages'] > 1 ) : ?><nav class="ps-coa-pagination" aria-label="<?php esc_attr_e( 'Previous report pages', 'pepselect-coa-archive' ); ?>"><?php echo wp_kses_post( paginate_links( array( 'base' => add_query_arg( 'paged', '%#%', $compound['url'] ), 'current' => $ps_context['pagination']['page'], 'total' => $ps_context['pagination']['pages'] ) ) ); ?></nav><?php endif; ?>
+	<section class="ps-coa-history-section" aria-labelledby="ps-history-incoming">
+		<header class="ps-coa-history-section__heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Active batch vetting', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-incoming"><?php esc_html_e( 'Incoming Reports', 'pepselect-coa-archive' ); ?></h2></header>
+		<div class="ps-coa-history-incoming-list"><?php if ( $ps_context['incoming_reports'] ) { foreach ( $ps_context['incoming_reports'] as $report ) { include pepselect_coa_template_path( 'partials/history-incoming-report.php' ); } } else { include pepselect_coa_template_path( 'partials/history-incoming-empty.php' ); } ?></div>
+	</section>
+	<section class="ps-coa-history-section ps-coa-history-section--previous" aria-labelledby="ps-history-previous">
+		<header class="ps-coa-history-section__heading ps-coa-history-section__heading--split"><div><p class="ps-coa-eyebrow"><?php esc_html_e( 'Complete transparent record', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-previous"><?php esc_html_e( 'Previous reports', 'pepselect-coa-archive' ); ?></h2></div><p><?php esc_html_e( 'Previous batch records remain available so each documented release can be reviewed independently. Retention of historical records is part of Pep Select’s testing policy.', 'pepselect-coa-archive' ); ?></p></header>
+		<?php include pepselect_coa_template_path( 'partials/history-previous-carousel.php' ); ?>
+	</section>
 </main>
 <?php if ( ! $ps_embedded ) { get_footer(); } ?>
