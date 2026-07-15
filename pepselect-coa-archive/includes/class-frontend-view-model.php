@@ -100,8 +100,8 @@ final class Frontend_View_Model {
 		);
 	}
 
-	/** Returns the public summary allowlist for a test. @param \WP_Post $test Test. @param \WP_Post|null $compound Compound. @return array */
-	public function test_summary( $test, $compound = null ) {
+	/** Returns the public summary allowlist for a test. @param \WP_Post $test Test. @param \WP_Post|null $compound Compound. @param bool $include_media Resolve report image fallbacks. @return array */
+	public function test_summary( $test, $compound = null, $include_media = true ) {
 		$compound = $compound ?: get_post( absint( get_post_meta( $test->ID, 'compound_id', true ) ) );
 		$coa_status = COA_Workflow::outcome( $test ); $workflow_stage = COA_Workflow::stage( $test );
 		$complete = 'complete' === $workflow_stage; $testing = 'in-testing' === $workflow_stage;
@@ -125,14 +125,17 @@ final class Frontend_View_Model {
 		$testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'testing_lab', true ) : '';
 		$other_testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'other_testing_lab', true ) : '';
 		$laboratory = $lab_public ? $this->laboratory_name( $testing_lab, $other_testing_lab ) : '';
-		$batch_image_id = absint( get_post_meta( $test->ID, 'batch_vial_photo', true ) );
-		$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
-		$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
-		if ( ! $image_source && $this->valid_image_id( $image_id ) ) { $image_source = 'featured-image'; }
-		if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
-		if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) ) ?: get_post_thumbnail_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'compound-image'; } }
-		if ( ! $image_source ) { $image_id = 0; $image_source = 'local-placeholder'; }
-		$image_url = $image_id ? $this->image_url( $image_id, 'large' ) : plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE );
+		$image_id = 0; $image_source = ''; $image_url = '';
+		if ( $include_media ) {
+			$batch_image_id = absint( get_post_meta( $test->ID, 'batch_vial_photo', true ) );
+			$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
+			$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
+			if ( ! $image_source && $this->valid_image_id( $image_id ) ) { $image_source = 'featured-image'; }
+			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
+			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) ) ?: get_post_thumbnail_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'compound-image'; } }
+			if ( ! $image_source ) { $image_id = 0; $image_source = 'local-placeholder'; }
+			$image_url = $image_id ? $this->image_url( $image_id, 'large' ) : plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE );
+		}
 		$public_title = $batch_public ? $test->post_title : ( isset( COA_Workflow::stages()[ $workflow_stage ] ) ? COA_Workflow::stages()[ $workflow_stage ] : __( 'Vetting update', 'pepselect-coa-archive' ) );
 		return array(
 			'test_id' => $test->ID, 'title' => $public_title, 'slug' => $batch_public ? $test->post_name : 'progress-' . $test->ID,
@@ -182,9 +185,9 @@ final class Frontend_View_Model {
 		);
 	}
 
-	/** Builds the compact, truthful data required by the compound-history cards. @return array */
-	public function history_report( $test, $compound ) {
-		$model = $this->test_summary( $test, $compound );
+	/** Builds the compact, truthful data required by the compound-history cards. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @param bool $include_media Resolve report image fallbacks. @return array */
+	public function history_report( $test, $compound, $include_media = true ) {
+		$model = $this->test_summary( $test, $compound, $include_media );
 		$results = 'complete' === $model['workflow_stage'] || $model['has_partial_results'];
 		$model['purity_method'] = $results ? (string) get_post_meta( $test->ID, 'purity_method', true ) : '';
 		$model['identity_method'] = $results ? (string) get_post_meta( $test->ID, 'identity_method', true ) : '';
@@ -213,6 +216,52 @@ final class Frontend_View_Model {
 		if ( $model['pdf_url'] ) { $model['history_claims'][] = __( 'Documentation available', 'pepselect-coa-archive' ); }
 		if ( ! empty( $model['identity_status']['success'] ) ) { $model['history_claims'][] = __( 'Identity confirmed', 'pepselect-coa-archive' ); }
 		return $model;
+	}
+
+	/**
+	 * Builds the compact, product-page-specific report projection.
+	 *
+	 * A recorded failure excludes the report. Generated measure-only rows such
+	 * as net content may document a value, but only explicit `pass` statuses
+	 * contribute to QC Passed or Fully Vetted. Reported, Pending, and Not Tested
+	 * therefore never become passing claims.
+	 *
+	 * @param \WP_Post $test     Approved public report.
+	 * @param \WP_Post $compound Connected public compound.
+	 * @return array Empty when a failed category is recorded.
+	 */
+	public function product_carousel_report( $test, $compound ) {
+		$model = $this->history_report( $test, $compound, false );
+		$reported_rows = array_values( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ); } ) );
+		$status_rows = array_values( array_filter( $reported_rows, static function ( $row ) { return 'net-content' !== $row['key']; } ) );
+		$stored_statuses = array_map( function ( $key ) use ( $test ) { return $this->status( get_post_meta( $test->ID, $key, true ) )['value']; }, array( 'identity_status', 'purity_status', 'heavy_metals_status', 'sterility_status', 'endotoxin_status', 'fentanyl_status' ) );
+		$has_failure = in_array( 'fail', $stored_statuses, true );
+		if ( $has_failure ) { return array(); }
+
+		$passing_rows = array_values( array_filter( $status_rows, static function ( $row ) { return 'pass' === ( isset( $row['status']['value'] ) ? $row['status']['value'] : '' ); } ) );
+		$has_unresolved_status = (bool) array_intersect( $stored_statuses, array( 'reported', 'pending' ) );
+		$all_status_rows_pass = ! $has_unresolved_status && $status_rows && count( $status_rows ) === count( $passing_rows );
+		$fully_vetted = 7 === count( $reported_rows ) && 6 === count( $passing_rows ) && $all_status_rows_pass;
+		$qc_passed = ! $fully_vetted && $all_status_rows_pass;
+		$status_label = $fully_vetted ? __( 'Fully Vetted', 'pepselect-coa-archive' ) : ( $qc_passed ? __( 'QC Passed', 'pepselect-coa-archive' ) : __( 'Report Published', 'pepselect-coa-archive' ) );
+
+		return array(
+			'test_id' => $model['test_id'],
+			'batch_number' => $model['batch_number'],
+			'test_date' => $model['test_date'],
+			'test_date_label' => $model['test_date_label'],
+			'laboratory' => $model['laboratory'],
+			'purity_percentage' => $model['purity_percentage'],
+			'purity_percentage_display' => pepselect_coa_format_number( $model['purity_percentage'], 'product-purity' ),
+			'purity_reported' => '' !== pepselect_coa_format_number( $model['purity_percentage'], 'product-purity' ),
+			'detail_url' => $model['detail_url'],
+			'status_label' => $status_label,
+			'status_tone' => $fully_vetted || $qc_passed ? 'success' : 'neutral',
+			'is_fully_vetted' => $fully_vetted,
+			'is_qc_passed' => $qc_passed,
+			'reported_category_count' => count( $reported_rows ),
+			'passing_category_count' => count( $passing_rows ),
+		);
 	}
 
 	/** Returns full public report data including validated attachments. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @return array */

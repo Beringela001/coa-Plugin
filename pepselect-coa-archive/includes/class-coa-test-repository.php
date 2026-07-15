@@ -32,6 +32,26 @@ final class COA_Test_Repository {
 		return $result;
 	}
 
+	/**
+	 * Returns approved, completed public reports for the product-page carousel.
+	 *
+	 * Selection stays compound-exact and uses test date, publication date, then
+	 * post ID for deterministic newest-first ordering. Result truthfulness is
+	 * projected by Frontend_View_Model before the six-card limit is applied.
+	 *
+	 * @param int $compound_id Compound ID.
+	 * @return \WP_Post[]
+	 */
+	public function approved_for_product_carousel( $compound_id ) {
+		$posts = array();
+		foreach ( $this->eligible_ids( array( absint( $compound_id ) ) ) as $test_id ) {
+			$test = get_post( $test_id );
+			if ( $test && $this->visibility->is_approved( $test ) && 'complete' === COA_Workflow::stage( $test ) ) { $posts[] = $test; }
+		}
+		usort( $posts, array( $this, 'compare_product_carousel' ) );
+		return $posts;
+	}
+
 	/** Returns eligible tests grouped by compound ID. @param int[] $compound_ids Compound IDs. @return array */
 	public function grouped_for_compounds( $compound_ids ) {
 		$grouped = array();
@@ -150,5 +170,17 @@ final class COA_Test_Repository {
 		if ( $left_date && ! $right_date ) { return -1; } if ( ! $left_date && $right_date ) { return 1; }
 		$priority = COA_Workflow::priority( COA_Workflow::stage( $left ) ) <=> COA_Workflow::priority( COA_Workflow::stage( $right ) );
 		return 0 !== $priority ? $priority : strcmp( $right->post_date_gmt, $left->post_date_gmt );
+	}
+
+	/** Sorts product carousel reports by test date, publication date, then ID. @return int */
+	private function compare_product_carousel( $left, $right ) {
+		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) );
+		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
+		$date = strcmp( $right_date, $left_date );
+		if ( 0 !== $date ) { return $date; }
+		$left_published = '0000-00-00 00:00:00' !== $left->post_date_gmt ? $left->post_date_gmt : $left->post_date;
+		$right_published = '0000-00-00 00:00:00' !== $right->post_date_gmt ? $right->post_date_gmt : $right->post_date;
+		$published = strcmp( $right_published, $left_published );
+		return 0 !== $published ? $published : ( $right->ID <=> $left->ID );
 	}
 }

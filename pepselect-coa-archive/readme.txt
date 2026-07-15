@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.17
+Stable tag: 0.4.0-beta.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,13 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.17 aligns approved archive cards within desktop/tablet rows and sorts `/testing/` compounds by current public documentation workflow without changing card content, public visibility, or other COA pages.
+Version 0.4.0-beta.18 adds `[pepselect_product_coa_carousel]`, an Elementor-compatible WooCommerce single-product carousel for the latest six Approved/Complete reports connected through the canonical Product ID relationship.
+
+The shortcode renders a new compact product-page card rather than reusing archive or history cards. Reports sort by test date, publication date, and post ID. Fully Vetted requires seven documented categories and explicit successful statuses; successful partial panels say QC Passed. Failed categories are excluded, Reported/Pending/Not Tested never become Pass, and missing purity displays no fabricated value.
+
+Three cards display on desktop, two on tablet, and one on mobile. Native swipe/scroll snapping, circular previous/next buttons, end-state disabling, resize recalculation, visible focus, reduced motion, and no autoplay provide an accessible dependency-free carousel. Dedicated assets load only after the shortcode produces report cards on a single-product request.
+
+In Elementor, open Templates > Theme Builder > Single Product > Edit with Elementor. Place a Shortcode widget after Product Data Tabs and before You may also like, enter `[pepselect_product_coa_carousel]`, then update the template. The existing View Latest COA button remains unchanged.
 
 Catalog cards use CSS Grid stretching and vertical flex layout so their unchanged View All Reports footers align at the bottom. Mobile returns to natural one-column height. No fake content, fixed card height, or JavaScript measurement is used.
 
@@ -40,7 +46,7 @@ The exact Batch Vial Photo is optional through laboratory submission and require
 
 Report-specific views fall back from the exact batch image to the COA Test Featured Image, Compound image, then a bundled neutral placeholder. The redesigned responsive report follows the approved three-part hero, compact real-value metrics, truthful Full-QC strip and table, separate certificate and identity galleries, and dark final-document panel. Optional Fentanyl data never defaults to Pass.
 
-Private access/verification metadata and internal product relationship fields remain excluded from public REST output. Existing workflow privacy, archive grouping, failed transparency, search, CSV import, PDF/gallery behavior, design settings, capabilities, and non-destructive uninstall remain intact. Public product-page COA sections, QR codes, Elementor widgets, price/stock/order/checkout/shipping integrations are not included.
+Private access/verification metadata and internal product relationship fields remain excluded from public REST output. Existing workflow privacy, archive grouping, failed transparency, search, CSV import, PDF/gallery behavior, design settings, capabilities, and non-destructive uninstall remain intact. The product carousel adds no QR codes and does not modify prices, stock, inventory, orders, checkout, or shipping.
 
 == Installation ==
 
@@ -51,6 +57,13 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.18 =
+* Added `[pepselect_product_coa_carousel]` with exact WooCommerce Product ID relationship resolution and no title/SKU fallback.
+* Added deterministic latest-six Approved/Complete selection, truthful Fully Vetted/QC Passed/Report Published projection, two-decimal purity display, and failed-category exclusion.
+* Added dedicated accessible product-card templates plus dependency-free three/two/one-card responsive navigation, native swipe, resize handling, and reduced-motion support.
+* Loaded dedicated assets only after valid single-product output and documented exact Elementor placement without modifying the template or existing View Latest COA button.
+* Preserved product layout, archive/history/report designs, pricing, inventory, stock, orders, checkout, shipping, and QR-free behavior.
 
 = 0.4.0-beta.17 =
 * Aligned unchanged archive-card footers with catalog-scoped CSS Grid stretching and flex growth on desktop/tablet, while restoring natural height on mobile.

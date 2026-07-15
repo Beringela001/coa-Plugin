@@ -57,6 +57,9 @@ final class Plugin {
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
 
+	/** @var Product_COA_Carousel */
+	private $product_carousel;
+
 	/** @var Design_Settings_Admin|null */
 	private $design_settings_admin;
 
@@ -85,6 +88,7 @@ final class Plugin {
 		$frontend_view_model        = new Frontend_View_Model();
 		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
+		$this->product_carousel     = new Product_COA_Carousel( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		Archive_Cache::register_hooks();
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this->post_types, 'register' ), 5 );
@@ -107,6 +111,7 @@ final class Plugin {
 		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
 		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
 		$this->frontend_templates->register_hooks();
+		$this->product_carousel->register_hooks();
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );
 		add_action( 'admin_menu', array( $this->post_types, 'register_admin_menu' ), 5 );
 		add_action( 'admin_menu', array( $this->post_types, 'remove_duplicate_parent_submenu' ), 99 );

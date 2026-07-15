@@ -56,6 +56,7 @@ final class Design_Settings {
 			'failed_report_label' => array( 'Failed-report label', 'Did Not Pass Release Review' ), 'failed_report_copy' => array( 'Failed-report copy', 'This batch was not released for sale.' ),
 			'expected_date_label' => array( 'Expected-date label', 'Expected report' ), 'view_pending_lab' => array( 'Pending-lab action', 'View Laboratory Status' ), 'view_failed_report' => array( 'Failed-report action', 'View Full Report' ),
 			'view_history' => array( 'View-history action', 'View all reports' ), 'view_report' => array( 'View-full-report action', 'View Full Report' ), 'search_placeholder_copy' => array( 'Search placeholder', 'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B' ), 'search_button_copy' => array( 'Search button label', 'Search' ),
+			'product_carousel_eyebrow' => array( 'Product COA carousel eyebrow', 'Batch Documentation' ), 'product_carousel_title' => array( 'Product COA carousel title', 'Independent Testing History' ), 'product_carousel_intro' => array( 'Product COA carousel introduction', 'Review the latest independently tested batch records for this compound.' ),
 		);
 		foreach ( $copy as $key => $data ) { $fields[ $key ] = array( 'section' => 'copy', 'label' => $data[0], 'type' => 'text', 'default' => $data[1] ); }
 		$fields['show_failed_only_compounds'] = array( 'section' => 'behavior', 'label' => 'Show failed-only compounds in archive', 'type' => 'boolean', 'default' => 0 );

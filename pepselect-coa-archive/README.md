@@ -1,7 +1,32 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.17 is the **COA-5B.2 Archive Card Alignment and Workflow Status Sorting** release. It keeps the approved `/testing/` card design intact while aligning card footers within desktop/tablet rows and ordering compounds by their current public documentation state.
+Version 0.4.0-beta.18 is the **COA-5 WooCommerce Product Page COA Summary Carousel** release. It adds an Elementor-compatible, product-specific approved-report carousel while preserving the existing product summary, description tabs, related products, archive, history, and full-report experiences.
+
+## COA-5 product report carousel
+
+`[pepselect_product_coa_carousel]` renders only on a valid published WooCommerce single-product request. For preview and focused testing, `[pepselect_product_coa_carousel product_id="123"]` may select another valid published product while remaining in single-product context. The shortcode resolves exactly one active public COA Compound through its canonical `woocommerce_product_id` relationship. Product-title and SKU similarity are never public fallbacks, so another strength or similarly named product cannot supply reports.
+
+The repository performs one compound-scoped public-test query, keeps only published Approved/Complete reports, and orders them newest-first by Test Date, publication date, then WordPress post ID. The dedicated product view model excludes any report containing a recorded failed category and limits output to the first six truthful models. Draft, private, pending, failed, Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, Verification in Progress, and other compounds never become product report cards.
+
+The card is a new compact product-page component rather than the archive or Vetting History card. It displays an optional Latest Report badge, a truthful status, purity formatted to at most two decimals or `Not reported`, batch number, test date, optional laboratory, and one crawlable same-tab link to the Pep Select batch report. **Fully Vetted** requires all seven documented categories with every explicit category status saved as Pass; net content remains a measure-only category. A successful partial panel displays **QC Passed** only when every explicitly reported status is Pass. Reported, Pending, and Not Tested never become Pass; approved records without a passing claim use the neutral **Report Published** label instead.
+
+The vanilla-JavaScript carousel uses native horizontal scrolling and scroll snapping, displays three equal near-square cards on desktop, two on tablet, and one on mobile, and loads at most six. Previous/next buttons advance one report, expose disabled state, and disappear whenever the current viewport has no overflow. Touch/swipe is native, resize/orientation changes recalculate the visible count, multiple instances are isolated, focus is visible, the viewport and controls are labeled, reduced-motion preferences are honored, and there is no autoplay or keyboard trap.
+
+The dedicated stylesheet and script enqueue only after the shortcode has resolved a connected compound and at least one eligible report on a single-product request. No carousel assets load on the archive, Vetting History, full reports, cart, checkout, WordPress administration, or an unconnected/no-report product. The shortcode returns an empty string instead of an empty frame, and duplicate calls for the same product in one request are suppressed.
+
+### Elementor placement
+
+1. Open **Templates**.
+2. Open **Theme Builder**.
+3. Choose **Single Product**.
+4. Select **Edit with Elementor** for the active template.
+5. Add a **Shortcode** widget immediately after **Product Data Tabs**.
+6. Place it before **You may also like**.
+7. Enter `[pepselect_product_coa_carousel]`.
+8. Update the template.
+
+The plugin does not edit Elementor JSON or the template database record. The existing top **View Latest COA** button and its ACF URL remain unchanged and independent.
 
 ## COA-5B.2 archive alignment and sorting
 

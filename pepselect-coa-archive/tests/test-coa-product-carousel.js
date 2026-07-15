@@ -1,0 +1,82 @@
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.join(__dirname, '..');
+const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const coordinator = read('includes/class-product-coa-carousel.php');
+const repository = read('includes/class-coa-test-repository.php');
+const viewModel = read('includes/class-frontend-view-model.php');
+const plugin = read('includes/class-plugin.php');
+const css = read('assets/css/pepselect-coa-product-carousel.css');
+const script = read('assets/js/pepselect-coa-product-carousel.js');
+const template = read('templates/shortcodes/product-coa-carousel.php');
+const card = read('templates/partials/product-coa-card.php');
+
+assert.ok(plugin.includes('new Product_COA_Carousel'));
+assert.ok(plugin.includes('$this->product_carousel->register_hooks()'));
+assert.ok(coordinator.includes("add_shortcode( 'pepselect_product_coa_carousel'"));
+assert.ok(coordinator.includes("shortcode_atts( array( 'product_id' => 0 )"));
+assert.ok(coordinator.includes("is_singular( 'product' )"));
+assert.ok(coordinator.includes('$this->matching->compounds_for_product( $product_id )'));
+assert.ok(coordinator.includes('1 !== count( $compound_ids )'));
+assert.ok(coordinator.includes('$this->compounds->find_public_by_id'));
+assert.ok(!coordinator.includes('coa_name('));
+assert.ok(!coordinator.includes('sku('));
+assert.ok(!coordinator.includes('search('));
+assert.ok(!/query_posts|setup_postdata|wp_reset_postdata/.test(coordinator));
+assert.ok(coordinator.includes("if ( 6 === count( $reports ) )"));
+assert.ok(coordinator.includes('$this->rendered_product_ids'));
+
+assert.ok(repository.includes('public function approved_for_product_carousel'));
+assert.ok(repository.includes("$this->visibility->is_approved( $test )"));
+assert.ok(repository.includes("'complete' === COA_Workflow::stage( $test )"));
+const comparator = repository.slice(repository.indexOf('private function compare_product_carousel'));
+assert.ok(comparator.includes("get_post_meta( $left->ID, 'test_date'"));
+assert.ok(comparator.includes('$right_published'));
+assert.ok(comparator.includes('$right->ID <=> $left->ID'));
+assert.ok(!comparator.includes('is_current'));
+
+assert.ok(viewModel.includes('public function product_carousel_report'));
+assert.ok(viewModel.includes('$this->history_report( $test, $compound, false )'));
+assert.ok(viewModel.includes("'fail' ==="));
+assert.ok(viewModel.includes("'pass' ==="));
+assert.ok(viewModel.includes("'Fully Vetted'"));
+assert.ok(viewModel.includes("'QC Passed'"));
+assert.ok(viewModel.includes("'Report Published'"));
+assert.ok(viewModel.includes("'product-purity'"));
+assert.ok(viewModel.includes("'net-content' !== $row['key']"));
+
+['aria-labelledby', 'aria-roledescription="carousel"', 'aria-controls', '<button', 'disabled(', 'data-ps-coa-product-carousel'].forEach(value => assert.ok(template.includes(value)));
+['<a class="ps-coa-product-carousel__card"', 'esc_url', 'esc_attr', 'esc_html', 'Latest Report', 'Not reported', 'View full batch report'].forEach(value => assert.ok(card.includes(value)));
+['lab_report_url', 'pdf_url', 'qr'].forEach(value => assert.ok(!card.toLowerCase().includes(value)));
+
+assert.match(css, /--ps-coa-product-visible:\s*3/);
+assert.match(css, /@media \(max-width: 1024px\)[\s\S]*--ps-coa-product-visible:\s*2/);
+assert.match(css, /@media \(max-width: 640px\)[\s\S]*--ps-coa-product-visible:\s*1/);
+assert.match(css, /\.ps-coa-product-carousel__card \{[\s\S]*aspect-ratio:\s*1\.05 \/ 1[\s\S]*scroll-snap-align:\s*start/);
+assert.match(css, /\.ps-coa-product-carousel__track \{[\s\S]*align-items:\s*stretch[\s\S]*display:\s*grid[\s\S]*grid-auto-columns:[\s\S]*grid-auto-flow:\s*column/);
+assert.match(css, /\.ps-coa-product-carousel__viewport \{[\s\S]*overflow-x:\s*auto[\s\S]*scroll-snap-type:\s*x mandatory[\s\S]*touch-action:\s*pan-x pan-y pinch-zoom/);
+assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
+assert.ok(css.includes('.ps-coa-product-carousel__card:focus-visible'));
+assert.ok(css.includes('.ps-coa-product-carousel__control:focus-visible'));
+assert.ok(!css.includes('position: fixed'));
+
+assert.ok(script.includes("querySelectorAll(selector).forEach(initialize)"));
+assert.ok(script.includes("dataset.psCoaInitialized === 'true'"));
+assert.ok(script.includes("previous.addEventListener('click'"));
+assert.ok(script.includes("next.addEventListener('click'"));
+assert.ok(script.includes("viewport.addEventListener('scroll'"));
+assert.ok(script.includes("'ResizeObserver' in window"));
+assert.ok(script.includes("window.matchMedia('(prefers-reduced-motion: reduce)')"));
+assert.ok(script.includes("previous.setAttribute('aria-disabled'"));
+assert.ok(!/setInterval|setTimeout|autoplay|Swiper|Slick|Owl|jQuery/i.test(script));
+
+assert.ok(coordinator.indexOf('$this->ensure_assets();') > coordinator.indexOf("if ( ! $reports ) { return ''; }"));
+assert.ok(coordinator.includes("wp_enqueue_style( 'pepselect-coa-product-carousel'"));
+assert.ok(coordinator.includes("wp_enqueue_script( 'pepselect-coa-product-carousel'"));
+assert.ok(!coordinator.includes('wp_enqueue_scripts'));
+
+const newSurface = [coordinator, repository, viewModel, css, script, template, card].join('\n').toLowerCase();
+['woocommerce_after_single_product_summary', 'woocommerce_single_product_summary', 'update_post_meta( $product_id', 'qrcode', 'view_latest_co'].forEach(value => assert.ok(!newSurface.includes(value)));
+console.log('COA_PRODUCT_CAROUSEL_STATIC_TESTS=PASS');
