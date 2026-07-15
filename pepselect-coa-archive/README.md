@@ -1,7 +1,19 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.20 is the **COA-5.2 Mobile Product Carousel Repair and Latest COA Button Automation** release. It repairs the mobile viewport calculation while preserving the approved desktop cards, and connects the existing Elementor top button to the canonical Product ID relationship without adding or moving a button.
+Version 0.4.0-beta.21 is the **COA-5C WordPress Dashboard Workflow Center** release. It adds a permission-aware operational summary to the standard WordPress Dashboard without changing public COA pages, product presentation, or stored workflow data.
+
+## COA-5C WordPress Dashboard Workflow Center
+
+Administrators and other users with `edit_ps_coas` receive a standard **COA Workflow Center** widget on `wp_dashboard_setup`. Users without that capability receive neither the widget registration nor its output. Each displayed row is additionally protected by WordPress's mapped `edit_post` check for the exact COA Test. Footer actions are independently gated by `create_ps_coas`, `edit_ps_coas`, and `manage_ps_compounds`.
+
+The widget queries only COA Tests with an active operational outcome (`pending`, including the supported beta-era operational status aliases), normalizes legacy workflow stages through the existing `COA_Workflow` model, and excludes Complete, Approved, Failed, unrelated, and non-editable records. Draft, private, future, pending, and published active records follow normal WordPress post permissions; inactive Compounds remain visible to authorized administrators because the widget is an operational—not public-visibility—surface. The query requests IDs only, primes test and linked-compound post/meta caches in batches, and performs no writes.
+
+Counters show Vendor Vetting, Waiting on Vendor, Submitted, In Testing, and Overdue totals from the same authorized active source set. Overdue means a Pending Submitted-to-Laboratory or Verification-in-Progress record with a valid Expected COA date before the current calendar date in the configured WordPress site timezone. The day count is the whole difference between those two site-local midnight dates. Vendor and waiting stages, missing/invalid dates, Complete records, Approved history, and Failed records never become overdue.
+
+Rows sort by overdue first (oldest expected date first), then Verification in Progress, Submitted to Laboratory, Waiting on Vendor, and Vendor Vetting. Within a non-overdue stage, dated records precede undated records, expected dates sort ascending, modified time sorts descending, and post ID descending supplies the final stable tie-breaker. Only the ten most urgent rows render; counters retain the full active total, and larger sets expose the existing View All COA Tests destination. The optional next-expected summary uses the nearest valid non-past date.
+
+The compact table shows the linked Compound Display Name, normalized human stage, Expected COA date or em dash, saved Batch Number or em dash, and the exact WordPress Edit link. It adds no inline editing. The empty state offers Add New COA Test when permitted. A dedicated stylesheet loads only on `index.php`, wraps counters, stacks table cells at narrow admin widths, keeps badges/actions readable, and adds no JavaScript. Results are built fresh on each Dashboard request, so normal WordPress post/meta invalidation is sufficient and no new cache invalidation path is required.
 
 ## COA-5.2 mobile repair and existing-button automation
 

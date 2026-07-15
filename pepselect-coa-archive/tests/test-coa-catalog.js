@@ -33,7 +33,7 @@ assert.match(css, /\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{[^}
 assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
 assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.ps-coa-archive--catalog-layout \.ps-coa-compound-grid \{ align-items: start; grid-template-columns: 1fr; \}/);
 assert.match(css, /\.ps-coa-history-carousel__control \{[^}]*aspect-ratio: 1 \/ 1;[^}]*flex: 0 0 48px;[^}]*height: 48px !important;[^}]*min-width: 48px;[^}]*width: 48px !important;/s);
-assert.match(main, /Version:\s+0\.4\.0-beta\.20/);
+assert.match(main, /Version:\s+0\.4\.0-beta\.21/);
 
 const implementation = [compounds, tests, router, view].join('\n').toLowerCase();
 assert.doesNotMatch(implementation, /woocommerce_single_product|qrcode/);

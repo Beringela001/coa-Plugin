@@ -66,6 +66,9 @@ final class Plugin {
 	/** @var Design_Settings_Admin|null */
 	private $design_settings_admin;
 
+	/** @var Dashboard_Workflow|null */
+	private $dashboard_workflow;
+
 	/** Returns the shared plugin instance. @return Plugin */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -125,6 +128,8 @@ final class Plugin {
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_future_date_notice' ) );
 		add_action( 'admin_notices', array( $this->coa_test_service, 'render_workflow_notices' ) );
 		if ( is_admin() ) {
+			$this->dashboard_workflow = new Dashboard_Workflow();
+			$this->dashboard_workflow->register_hooks();
 			$this->product_matching_admin = new Product_Matching_Admin( $this->product_matching );
 			$this->product_matching_admin->register_hooks();
 			$this->coa_test_form = new COA_Test_Form();

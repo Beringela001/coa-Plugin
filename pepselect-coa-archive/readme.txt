@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.20
+Stable tag: 0.4.0-beta.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,11 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.20 repairs the one-card mobile viewport and automates the existing Elementor top COA button from canonical public COA data.
+Version 0.4.0-beta.21 adds a capability-protected COA Workflow Center to the standard WordPress Dashboard.
+
+Authorized users receive active-stage counters, a timezone-aware overdue count, and up to ten urgency-sorted Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, or Verification in Progress records. Every row uses the linked Compound Display Name and exact COA Test edit permission. Complete, Approved historical, Failed, unrelated, and non-editable records are excluded.
+
+The admin-only query requests IDs, primes test and linked Compound caches, and performs no writes. Results are built fresh per Dashboard request, so no additional cache invalidation mechanism is introduced. The dedicated responsive stylesheet loads only on the main Dashboard; no JavaScript, inline editing, frontend change, Elementor change, product carousel change, email, cron, QR code, or commerce behavior is added.
 
 The carousel now uses one shared three/two/one cards-per-view property at desktop, tablet, and mobile breakpoints. At 767px and below, the viewport spans flexible full-width grid tracks, every slide is 100% and non-shrinking, cards use natural height, and the circular 44px controls sit beneath the card without compressing it. ResizeObserver, resize, orientation change, and Elementor initialization recalculate the actual viewport and clamp navigation state. Desktop styling and the approved Current/Incoming/Previous hierarchy are unchanged.
 
@@ -61,6 +65,12 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.21 =
+* Added the standard WordPress Dashboard COA Workflow Center for users with edit_ps_coas, with per-record mapped edit checks and independently gated footer actions.
+* Added active-stage counters, WordPress-timezone overdue logic, whole-calendar-day warnings, deterministic urgency sorting, a ten-row limit, next expected summary, and an actionable empty state.
+* Added an IDs-only active workflow query with batched post/meta cache priming and no mutations or secondary result cache.
+* Added Dashboard-only responsive CSS plus focused PHP/static coverage for the 79 COA-5C acceptance checks while preserving every public, Elementor, carousel, Product Matching, form, CSV, and commerce surface.
 
 = 0.4.0-beta.20 =
 * Fixed the mobile squeeze at its root by spanning the carousel viewport across flexible full-width grid tracks and enforcing one full-width, non-shrinking, natural-height slide at 767px and below.

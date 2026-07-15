@@ -1,0 +1,50 @@
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.join(__dirname, '..');
+const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const service = read('includes/class-dashboard-workflow.php');
+const template = read('templates/admin/dashboard-workflow.php');
+const css = read('assets/css/pepselect-coa-dashboard-workflow.css');
+const plugin = read('includes/class-plugin.php');
+const main = read('pepselect-coa-archive.php');
+
+assert.ok(service.includes("add_action( 'wp_dashboard_setup'"));
+assert.ok(service.includes("__( 'COA Workflow Center'"));
+assert.ok(service.includes("current_user_can( 'edit_ps_coas' )"));
+assert.ok(service.includes('! is_admin()'));
+assert.ok(service.includes("current_user_can( 'edit_post', $id )"));
+assert.ok(service.includes("'posts_per_page' => -1"));
+assert.ok(service.includes("'fields' => 'ids'"));
+assert.ok(service.includes("'coa_status'"));
+assert.ok(service.includes("array( 'pending', 'in-testing', 'vendor-vetting' )"));
+assert.ok(service.includes('_prime_post_caches'));
+assert.ok(service.includes("update_meta_cache( 'post'"));
+assert.ok(service.includes('current_datetime()->setTime( 0, 0, 0 )'));
+assert.ok(service.includes("array( 'submitted-to-lab', 'in-testing' )"));
+assert.ok(service.includes('array_slice( $rows, 0, self::LIMIT )'));
+assert.ok(service.includes("'index.php' !== $hook_suffix"));
+assert.ok(service.includes("current_user_can( 'create_ps_coas' )"));
+assert.ok(service.includes("current_user_can( 'manage_ps_compounds' )"));
+assert.ok(plugin.includes('$this->dashboard_workflow->register_hooks()'));
+assert.match(main, /Version:\s+0\.4\.0-beta\.21/);
+assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-beta.21'"));
+
+['Compound', 'Stage', 'Expected COA', 'Batch', 'Action', 'No active COA workflows need attention.', 'Add New COA Test'].forEach(text => assert.ok(template.includes(text)));
+['Add New COA Test', 'View All COA Tests', 'Product Matching'].forEach(text => assert.ok(service.includes(text)));
+['esc_html', 'esc_attr', 'esc_url'].forEach(escape => assert.ok(template.includes(escape)));
+assert.ok(template.includes('&mdash;'));
+assert.ok(template.includes("_n( 'Overdue by %d day'"));
+assert.ok(!/esc_attr\(\s*\$ps_row\['stage'\]/.test(template));
+
+assert.match(css, /@media \(max-width: 782px\)/);
+assert.match(css, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+assert.match(css, /overflow-wrap: anywhere/);
+assert.match(css, /\.ps-coa-dashboard-workflow__table td \{ display: grid/);
+assert.ok(!css.includes('overflow-x: scroll'));
+
+const dashboardOnly = [service, template, css].join('\n').toLowerCase();
+['wp_enqueue_scripts', 'template_redirect', 'woocommerce_', 'elementor', 'checkout', 'shipping', 'inventory', 'stock', 'qrcode', 'wp_cron', 'wp_mail'].forEach(term => assert.ok(!dashboardOnly.includes(term)));
+['update_post_meta', 'delete_post_meta', 'wp_update_post', 'wp_insert_post', 'wp_delete_post'].forEach(term => assert.ok(!service.includes(term)));
+console.log('COA_5C_DASHBOARD_STATIC_TESTS=PASS');

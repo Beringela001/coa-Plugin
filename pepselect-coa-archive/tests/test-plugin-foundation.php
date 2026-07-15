@@ -1,7 +1,7 @@
 <?php
 /** Foundation integration tests. */
 class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
-	public function test_plugin_bootstraps() { $this->assertSame( '0.4.0-beta.20', pepselect_coa_archive_version() ); }
+	public function test_plugin_bootstraps() { $this->assertSame( '0.4.0-beta.21', pepselect_coa_archive_version() ); }
 	public function test_post_types_and_rest_are_registered() {
 		do_action( 'init' );
 		foreach ( array( 'ps_compound', 'ps_coa_test' ) as $name ) { $object = get_post_type_object( $name ); $this->assertNotNull( $object ); $this->assertTrue( $object->show_in_rest ); }
