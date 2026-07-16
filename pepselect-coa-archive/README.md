@@ -1,9 +1,9 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-rc.1 is the **COA-7 Release Candidate and Launch Hardening** release. It preserves the approved beta.23 application behavior and adds release verification, upgrade/rollback guidance, and an explicit release test matrix. No feature, public design, Elementor placement, commerce behavior, or stored COA data is changed.
+Version 0.4.0 is the **COA-8 stable release**. It promotes the verified COA-7 release candidate without changing approved public/admin behavior, Elementor placement, commerce behavior, or stored COA data. The release includes the production archive, Vetting History and Full Report views, exact Product ID integration, operational Dashboard and admin workflows, staged validation, CSV assistance, responsive presentation, and launch-hardening contracts established throughout the 0.4.0 prerelease series.
 
-## Release-candidate operator documents
+## Stable-release operator documents
 
 - [Release readiness and 62-check matrix](#release-readiness-and-62-check-matrix)
 - [Beginner staging installation and smoke test](#beginner-staging-installation-and-smoke-test)
@@ -55,21 +55,21 @@ This source package contains no staging database or authenticated WordPress sess
 - This repository does not include PHP, PHPUnit, a WordPress test database, WooCommerce staging data, or browser automation. PHP lint, PHPUnit, real-record enumeration, HTTP-route status, visual comparison, touch/swipe, checkout, stock notification, and authenticated permission observations must be completed on staging.
 - The plugin deliberately preserves all data on deactivation and uninstall. Destructive cleanup is not available.
 - The CSV importer is intentionally one-row, client-side preview/apply and does not add a server-side import format.
-- No final stable `0.4.0` release is implied by this RC. Staging approval is required first.
+- Source-only verification cannot replace authenticated staging acceptance. Complete the manual checks below before production deployment.
 
 ## Beginner staging installation and smoke test
 
 ### Before installing
 
-1. In MyKinsta, open the staging site, choose **Backups**, create a manual backup, and name it **Before COA 0.4.0 RC1**.
+1. In MyKinsta, open the staging site, choose **Backups**, create a manual backup, and name it **Before COA 0.4.0 Stable**.
 2. Keep the currently working plugin ZIP somewhere safe and record its installed version from **WordPress Admin → Plugins**.
 3. Leave the current staging site open in a separate browser tab so you can compare it after replacement.
 
-### Install the RC
+### Install the stable release
 
 1. Open **WordPress Admin → Plugins → Add New Plugin → Upload Plugin**.
-2. Select `pepselect-coa-archive.zip`, choose **Install Now**, then choose **Replace current with uploaded**.
-3. Confirm **Pep Select COA Archive** remains active and shows version `0.4.0-rc.1`.
+2. Select `pepselect-coa-archive-0.4.0.zip`, choose **Install Now**, then choose **Replace current with uploaded**.
+3. Confirm **Pep Select COA Archive** remains active and shows version `0.4.0`.
 4. Clear the Kinsta page/cache layer, then perform a hard browser refresh. Do not edit Elementor.
 
 ### First ten smoke checks
@@ -85,7 +85,7 @@ This source package contains no staging database or authenticated WordPress sess
 9. Open one out-of-stock product; confirm the stock notifier and COA content remain independent.
 10. Repeat the product and report checks on a phone-sized browser and confirm no horizontal body scroll.
 
-## Manual release-candidate QA checklist
+## Manual stable-release QA checklist
 
 Record Pass/Fail and a screenshot or URL for every row. Do not change real records merely to make a check pass; use a safe temporary staging record where an edit is required.
 
@@ -93,7 +93,7 @@ Record Pass/Fail and a screenshot or URL for every row. Do not change real recor
 
 | Page to open | Action to take | Expected result | What indicates failure |
 |---|---|---|---|
-| Plugins | Upload and replace with the verified RC ZIP. | Plugin remains active at `0.4.0-rc.1`; no activation error. | White screen, fatal error, deactivation, wrong version, or duplicate plugin entry. |
+| Plugins | Upload and replace with the verified stable ZIP. | Plugin remains active at `0.4.0`; no activation error. | White screen, fatal error, deactivation, wrong version, or duplicate plugin entry. |
 | COA Archive lists | Count Compounds and COA Tests before/after replacement. | Counts, titles, statuses, slugs, and dates are unchanged. | Missing, duplicated, renamed, or reset records. |
 
 ### 2. Dashboard
@@ -210,9 +210,9 @@ Record Pass/Fail and a screenshot or URL for every row. Do not change real recor
 
 ## Rollback
 
-Use the MyKinsta backup when records/settings were unexpectedly changed, a fatal error prevents normal administration, or several site systems are affected. In MyKinsta, select the staging environment, open **Backups**, choose **Before COA 0.4.0 RC1**, and restore it to staging. This returns files and database together.
+Use the MyKinsta backup when records/settings were unexpectedly changed, a fatal error prevents normal administration, or several site systems are affected. In MyKinsta, select the staging environment, open **Backups**, choose **Before COA 0.4.0 Stable**, and restore it to staging. This returns files and database together.
 
-Use the previous working ZIP when the database and COA records are intact but only plugin code/assets need to be reverted. In **WordPress Admin → Plugins → Add New Plugin → Upload Plugin**, upload the preserved ZIP and choose **Replace current with uploaded**. Confirm activation, clear Kinsta/browser cache, and repeat the ten smoke checks. If you cannot confirm database integrity, prefer the named Kinsta backup.
+Use the preserved `pepselect-coa-archive-0.4.0-rc.1.zip` when the database and COA records are intact but only plugin code/assets need to be reverted. In **WordPress Admin → Plugins → Add New Plugin → Upload Plugin**, upload that RC1 ZIP and choose **Replace current with uploaded**. Confirm activation, clear Kinsta/browser cache, and repeat the ten smoke checks. If you cannot confirm database integrity, prefer the named Kinsta backup.
 
 ## COA-5D.1 compact narrow dashboard workflow layout
 

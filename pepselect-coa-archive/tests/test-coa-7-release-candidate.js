@@ -132,7 +132,7 @@ check(58, 'no nested duplicate plugin directory exists', !fs.existsSync(path.joi
 check(59, 'no filename contains a backslash character', sourceFiles.every(file => !path.basename(file).includes('\\')));
 check(60, 'no ZIP is stored inside the source directory', sourceFiles.every(file => path.extname(file).toLowerCase() !== '.zip'));
 check(61, 'no forbidden release artifact is present', sourceFiles.every(file => !/\.(?:log|tmp|bak|sql|env|json)$/i.test(file)));
-check(62, 'RC version is consistent in active metadata', /Version:\s+0\.4\.0-rc\.1/.test(main) && main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-rc.1'"));
+check(62, 'stable version is consistent in active metadata', /Version:\s+0\.4\.0(?:\s|$)/.test(main) && main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0'"));
 
 assert.strictEqual(checks.length, 62);
 console.log(`COA_7_RELEASE_CANDIDATE_STATIC_TESTS=PASS (${checks.length}/62)`);

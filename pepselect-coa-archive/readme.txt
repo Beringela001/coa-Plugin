@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-rc.1
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-rc.1 is the first release candidate. It preserves the approved beta.23 behavior while adding release-hardening verification, upgrade/rollback documentation, and an explicit 62-check release matrix. No public design, workflow, Elementor, product, pricing, stock, checkout, shipping, or stored COA data behavior is changed.
+Version 0.4.0 is the stable Pep Select COA Archive release. It promotes the verified release candidate without changing approved public/admin design, Elementor placement, commerce behavior, or stored COA data. It includes the production archive, Vetting History, Full Reports, exact Product ID integration, operational admin workflows, staged validation, CSV assistance, responsive presentation, and launch hardening developed across the 0.4.0 prerelease series.
 
 Authorized users receive active-stage counters, a timezone-aware overdue count, and up to ten urgency-sorted Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, or Verification in Progress records. Every row uses the linked Compound Display Name and exact COA Test edit permission. Complete, Approved historical, Failed, unrelated, and non-editable records are excluded.
 
@@ -65,6 +65,12 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0 =
+* Promoted the verified COA-7 release candidate to the stable 0.4.0 release without adding features or changing approved public/admin behavior.
+* Finalized the production-ready COA Archive, Vetting History, Full Reports, exact Product ID matching, and WooCommerce product-page integration established throughout the prerelease series.
+* Finalized the Dashboard Workflow Center, staged validation, CSV import assistance, responsive behavior, stable metadata, operator guidance, upgrade/rollback documentation, and 62-check release-hardening contract established throughout the prerelease series.
+* Preserved all Compounds, COA Tests, product relationships, settings, attachments, capabilities, public routes, Elementor placement, and commerce behavior.
 
 = 0.4.0-rc.1 =
 * Prepared the first release candidate from the verified beta.23 source without adding features or changing approved public/admin behavior.

@@ -130,6 +130,6 @@ assert.ok(!productCss.includes('overflow-wrap: anywhere'));
 const adminOnly = [dashboard, shared, list, validation, requirements, requirementsTemplate].join('\n').toLowerCase();
 ['wp_enqueue_scripts', 'woocommerce_single_product', 'elementor', 'checkout', 'shipping', 'inventory', 'qrcode', 'wp_cron', 'wp_mail'].forEach(value => assert.ok(!adminOnly.includes(value)));
 ['update_post_meta', 'delete_post_meta', 'wp_update_post', 'wp_insert_post', 'wp_delete_post'].forEach(value => assert.ok(!dashboard.includes(value) && !shared.includes(value) && !requirements.includes(value)));
-assert.match(main, /Version:\s+0\.4\.0-rc\.1/);
-assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-rc.1'"));
+assert.match(main, /Version:\s+0\.4\.0(?:\s|$)/);
+assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0'"));
 console.log('COA_5D_ADMIN_WORKFLOW_STATIC_TESTS=PASS');
