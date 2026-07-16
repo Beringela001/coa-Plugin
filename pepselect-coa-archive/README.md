@@ -1,7 +1,11 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.22 is the **COA-5D Dashboard and Admin Workflow Polish** release. It improves the existing administrative workflow surfaces without changing public COA pages, product-page COA cards, Elementor, commerce behavior, or stored COA data.
+Version 0.4.0-beta.23 is the **COA-5D.1 Compact Narrow Dashboard Workflow Layout** release. It compacts narrow Dashboard records without changing the approved full-width table, workflow behavior, public COA pages, Elementor, commerce behavior, or stored COA data.
+
+## COA-5D.1 compact narrow dashboard workflow layout
+
+The Dashboard stylesheet now relies exclusively on the existing `620px` component-width container query instead of also activating from a `782px` browser-viewport fallback. Inside that narrow container only, each workflow record becomes a compact two-column, three-row grid: Compound with Stage, Expected COA with Due Soon/Overdue, and Batch with Edit. The existing table headings remain visually hidden but accessible at narrow widths, values wrap only at word boundaries, and the full-width table rules remain unchanged.
 
 ## COA-5D dashboard and admin workflow polish
 
@@ -11,7 +15,7 @@ COA Tests retain the WordPress list table and gain composable Workflow Stage, CO
 
 COA Test Add/Edit screens now include a read-only **Workflow Requirements** metabox. It evaluates saved evidence against the same stage/status conditions as `COA_Test_Validation`, updates guidance immediately when the selected stage, status, or laboratory changes, reports Complete, Missing, Not required yet, or Optional in text and icons, and never duplicates or writes form fields. Validation messages name the exact field, stage, and reason; invalid transitions still fail through normal ACF validation without partial workflow writes. The panel stylesheet and lightweight controller load only on COA Test Add/Edit screens.
 
-The current COA Test schema has no separate Report Type field, so beta.22 does not fabricate one or impose a new Full-QC requirement matrix. It reports the evidence actually enforced today: Approved documentation/date/laboratory requirements, Complete-stage Fentanyl method/specification rules, the stricter Approved ILS Fentanyl result, and the Failed Release Decision Note.
+The current COA Test schema has no separate Report Type field, so beta.23 does not fabricate one or impose a new Full-QC requirement matrix. It reports the evidence actually enforced today: Approved documentation/date/laboratory requirements, Complete-stage Fentanyl method/specification rules, the stricter Approved ILS Fentanyl result, and the Failed Release Decision Note.
 
 Compound Active and Featured instructions now include the exact public-eligibility and priority definitions. Featured still cannot override an inactive Compound. The WooCommerce sidebar keeps SKU and Product ID in row one, Connection Status across row two, and its action across row three with safe word wrapping. Product Matching logic, relationships, and write handlers are unchanged.
 
@@ -21,9 +25,9 @@ Deployment requires only uploading and replacing the plugin ZIP, confirming acti
 
 ### COA-5D deployment-site manual QA
 
-The local source workspace does not include a running WordPress/WooCommerce site, so the following deployment checks are intentionally documented for the installed beta.22 package rather than marked as locally executed:
+The local source workspace does not include a running WordPress/WooCommerce site, so the following deployment checks are intentionally documented for the installed beta.23 package rather than marked as locally executed:
 
-1. Dashboard: check full-width counter/headings, one-line Action, visible Edit controls, word-boundary stage wrapping, then move the widget to a narrow column and verify labeled stacking, no horizontal scroll, unchanged counts/sorting, Due Soon, and Overdue results.
+1. Dashboard: check the approved full-width table maximized, at half-screen, and in the widest column; move the widget to a narrow column and verify compact Compound/Stage, Expected/Timing, and Batch/Edit rows; narrow and widen again without reloading; confirm no horizontal scroll, mid-word breaks, missing Edit control, or counter/sorting/timing change.
 2. COA Tests: exercise Verification in Progress, Pending, Compound, Laboratory, Due Soon, Overdue, and combined filters; repeat with search and pagination; clear filters and confirm the full list returns.
 3. Workflow Requirements: inspect Vendor Vetting and Waiting on Vendor; verify physical-batch fields are not required; safely move a test to Verification in Progress, satisfy listed fields, and confirm save; attempt Approved without Lab Report URL, confirm the specific validation block, add the URL, and confirm a valid save.
 4. Compound controls: verify both complete Active/Featured descriptions; with Featured on and Active off, confirm public ineligibility; restore the original values.

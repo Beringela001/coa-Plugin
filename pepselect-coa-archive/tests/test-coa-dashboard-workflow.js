@@ -31,8 +31,8 @@ assert.ok(service.includes("'index.php' !== $hook_suffix"));
 assert.ok(service.includes("current_user_can( 'create_ps_coas' )"));
 assert.ok(service.includes("current_user_can( 'manage_ps_compounds' )"));
 assert.ok(plugin.includes('$this->dashboard_workflow->register_hooks()'));
-assert.match(main, /Version:\s+0\.4\.0-beta\.22/);
-assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-beta.22'"));
+assert.match(main, /Version:\s+0\.4\.0-beta\.23/);
+assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-beta.23'"));
 
 ['Compound', 'Stage', 'Expected COA', 'Batch', 'Action', 'No active COA workflows need attention.', 'Add New COA Test'].forEach(text => assert.ok(template.includes(text)));
 ['Add New COA Test', 'View All COA Tests', 'Product Matching'].forEach(text => assert.ok(service.includes(text)));
@@ -41,12 +41,13 @@ assert.ok(template.includes('&mdash;'));
 assert.ok(template.includes("_n( 'Overdue by %d day'"));
 assert.ok(!/esc_attr\(\s*\$ps_row\['stage'\]/.test(template));
 
-assert.match(css, /@media \(max-width: 782px\)/);
 assert.match(css, /@container ps-coa-workflow \(max-width: 620px\)/);
 assert.match(css, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
 assert.ok(!css.includes('overflow-wrap: anywhere'));
 assert.match(css, /overflow-wrap: break-word/);
-assert.match(css, /\.ps-coa-dashboard-workflow__table td \{ display: grid/);
+assert.match(css, /grid-template-areas: "compound stage" "expected expected" "batch action"/);
+assert.match(css, /td:nth-child\(3\)[^}]*display: grid[^}]*grid-area: expected/);
+assert.ok(!css.includes('@media (max-width: 782px)'));
 assert.ok(!css.includes('overflow-x: scroll'));
 
 const dashboardOnly = [service, template, css].join('\n').toLowerCase();

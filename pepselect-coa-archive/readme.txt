@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.22
+Stable tag: 0.4.0-beta.23
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.22 polishes the Dashboard Workflow Center, COA Test list filters and timing indicators, validation guidance, Compound help text, and the WooCommerce COA sidebar without changing public pages or stored COA data.
+Version 0.4.0-beta.23 compacts narrow Dashboard Workflow Center records into three efficient rows while preserving the approved full-width table, workflow behavior, public pages, and stored COA data.
 
 Authorized users receive active-stage counters, a timezone-aware overdue count, and up to ten urgency-sorted Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, or Verification in Progress records. Every row uses the linked Compound Display Name and exact COA Test edit permission. Complete, Approved historical, Failed, unrelated, and non-editable records are excluded.
 
@@ -65,6 +65,11 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-beta.23 =
+* Replaced narrow one-field-per-row stacking with compact Compound/Stage, Expected COA/Timing, and Batch/Edit rows inside the existing 620px widget container query.
+* Removed the 782px viewport fallback so the compact layout responds only to the actual Dashboard widget width.
+* Preserved accessible table headings, word-boundary wrapping, counters, workflow selection, timing, sorting, links, public pages, Elementor, and commerce behavior.
 
 = 0.4.0-beta.22 =
 * Corrected Dashboard word wrapping and Action geometry with purpose-sized columns plus a component-width stacked layout, preserving existing counters, record selection, timing, sorting, and destinations.
