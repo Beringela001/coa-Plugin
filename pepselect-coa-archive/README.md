@@ -1,7 +1,218 @@
 
 # Pep Select COA Archive
 
-Version 0.4.0-beta.23 is the **COA-5D.1 Compact Narrow Dashboard Workflow Layout** release. It compacts narrow Dashboard records without changing the approved full-width table, workflow behavior, public COA pages, Elementor, commerce behavior, or stored COA data.
+Version 0.4.0-rc.1 is the **COA-7 Release Candidate and Launch Hardening** release. It preserves the approved beta.23 application behavior and adds release verification, upgrade/rollback guidance, and an explicit release test matrix. No feature, public design, Elementor placement, commerce behavior, or stored COA data is changed.
+
+## Release-candidate operator documents
+
+- [Release readiness and 62-check matrix](#release-readiness-and-62-check-matrix)
+- [Beginner staging installation and smoke test](#beginner-staging-installation-and-smoke-test)
+- [Manual release-candidate QA checklist](#manual-release-candidate-qa-checklist)
+- [Rollback](#rollback)
+
+## Release readiness and 62-check matrix
+
+### System overview
+
+The plugin owns two post types: `ps_compound` for the public compound identity and `ps_coa_test` for batch/workflow/report records. Public routes are `/testing/`, `/testing/{compound}/`, and `/testing/{compound}/{batch}/`. The product-page integration is `[pepselect_product_coa_carousel]`; Elementor keeps the existing shortcode placement and existing ACF-backed top button. A WooCommerce Product ID is the canonical relationship. SKU and title are review aids, never public relationship fallbacks.
+
+Current means one published, Approved, Complete report explicitly marked Current for its Compound. Incoming means one public Pending operational record selected by workflow priority. Previous means older public Approved reports; transparent Failed history follows the established Vetting History rules but never becomes a product card. Full-QC language requires all seven documented successful categories. Partial evidence remains QC Testing Passed or neutral and never becomes Fully Vetted. Early workflow fields, access codes, verification metadata, internal notes, and private records remain outside public output.
+
+Workflow stages are Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, Verification in Progress, and Complete. The Dashboard Workflow Center, COA Test filters, Due Soon/Overdue classifier, and Workflow Requirements panel are read-only operational views over the same stored workflow data. The CSV importer previews exactly one row in the browser and applies it to the normal ACF form; normal WordPress validation/save remains authoritative.
+
+### Audit findings
+
+- Source integrity: no nested plugin folder, ZIP inside source, backslash filename, screenshot, Elementor JSON, Graphify output, debug log, backup, environment file, database export, duplicate class, or merge marker was found.
+- Upgrade safety: runtime upgrade work is version-gated; the catalog-copy migration changes only exact untouched legacy defaults; Product Matching backfills only a blank SKU snapshot on an existing canonical Product ID link. Activation registers structures, grants capabilities, flushes once, and records the version. Deactivation and uninstall delete no posts, metadata, attachments, relationships, settings, or capabilities.
+- Security/privacy: both post types use mapped custom capabilities; administrators receive the complete primitive capability set; REST writes require `edit_post` for the exact record; state-changing Product Matching operations use nonces and administrator capabilities; private workflow metadata is not registered in the public REST schema.
+- Performance/assets: archive results use a plugin-only versioned cache with lifecycle invalidation; public CSS loads only for COA routes/shortcodes; lightbox/history scripts load only for matching contexts; product-carousel assets load only after valid card output; Dashboard, list, form, requirements, Product Matching, and Design assets are screen-scoped. Product cards remain capped at four, Previous History at ten, and Dashboard rows at ten.
+- Proven defect corrected: two punctuation sequences in this README had been stored as mojibake. They are now valid UTF-8. Runtime code, public output, and stored data were unaffected.
+- No runtime, schema, migration, design, Elementor, or commerce correction was justified by the audit.
+
+### Required release matrix
+
+The automated `tests/test-coa-7-release-candidate.js` suite enforces the static source contracts represented by checks 1–62. Existing PHP tests provide WordPress integration coverage when the WordPress test harness is available. Browser, real-data, and responsive observations below remain staging gates and must not be inferred from a source-only run.
+
+| Checks | Area | Required outcome |
+|---|---|---|
+| 1–6 | Upgrade | Compounds, tests, relationships, and settings remain; activation and upgrades are idempotent. |
+| 7–12 | Public visibility | Draft/private/inactive records stay hidden; failed transparency and early-stage privacy stay correct. |
+| 13–16 | Product isolation | Product ID selects the exact strength; title/SKU similarity and unconnected products cannot borrow records. |
+| 17–23 | Current/Incoming/Previous | Current leads, one Incoming follows, Previous fills, maximum four, Failed excluded, destinations exact. |
+| 24–29 | Report truthfulness | Full-QC/partial wording, neutral/failed categories, Fentanyl, and missing purity remain truthful. |
+| 30–37 | Admin | Dashboard timing/counters, filters, stage requirements, evidence, uniqueness, and safe bulk behavior remain enforced. |
+| 38–43 | Lightbox | Portal stacking, Close, Escape, arrows, scroll restoration, and mobile viewport behavior remain present. |
+| 44–50 | Security | Capabilities, nonces, escaping, sanitization, record authorization, and private REST exclusion remain present. |
+| 51–55 | Performance | Assets are scoped, output limits remain, and lifecycle cache invalidation remains registered. |
+| 56–62 | Packaging | Required folders, exact activation file, no nesting/backslashes/embedded ZIP/artifacts, and consistent RC metadata. |
+
+### Real-data audit gate
+
+This source package contains no staging database or authenticated WordPress session. Therefore record titles, Product IDs/SKUs, public URLs, attachment availability, and admin edit links cannot be honestly enumerated here. Before approval, use the checklist below to review every active Compound and record: Display Name, strength/unit, Product ID, SKU, Current report, Incoming record, Previous/Failed counts, report/PDF/laboratory URLs, exact vial photo, cap/crimp, laboratory, outcome, and status consistency. Flag for manual review—do not auto-delete—any duplicate Product ID, duplicate Compound/strength, multiple Current records, duplicate batch, wrong strength, invalid link, missing required evidence, Completed/Pending mismatch, Failed/Current mismatch, Incoming/Approved mismatch, or obvious development record.
+
+### Known limitations
+
+- This repository does not include PHP, PHPUnit, a WordPress test database, WooCommerce staging data, or browser automation. PHP lint, PHPUnit, real-record enumeration, HTTP-route status, visual comparison, touch/swipe, checkout, stock notification, and authenticated permission observations must be completed on staging.
+- The plugin deliberately preserves all data on deactivation and uninstall. Destructive cleanup is not available.
+- The CSV importer is intentionally one-row, client-side preview/apply and does not add a server-side import format.
+- No final stable `0.4.0` release is implied by this RC. Staging approval is required first.
+
+## Beginner staging installation and smoke test
+
+### Before installing
+
+1. In MyKinsta, open the staging site, choose **Backups**, create a manual backup, and name it **Before COA 0.4.0 RC1**.
+2. Keep the currently working plugin ZIP somewhere safe and record its installed version from **WordPress Admin → Plugins**.
+3. Leave the current staging site open in a separate browser tab so you can compare it after replacement.
+
+### Install the RC
+
+1. Open **WordPress Admin → Plugins → Add New Plugin → Upload Plugin**.
+2. Select `pepselect-coa-archive.zip`, choose **Install Now**, then choose **Replace current with uploaded**.
+3. Confirm **Pep Select COA Archive** remains active and shows version `0.4.0-rc.1`.
+4. Clear the Kinsta page/cache layer, then perform a hard browser refresh. Do not edit Elementor.
+
+### First ten smoke checks
+
+1. Open **Plugins** and confirm the RC is active without an error notice.
+2. Open **Dashboard** and confirm COA Workflow Center renders.
+3. Open **COA Archive → Compounds** and confirm existing records remain.
+4. Open **COA Archive → COA Tests** and confirm existing records and filters remain.
+5. Open **COA Archive → Product Matching** and confirm Product IDs/SKUs remain connected.
+6. Visit `/testing/` and open one Compound Vetting History page.
+7. Open its Current Full Report, certificate lightbox, laboratory link, and PDF link.
+8. Open one connected in-stock product; confirm the top COA button, cards, price, quantity choices, and Add to Cart.
+9. Open one out-of-stock product; confirm the stock notifier and COA content remain independent.
+10. Repeat the product and report checks on a phone-sized browser and confirm no horizontal body scroll.
+
+## Manual release-candidate QA checklist
+
+Record Pass/Fail and a screenshot or URL for every row. Do not change real records merely to make a check pass; use a safe temporary staging record where an edit is required.
+
+### 1. Installation
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Plugins | Upload and replace with the verified RC ZIP. | Plugin remains active at `0.4.0-rc.1`; no activation error. | White screen, fatal error, deactivation, wrong version, or duplicate plugin entry. |
+| COA Archive lists | Count Compounds and COA Tests before/after replacement. | Counts, titles, statuses, slugs, and dates are unchanged. | Missing, duplicated, renamed, or reset records. |
+
+### 2. Dashboard
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Dashboard | Compare all five counters, Overdue, and Next Expected with source records. | Counts and dates match active editable records in site timezone. | Completed/failed records counted, wrong date, or inaccurate total. |
+| Dashboard | Resize full width, half screen, and narrow widget column without reloading. | Table becomes the compact three-row layout without overflow or mid-word breaks. | Clipped Edit button, squeezed text, excess blank space, or horizontal scroll. |
+
+### 3. COA Tests admin
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| COA Tests | Combine Workflow, Status, Compound, Laboratory, and Timing filters; add search and change page. | Filters compose, preserve search/pagination, and clear back to the full list. | Unrelated records, lost filters, wrong order, or other post types affected. |
+| Safe COA Test edit | Compare Workflow Requirements with validation; attempt one invalid then valid transition. | Exact missing field is named; invalid save is blocked without partial state; valid save succeeds. | Generic error, partial save, missing required evidence, or unexpected requirement. |
+
+### 4. Compound admin
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Compound edit | Read Active/Featured help and temporarily test on a safe record. | Featured never overrides inactive public eligibility; tests and connection remain stored. | Inactive record becomes public or linked history disappears. |
+| Compound list/edit | Confirm title, image, strength, unit, order, and Product relationship. | Existing values and edit controls are intact. | Reset values, duplicate Compound, or lost relationship. |
+
+### 5. Product Matching
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Product Matching | Review Product ID, SKU, Compound, strength, status, and Last Sync for every included product. | Each Product ID maps to exactly one matching-strength Compound. | Duplicate Product ID, wrong strength, missing SKU snapshot, or borrowed records. |
+| Safe connected product | Use Sync once, reload, then reconnect only if intentionally testing a known safe relationship. | Sync is idempotent and creates no Compound/Test duplicate. | New duplicate, changed slug, altered COA evidence, price, stock, or title. |
+
+### 6. COA Archive
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| `/testing/` | Compare all active cards, images, status order, counts, recent batches, dates, purity, and laboratory. | Only eligible truthful records display in approved order. | Draft/private/inactive leak, failed-as-approved card, wrong image/value/order. |
+| `/testing/` | Search by Compound and supported public batch, then clear. | Only matches display; clearing restores all eligible cards and accurate count. | Stale cards, private batch match, incorrect count, or broken URL. |
+
+### 7. Vetting History
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Each active Compound | Verify hero, Current, Incoming, Previous, failed transparency, and empty states. | Exact Compound/strength/current batch appears; privacy and truthful statuses are preserved. | Wrong strength/current report, guessed Incoming data, or missing transparent failure. |
+| Compound with history | Exercise Previous arrows and every Full Report/PDF destination. | Newest previous first, Current excluded, up to ten available, links exact. | Duplicate Current, wrong order, non-circular/unusable controls, or wrong link. |
+
+### 8. Full Reports
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Representative Full-QC, partial, previous, failed, and non-ILS reports | Compare hero, metrics, seven-category strip, results table, lab panel, links, and vial identity to saved data. | No value is invented; Full-QC/partial/failure language and Current/Past are truthful. | Untested/failed shown green, fabricated purity, wrong batch/lab/link/image. |
+| Full Report at desktop and mobile widths | Inspect results cards/table and certificate/lab actions. | Readable layout with no body overflow or clipped actions. | Missing results, clipped columns, unreadable text, or horizontal page scroll. |
+
+### 9. Lightbox
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Full Report, scrolled near footer | Open every certificate page; use arrows, Escape, Close, and backdrop. | Overlay stays above footer/widgets, traps focus, and restores launcher focus/scroll. | Overlay behind UI, trapped page, jump to top, broken counter, or scroll remains locked. |
+| Phone-sized Full Report | Repeat with touch and orientation change. | Whole uncropped page remains viewable; controls stay reachable. | Cropping, off-screen controls, floating-cart collision, or body scroll leak. |
+
+### 10. Product pages
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Connected product with approved report | Verify top button and Current/Incoming/Previous carousel. | Exact product strength only; correct labels/order/URLs; maximum four; failed excluded. | Wrong-strength report, duplicate button, failed card, stale URL, or over four cards. |
+| Unconnected/no-eligible-record product | Inspect existing Elementor buttons and COA area. | COA button/cards hide; unrelated buttons remain unchanged. | Borrowed COA, empty broken shell, or unrelated button modified. |
+
+### 11. Mobile product pages
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Connected product at 480, 430, 414, 390, 375, 360, and 320px | Swipe all cards and use arrows/orientation change. | One full-width natural-height card, reachable fourth card, visible focus, no overflow. | Squeezed/narrow card, clipped arrows, stale size, or horizontal body scroll. |
+
+### 12. Out-of-stock products
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Connected out-of-stock product | Verify stock state/notifier and COA destinations. | Existing notifier works; COA remains exact and does not alter stock behavior. | Add to Cart appears incorrectly, notifier breaks, or COA changes stock state. |
+
+### 13. Add to cart
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| In-stock product | Select each existing quantity choice and add to cart; open cart/checkout. | Existing price/discount/quantity, stock decrement, cart, checkout, and shipping behavior are unchanged. | Wrong price, discount, stock, cart item, checkout, payment, or shipping behavior. |
+
+### 14. Search
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| COA Archive and COA Tests admin | Try exact, partial, batch, no-match, punctuation, and cleared searches. | Results remain scoped, escaped, correctly ordered, and reversible. | Private leak, malformed page, unrelated post impact, or persistent stale state. |
+
+### 15. Links
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Archive, History, Full Report, product, Dashboard, Product Matching | Exercise breadcrumbs, View All, Full Report, Latest/Vetting, previous/next, lab, PDF, and Edit links. | Internal links use established routes; external/PDF links open appropriately; no loops/404s. | Wrong strength, stale slug, admin link public, malformed query, loop, or 404. |
+
+### 16. Permissions
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Administrator session | Open both post-type lists/add/edit, settings, matching, and Dashboard. | Full authorized access to both post types and all intended tools. | Higher-permission error, missing menu, blocked save, or missing widget. |
+| Logged-out/low-privilege test session | Try public routes, REST writes, admin URLs, and Product Matching actions. | Public eligible content only; writes/admin actions denied; no private metadata exposed. | Unauthorized edit/action, private REST field, or restricted record visible. |
+
+### 17. Cache refresh
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| Safe staging record plus archive/product/history | Change one safe public status/current/incoming value, save, clear Kinsta cache, and reload. | Archive, History, top button, and product cards reflect the saved canonical state without re-saving product/Elementor. | Stale status, cross-product cache leak, duplicate card, or manual Elementor repair required. |
+
+### 18. Rollback
+
+| Page to open | Action to take | Expected result | What indicates failure |
+|---|---|---|---|
+| MyKinsta Backups or Plugins Upload | Rehearse the chosen rollback plan without executing it unless needed; confirm backup and prior ZIP are available. | Named backup and previous ZIP/version can be identified immediately. | No backup, unknown previous version, or missing working ZIP. |
+
+## Rollback
+
+Use the MyKinsta backup when records/settings were unexpectedly changed, a fatal error prevents normal administration, or several site systems are affected. In MyKinsta, select the staging environment, open **Backups**, choose **Before COA 0.4.0 RC1**, and restore it to staging. This returns files and database together.
+
+Use the previous working ZIP when the database and COA records are intact but only plugin code/assets need to be reverted. In **WordPress Admin → Plugins → Add New Plugin → Upload Plugin**, upload the preserved ZIP and choose **Replace current with uploaded**. Confirm activation, clear Kinsta/browser cache, and repeat the ten smoke checks. If you cannot confirm database integrity, prefer the named Kinsta backup.
 
 ## COA-5D.1 compact narrow dashboard workflow layout
 
@@ -174,9 +385,9 @@ The importer validates the dedicated status set, keeps blank status blank, norma
 
 ## Responsive behavior
 
-- 1180â€“1240px centered report width; three-part hero and four metrics on desktop.
+- 1180–1240px centered report width; three-part hero and four metrics on desktop.
 - Two-row/tablet hero, two-column metrics, and adaptive document/laboratory panels at 1024px and 768px.
-- Identity â†’ vial â†’ outcome stacking, non-scrolling result cards, one-column document/photo galleries, and full-width actions at 480px, 390px, and 360px.
+- Identity → vial → outcome stacking, non-scrolling result cards, one-column document/photo galleries, and full-width actions at 480px, 390px, and 360px.
 - Scoped active-theme typography and existing configurable colors/radii; new laboratory-panel color variables live in the existing Design & Copy screen.
 - Logical headings, icon-plus-text statuses, focus visibility, meaningful alt text, external-link indication, dark-panel contrast, and reduced-motion compatibility.
 

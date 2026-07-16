@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.4.0-beta.23
+Stable tag: 0.4.0-rc.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Public compound testing histories with progressive vendor-vetting administration
 
 == Description ==
 
-Version 0.4.0-beta.23 compacts narrow Dashboard Workflow Center records into three efficient rows while preserving the approved full-width table, workflow behavior, public pages, and stored COA data.
+Version 0.4.0-rc.1 is the first release candidate. It preserves the approved beta.23 behavior while adding release-hardening verification, upgrade/rollback documentation, and an explicit 62-check release matrix. No public design, workflow, Elementor, product, pricing, stock, checkout, shipping, or stored COA data behavior is changed.
 
 Authorized users receive active-stage counters, a timezone-aware overdue count, and up to ten urgency-sorted Vendor Vetting, Waiting on Vendor, Submitted to Laboratory, or Verification in Progress records. Every row uses the linked Compound Display Name and exact COA Test edit permission. Complete, Approved historical, Failed, unrelated, and non-editable records are excluded.
 
@@ -65,6 +65,12 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.4.0-rc.1 =
+* Prepared the first release candidate from the verified beta.23 source without adding features or changing approved public/admin behavior.
+* Added an explicit release-hardening static suite covering upgrade safety, privacy, Product ID isolation, truthful reporting, permissions, asset scoping, limits, and package-source integrity.
+* Added beginner-friendly staging installation, smoke-test, manual-QA, cache-refresh, and rollback instructions to README.md.
+* Corrected two corrupted punctuation sequences in developer documentation; runtime output and stored data were not affected.
 
 = 0.4.0-beta.23 =
 * Replaced narrow one-field-per-row stacking with compact Compound/Stage, Expected COA/Timing, and Batch/Edit rows inside the existing 620px widget container query.

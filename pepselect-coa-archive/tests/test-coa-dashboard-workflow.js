@@ -31,8 +31,8 @@ assert.ok(service.includes("'index.php' !== $hook_suffix"));
 assert.ok(service.includes("current_user_can( 'create_ps_coas' )"));
 assert.ok(service.includes("current_user_can( 'manage_ps_compounds' )"));
 assert.ok(plugin.includes('$this->dashboard_workflow->register_hooks()'));
-assert.match(main, /Version:\s+0\.4\.0-beta\.23/);
-assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-beta.23'"));
+assert.match(main, /Version:\s+0\.4\.0-rc\.1/);
+assert.ok(main.includes("PEPSELECT_COA_ARCHIVE_VERSION', '0.4.0-rc.1'"));
 
 ['Compound', 'Stage', 'Expected COA', 'Batch', 'Action', 'No active COA workflows need attention.', 'Add New COA Test'].forEach(text => assert.ok(template.includes(text)));
 ['Add New COA Test', 'View All COA Tests', 'Product Matching'].forEach(text => assert.ok(service.includes(text)));
