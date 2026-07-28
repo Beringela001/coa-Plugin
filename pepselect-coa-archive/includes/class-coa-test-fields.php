@@ -28,15 +28,16 @@ final class COA_Test_Fields {
 		$this->rest_registered = true;
 		$integer = array( 'compound_id' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
-		$boolean = array();
+		$boolean = array( 'is_current' );
 		// The ops app (control.pepselect.co) drives the operational lifecycle over
 		// REST — Ops Spec §16. Beyond the state trio (workflow_stage/coa_status/
-		// public_status_note) it also owns the batch identity and the certificate
-		// scalars it captures at COA time, so those are REST-writable too. Rich
-		// enrichment (photos, methods, notes, lab identity) stays owner-only in wp-admin.
+		// public_status_note) it also owns the batch identity, the "current COA"
+		// flag, and the certificate scalars it captures at COA time, so those are
+		// REST-writable too. Rich enrichment (photos, methods, notes, lab identity)
+		// stays owner-only in wp-admin.
 		$safe = array(
 			'compound_id', 'workflow_stage', 'coa_status', 'public_status_note',
-			'batch_number', 'coa_number', 'purity_percentage', 'average_net_content', 'test_date',
+			'batch_number', 'coa_number', 'purity_percentage', 'average_net_content', 'test_date', 'is_current',
 		);
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );

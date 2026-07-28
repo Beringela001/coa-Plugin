@@ -53,6 +53,8 @@ final class Frontend_View_Model {
 			'archive_show_purity' => $status_summary && 'complete' === $status_summary['workflow_stage'],
 			'archive_show_laboratory' => $status_summary && in_array( $status_summary['workflow_stage'], array( 'in-testing', 'complete' ), true ) && (bool) $status_summary['laboratory'],
 			'public_status_label' => $status_summary ? $status_summary['public_status_label'] : '',
+			'status_workflow_stage' => $status_summary ? $status_summary['workflow_stage'] : '',
+			'status_batch_number' => $status_summary ? $status_summary['batch_number'] : '',
 			'public_status_copy' => $status_summary ? $status_summary['public_status_copy'] : '',
 			'public_status_tone' => $status_summary ? $status_summary['public_status_tone'] : 'neutral',
 			'recent_batches' => array_map( function ( $test ) use ( $compound ) { return $this->test_summary( $test, $compound ); }, $preview ),

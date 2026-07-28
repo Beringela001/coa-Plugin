@@ -1,0 +1,45 @@
+# Changelog
+
+## 0.5.7 - 2026-07-28
+
+- Ops-app idempotency fix (§16.7). New authenticated route `GET /wp-json/pepselect-coa/v1/coa-test?batch_number=X` returns the existing ps_coa_test post id for an exact `batch_number` meta match. The ops app addresses records by batch number (the real vial↔certificate key), not by post slug — owner-entered records carry numeric/auto slugs, so the previous slug lookup always missed and created duplicate empty posts. No public-page or data change.
+
+## 0.5.6 - 2026-07-28
+
+- Ops-app integration (control.pepselect.co) for the Ops Spec §16 COA lifecycle. Additive; no change to public pages, templates, or the archive typeahead.
+- Archive lone-failure fix (§16.6): the public archive now always includes a compound whose only record is a failure — a lone failure is exactly when transparency matters most. The `show_failed_only_compounds` design toggle no longer suppresses it.
+- New authenticated resolver route `GET /wp-json/pepselect-coa/v1/compound?product_id=&sku=` (Compound_Resolver_Endpoint, mirroring the archive-search endpoint), returning the compound post id via the existing `compounds_for_product()` / `compounds_for_sku()`. Gated on `edit_posts`.
+- Widened the `ps_coa_test` REST-safe meta list so the ops app can stamp `batch_number`, `is_current`, and the certificate scalars it owns (`coa_number`, `purity_percentage`, `average_net_content`, `test_date`) alongside the existing state trio. Sanitize is key-aware with a safe default; rich enrichment stays owner-only in wp-admin.
+
+## 0.5.5 - 2026-07-18
+
+- Compound results in the archive typeahead now show the batch number alongside the status when the current batch is in lab testing (Verification in Progress) or fully documented — stages where batch numbers are public and never change. Earlier stages continue to show no batch, matching the existing privacy gate in the view model. Additive model fields only; COA cards, templates, and data logic untouched.
+
+## 0.5.4 - 2026-07-18
+
+- Fixed the typeahead dropdown being clipped at the bottom edge of the hero card. The hero carried overflow: hidden, which cut the suggestion list off at the card frame; nothing inside the hero relies on that clipping, so the hero now allows overflow and stacks above the catalog band so open suggestions float cleanly over the heading and cards below. CSS-only change; COA cards, templates, and data logic untouched.
+
+## 0.5.3 - 2026-07-18
+
+- Fixed the archive typeahead not appearing on the /testing/ page. The search script was only enqueued on the embedded-shortcode path, not the main archive route, so live results never loaded while the server-side form still worked. The script now loads on the archive route.
+
+## 0.5.2 - 2026-07-18
+
+Archive typeahead search (M5 Beta 2). Compound cards, batch reports, and data logic remain untouched.
+
+- Added a live typeahead to the archive hero search, matching the storefront header search. As you type, results appear beneath the field. A base query (for example a compound family) returns each strength variant with its public status label; an exact or partial public batch code appears as a batch result.
+- Choosing a compound opens its history page; choosing a batch opens that batch report. Submitting the form still runs the normal server-side search, so the feature degrades gracefully.
+- New public read-only REST route (pepselect-coa/v1/search) that searches only certificate-archive data: public compounds by name and strength, and public batch codes. Results are gated by the existing compound and test visibility rules, so nothing hidden is ever exposed.
+
+## 0.5.1 - 2026-07-18
+
+- The new archive copy and status descriptions now seed automatically on update through the plugin's existing copy-migration, so previously saved defaults are replaced without visiting Design Settings. Intentionally customized copy is preserved; only recognized prior defaults or empty fields are updated.
+- Card-section heading: removed the redundant "On the record" eyebrow (it repeated the title) and restyled "The selection, on the record." with the site's serif and cyan italic accent on "on the record.".
+
+## 0.5.0 - 2026-07-18
+
+Archive landing page top section restyled to match the Pep Select coded site (M5 Beta 1). Compound cards, batch reports, and all data logic are untouched.
+
+- Hero rebuilt in the site design language: navy gradient card, Georgia serif title with a cyan italic accent, cyan search button. New title "Every batch has a permanent address." and a rewritten, de-slopped introduction (both editable in Design Settings).
+- Card-section heading changed from "Documented Compounds / Certificate archive" to "On the record / The selection, on the record.", restyled to the serif treatment.
+- Reworded the four incoming-stage status descriptions (Design Settings copy only; workflow stage keys unchanged, so storefront status bands are unaffected): vetting vendor, waiting on vendor, submitted to laboratory, and verification in progress now read in plainer, calmer language.

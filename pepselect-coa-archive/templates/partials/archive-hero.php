@@ -1,12 +1,12 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 $archive_title = \PepSelect\COAArchive\Design_Settings::copy( 'archive_title' );
-$catalog_title = 'Every batch. Every peptide. Independently verified.';
+$catalog_title = 'Every batch has a permanent address.';
 ?>
 <header class="ps-coa-archive-hero">
 	<div class="ps-coa-archive-hero__content">
 		<p class="ps-coa-eyebrow"><span aria-hidden="true">▧</span> <?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'archive_eyebrow' ) ); ?></p>
-		<h1><?php if ( $catalog_title === $archive_title ) : ?><span>Every batch. Every peptide.</span><span class="ps-coa-archive-hero__accent">Independently verified.</span><?php else : ?><?php echo esc_html( $archive_title ); ?><?php endif; ?></h1>
+		<h1><?php if ( $catalog_title === $archive_title ) : ?>Every batch has a <span class="ps-coa-archive-hero__accent">permanent address.</span><?php else : ?><?php echo esc_html( $archive_title ); ?><?php endif; ?></h1>
 		<p class="ps-coa-archive-hero__intro"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'archive_intro' ) ); ?></p>
 		<ul class="ps-coa-archive-trust" aria-label="<?php esc_attr_e( 'Archive assurances', 'pepselect-coa-archive' ); ?>">
 			<li><span aria-hidden="true">◇</span><?php esc_html_e( 'Independent labs', 'pepselect-coa-archive' ); ?></li>

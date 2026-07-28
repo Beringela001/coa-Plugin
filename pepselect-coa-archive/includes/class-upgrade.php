@@ -25,12 +25,45 @@ final class Upgrade {
 		$settings = get_option( Design_Settings::OPTION, array() );
 		if ( ! is_array( $settings ) ) { return; }
 		$replacements = array(
-			'archive_title' => array( 'Testing & Documentation', 'Every batch. Every peptide. Independently verified.' ),
-			'archive_intro' => array( 'Independent laboratory reports organized by compound and batch.', 'Pep Select doesn’t ask you to take our word for it. Third-party labs test every release — purity, mass, sterility — and we publish the certificates raw. No cropping, no marketing gloss, no missing pages. Search a compound, open a batch, read the same report our chemists do.' ),
-			'search_placeholder_copy' => array( 'Search compounds...', 'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B' ),
+			'archive_title' => array(
+				array( 'Testing & Documentation', 'Every batch. Every peptide. Independently verified.' ),
+				'Every batch has a permanent address.',
+			),
+			'archive_intro' => array(
+				array( 'Independent laboratory reports organized by compound and batch.', 'Pep Select doesn’t ask you to take our word for it. Third-party labs test every release — purity, mass, sterility — and we publish the certificates raw. No cropping, no marketing gloss, no missing pages. Search a compound, open a batch, read the same report our chemists do.' ),
+				'Every compound we’ve released keeps its full record here: the raw third-party certificate, the batch it came from, and the date it was tested. We publish these exactly as the lab returns them, and we keep them up after a batch sells out. Search a compound, or enter the batch code from your vial, to read the same report our team reads.',
+			),
+			'search_placeholder_copy' => array(
+				array( 'Search compounds...' ),
+				'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B',
+			),
+			'vendor_vetting_copy' => array(
+				array( 'We are currently vetting vendors for this compound.' ),
+				'We’re sourcing a new batch from a vetted manufacturer.',
+			),
+			'waiting_vendor_copy' => array(
+				array( 'We are currently waiting on a new batch from our vendor.' ),
+				'A new batch is on its way to us.',
+			),
+			'submitted_lab_copy' => array(
+				array( 'Samples have been shipped to the testing laboratory.' ),
+				'Samples are with the lab.',
+			),
+			'in_testing_copy' => array(
+				array( 'Independent testing is underway.' ),
+				'Testing is underway.',
+			),
 		);
 		$changed = false;
-		foreach ( $replacements as $key => $copy ) { if ( isset( $settings[ $key ] ) && $copy[0] === $settings[ $key ] ) { $settings[ $key ] = $copy[1]; $changed = true; } }
+		foreach ( $replacements as $key => $copy ) {
+			if ( ! isset( $settings[ $key ] ) ) { continue; }
+			$old_values = $copy[0];
+			$new_value  = $copy[1];
+			if ( in_array( $settings[ $key ], $old_values, true ) || '' === trim( (string) $settings[ $key ] ) ) {
+				$settings[ $key ] = $new_value;
+				$changed = true;
+			}
+		}
 		if ( $changed ) { update_option( Design_Settings::OPTION, $settings, false ); Design_Settings::clear_cache(); }
 	}
 }

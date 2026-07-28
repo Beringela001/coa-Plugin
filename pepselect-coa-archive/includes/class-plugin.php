@@ -31,9 +31,6 @@ final class Plugin {
 	/** @var Product_Matching */
 	private $product_matching;
 
-	/** @var REST_Controller */
-	private $rest_controller;
-
 	/** @var Product_Matching_Admin|null */
 	private $product_matching_admin;
 
@@ -61,6 +58,8 @@ final class Plugin {
 
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
+	private $archive_search;
+	private $compound_resolver;
 
 	/** @var Product_COA_Carousel */
 	private $product_carousel;
@@ -90,7 +89,6 @@ final class Plugin {
 		$this->compound_fields     = new Compound_Fields( $this->dependencies );
 		$this->compound_validation = new Compound_Validation();
 		$this->product_matching     = new Product_Matching( $this->dependencies );
-		$this->rest_controller      = new REST_Controller( $this->product_matching );
 		$this->coa_test_fields      = new COA_Test_Fields( $this->dependencies );
 		$this->coa_test_validation  = new COA_Test_Validation();
 		$this->coa_test_service     = new COA_Test_Service();
@@ -100,6 +98,10 @@ final class Plugin {
 		$frontend_view_model        = new Frontend_View_Model();
 		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
+		$this->archive_search       = new Archive_Search_Endpoint( $frontend_view_model, $frontend_visibility, $coa_test_repository );
+		$this->archive_search->register();
+		$this->compound_resolver    = new Compound_Resolver_Endpoint( $this->product_matching );
+		$this->compound_resolver->register();
 		$this->product_carousel     = new Product_COA_Carousel( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->product_coa_button   = new Product_COA_Button( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		Archive_Cache::register_hooks();
@@ -113,7 +115,6 @@ final class Plugin {
 		}
 		add_action( 'acf/init', array( $this->compound_validation, 'register_hooks' ), 10 );
 		add_action( 'init', array( $this->coa_test_fields, 'register_rest_meta' ), 20 );
-		$this->rest_controller->register_hooks();
 		add_action( 'acf/init', array( $this->coa_test_fields, 'register' ) );
 		add_action( 'acf/init', array( $this->coa_test_validation, 'register_hooks' ), 10 );
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_save' ), 30 );

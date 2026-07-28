@@ -38,14 +38,15 @@ final class Frontend_Template_Loader {
 		$shortcode = has_shortcode( $content, 'pepselect_coa_archive' ) || has_shortcode( $content, 'pepselect_compound_history' ) || has_shortcode( $content, 'pepselect_coa_report' );
 		if ( ! $this->router->is_route() && ! $shortcode ) { return; }
 		$context = $this->router->context();
-		$this->ensure_assets( $this->context_has_gallery( $context ), $this->context_has_history_carousel( $context ) );
+		$is_archive = $context && isset( $context['view'] ) && 'archive' === $context['view'];
+		$this->ensure_assets( $this->context_has_gallery( $context ), $this->context_has_history_carousel( $context ), $is_archive );
 	}
 
 	public function archive_shortcode() {
 		$context = $this->router->context();
 		$search = isset( $_GET['coa_search'] ) ? Frontend_Query::normalize_search( $_GET['coa_search'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! $context || 'archive' !== $context['view'] ) { $context = $this->router->build_archive( 1, $search ); }
-		$this->ensure_assets();
+		$this->ensure_assets( false, false, true );
 		return $this->render( 'archive-testing.php', $context );
 	}
 
@@ -86,11 +87,12 @@ final class Frontend_Template_Loader {
 		ob_start(); include $this->locate( $template ); return (string) ob_get_clean();
 	}
 
-	private function ensure_assets( $gallery = false, $history_carousel = false ) {
+	private function ensure_assets( $gallery = false, $history_carousel = false, $search = false ) {
 		wp_enqueue_style( 'pepselect-coa-frontend', plugins_url( 'assets/css/pepselect-coa-frontend.css', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION );
 		if ( ! $this->variables_added ) { wp_add_inline_style( 'pepselect-coa-frontend', Design_Settings::inline_css() ); $this->variables_added = true; }
 		if ( $gallery ) { wp_enqueue_script( 'pepselect-coa-lightbox', plugins_url( 'assets/js/pepselect-coa-lightbox.js', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION, true ); }
 		if ( $history_carousel ) { wp_enqueue_script( 'pepselect-coa-history-carousel', plugins_url( 'assets/js/pepselect-coa-history-carousel.js', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION, true ); }
+		if ( $search ) { wp_enqueue_script( 'pepselect-coa-search', plugins_url( 'assets/js/pepselect-coa-search.js', PEPSELECT_COA_ARCHIVE_FILE ), array(), PEPSELECT_COA_ARCHIVE_VERSION, true ); wp_localize_script( 'pepselect-coa-search', 'PepSelectCoaSearch', array( 'endpoint' => esc_url_raw( rest_url( 'pepselect-coa/v1/search' ) ) ) ); }
 		if ( did_action( 'wp_head' ) && ! wp_style_is( 'pepselect-coa-frontend', 'done' ) ) { wp_print_styles( 'pepselect-coa-frontend' ); }
 	}
 

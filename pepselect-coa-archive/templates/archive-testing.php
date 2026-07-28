@@ -11,7 +11,7 @@ if ( ! $ps_embedded ) { get_header(); }
 	<?php include pepselect_coa_template_path( 'partials/archive-hero.php' ); ?>
 	<section class="ps-coa-archive-catalog" aria-labelledby="ps-coa-catalog-title">
 		<header class="ps-coa-archive-catalog__header">
-			<div><p class="ps-coa-eyebrow"><?php esc_html_e( 'Documented Compounds', 'pepselect-coa-archive' ); ?></p><h2 id="ps-coa-catalog-title"><?php esc_html_e( 'Certificate archive', 'pepselect-coa-archive' ); ?></h2></div>
+			<div><h2 id="ps-coa-catalog-title" class="ps-coa-catalog-title--accent">The selection, <span class="ps-coa-archive-hero__accent">on the record.</span></h2></div>
 			<p class="ps-coa-archive-catalog__count" role="status" aria-live="polite"><?php echo esc_html( sprintf( __( 'Showing %1$s of %2$s compounds', 'pepselect-coa-archive' ), number_format_i18n( $matched_total ), number_format_i18n( $available_total ) ) ); ?></p>
 		</header>
 		<?php if ( empty( $ps_context['compounds'] ) ) : ?>
