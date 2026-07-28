@@ -35,7 +35,11 @@ final class Frontend_Router {
 	public function build_archive( $page = 1, $search = '' ) {
 		$search = Frontend_Query::normalize_search( $search );
 		$settings = Design_Settings::get();
-		$index = $this->tests->archive_index( $search, ! empty( $settings['show_failed_only_compounds'] ) );
+		// Ops Spec §16.6: a compound whose only public record is a FAILURE must
+		// still appear in the archive — a lone failure is exactly the case where
+		// transparency matters most. The archive therefore always includes
+		// failed-only compounds; the design toggle no longer suppresses them.
+		$index = $this->tests->archive_index( $search, true );
 		$result = $this->compounds->archive_page( $index['compound_ids'], $page, 24, $search, $index['batch_matches'], $index['sort_priorities'] );
 		$grouped = $this->tests->grouped_for_compounds( wp_list_pluck( $result['posts'], 'ID' ) );
 		$items = array();

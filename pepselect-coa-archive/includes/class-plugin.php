@@ -31,6 +31,9 @@ final class Plugin {
 	/** @var Product_Matching */
 	private $product_matching;
 
+	/** @var REST_Controller */
+	private $rest_controller;
+
 	/** @var Product_Matching_Admin|null */
 	private $product_matching_admin;
 
@@ -87,6 +90,7 @@ final class Plugin {
 		$this->compound_fields     = new Compound_Fields( $this->dependencies );
 		$this->compound_validation = new Compound_Validation();
 		$this->product_matching     = new Product_Matching( $this->dependencies );
+		$this->rest_controller      = new REST_Controller( $this->product_matching );
 		$this->coa_test_fields      = new COA_Test_Fields( $this->dependencies );
 		$this->coa_test_validation  = new COA_Test_Validation();
 		$this->coa_test_service     = new COA_Test_Service();
@@ -109,6 +113,7 @@ final class Plugin {
 		}
 		add_action( 'acf/init', array( $this->compound_validation, 'register_hooks' ), 10 );
 		add_action( 'init', array( $this->coa_test_fields, 'register_rest_meta' ), 20 );
+		$this->rest_controller->register_hooks();
 		add_action( 'acf/init', array( $this->coa_test_fields, 'register' ) );
 		add_action( 'acf/init', array( $this->coa_test_validation, 'register_hooks' ), 10 );
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_save' ), 30 );
