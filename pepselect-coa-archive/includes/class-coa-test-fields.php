@@ -26,7 +26,7 @@ final class COA_Test_Fields {
 	public function register_rest_meta() {
 		if ( $this->rest_registered ) { return; }
 		$this->rest_registered = true;
-		$integer = array( 'compound_id', 'vials_tested' );
+		$integer = array( 'compound_id', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
 		$boolean = array( 'is_current' );
 		// The ops app (control.pepselect.co) drives the operational lifecycle over
@@ -43,11 +43,30 @@ final class COA_Test_Fields {
 			// (submitted-to-lab + in-testing), the lab slug (in-testing + complete),
 			// and vials tested (completed approved).
 			'expected_coa_date', 'testing_lab', 'other_testing_lab', 'vials_tested',
+			// §16 media: the ops app pushes the COA PDF and vial photo to the WP
+			// media library on COA pass and links them by attachment ID. coa_pdf_id
+			// is REQUIRED by the plugin for an approved completed report, so without
+			// these every published record was incomplete by the plugin's own rules.
+			'coa_pdf_id', 'batch_vial_photo',
 		);
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
 			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
 		}
+
+		// batch_identity_photos is an ACF gallery — an ARRAY of attachment IDs — so
+		// it needs an explicit array schema rather than the scalar loop above.
+		register_post_meta(
+			Post_Types::COA_TEST,
+			'batch_identity_photos',
+			array(
+				'single'        => true,
+				'type'          => 'array',
+				'show_in_rest'  => array( 'schema' => array( 'type' => 'array', 'items' => array( 'type' => 'integer' ) ) ),
+				'auth_callback' => array( $this, 'authorize_meta_edit' ),
+				'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize_gallery' ),
+			)
+		);
 	}
 
 	/** Restricts REST writes to users who can edit the record. @param bool $allowed Existing result. @param string $key Meta key. @param int $post_id Post ID. @return bool */

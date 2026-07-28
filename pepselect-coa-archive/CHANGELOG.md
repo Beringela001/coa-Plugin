@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.9 - 2026-07-28
+
+- COA PDF + vial photos from the ops app. Added attachment-ID metas to the REST-safe list so the ops app can link media it pushes to the WP media library on COA pass: `coa_pdf_id` and `batch_vial_photo` (single integer), and `batch_identity_photos` (array of integers, registered with an explicit array schema and the gallery sanitizer). The plugin requires `coa_pdf_id` for an approved completed report, so until now every ops-published record was incomplete by the plugin's own rules.
+
 ## 0.5.8 - 2026-07-28
 
 - Fixes compounds vanishing from the archive after the ops app stamps them to in-testing. is_test_public() requires expected_coa_date (submitted-to-lab + in-testing), a whitelisted testing_lab (in-testing + complete), and vials_tested >= 1 (completed approved). Those fields were not REST-writable, so ops-app stamps left them empty and the record failed the public gate. Added to the REST-safe list: expected_coa_date, testing_lab, other_testing_lab, vials_tested.
