@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.8 - 2026-07-28
+
+- Fixes compounds vanishing from the archive after the ops app stamps them to in-testing. is_test_public() requires expected_coa_date (submitted-to-lab + in-testing), a whitelisted testing_lab (in-testing + complete), and vials_tested >= 1 (completed approved). Those fields were not REST-writable, so ops-app stamps left them empty and the record failed the public gate. Added to the REST-safe list: expected_coa_date, testing_lab, other_testing_lab, vials_tested.
+- Laboratory list: added 'freedom-labs' (Freedom Diagnostics Testing) and removed 'mz-biotech' (unused). Updated the labs() choices, the frontend label map, and both is_test_public() lab whitelists so freedom-labs records display and pass the public gate.
+
 ## 0.5.7 - 2026-07-28
 
 - Ops-app idempotency fix (§16.7). New authenticated route `GET /wp-json/pepselect-coa/v1/coa-test?batch_number=X` returns the existing ps_coa_test post id for an exact `batch_number` meta match. The ops app addresses records by batch number (the real vial↔certificate key), not by post slug — owner-entered records carry numeric/auto slugs, so the previous slug lookup always missed and created duplicate empty posts. No public-page or data change.

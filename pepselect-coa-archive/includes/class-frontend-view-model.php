@@ -343,7 +343,7 @@ final class Frontend_View_Model {
 
 	/** Formats a stored lab value once for every frontend consumer. @return string */
 	public function laboratory_name( $stored, $other = '' ) {
-		$names = array( 'ils-labs' => 'ILS Labs', 'janoshik' => 'Janoshik Analytical', 'mz-biotech' => 'MZ Biolabs' );
+		$names = array( 'ils-labs' => 'ILS Labs', 'freedom-labs' => 'Freedom Diagnostics Testing', 'janoshik' => 'Janoshik Analytical' );
 		return isset( $names[ $stored ] ) ? $names[ $stored ] : ( 'other' === $stored && trim( (string) $other ) ? trim( (string) $other ) : ucwords( str_replace( '-', ' ', (string) $stored ) ) );
 	}
 

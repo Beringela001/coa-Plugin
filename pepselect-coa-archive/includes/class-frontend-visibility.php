@@ -26,7 +26,7 @@ final class Frontend_Visibility {
 		if ( 'pending' === $status ) {
 			if ( ! COA_Workflow::is_incoming_stage( $stage ) ) { return false; }
 			if ( in_array( $stage, array( 'submitted-to-lab', 'in-testing' ), true ) && '' === trim( (string) get_post_meta( $post->ID, 'expected_coa_date', true ) ) ) { return false; }
-			if ( 'in-testing' === $stage ) { $lab = (string) get_post_meta( $post->ID, 'testing_lab', true ); if ( ! in_array( $lab, array( 'ils-labs', 'janoshik', 'mz-biotech', 'other' ), true ) || ( 'other' === $lab && '' === trim( (string) get_post_meta( $post->ID, 'other_testing_lab', true ) ) ) ) { return false; } }
+			if ( 'in-testing' === $stage ) { $lab = (string) get_post_meta( $post->ID, 'testing_lab', true ); if ( ! in_array( $lab, array( 'ils-labs', 'freedom-labs', 'janoshik', 'other' ), true ) || ( 'other' === $lab && '' === trim( (string) get_post_meta( $post->ID, 'other_testing_lab', true ) ) ) ) { return false; } }
 			return true;
 		}
 		if ( 'complete' !== $stage ) { return false; }
@@ -34,7 +34,7 @@ final class Frontend_Visibility {
 		$date = preg_replace( '/\D/', '', (string) get_post_meta( $post->ID, 'test_date', true ) );
 		if ( 8 !== strlen( $date ) || ! checkdate( (int) substr( $date, 4, 2 ), (int) substr( $date, 6, 2 ), (int) substr( $date, 0, 4 ) ) ) { return false; }
 		$lab = (string) get_post_meta( $post->ID, 'testing_lab', true );
-		if ( ! in_array( $lab, array( 'ils-labs', 'janoshik', 'mz-biotech', 'other' ), true ) || ( 'other' === $lab && '' === trim( (string) get_post_meta( $post->ID, 'other_testing_lab', true ) ) ) ) { return false; }
+		if ( ! in_array( $lab, array( 'ils-labs', 'freedom-labs', 'janoshik', 'other' ), true ) || ( 'other' === $lab && '' === trim( (string) get_post_meta( $post->ID, 'other_testing_lab', true ) ) ) ) { return false; }
 		return absint( get_post_meta( $post->ID, 'vials_tested', true ) ) >= 1;
 	}
 

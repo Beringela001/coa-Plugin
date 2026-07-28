@@ -26,7 +26,7 @@ final class COA_Test_Fields {
 	public function register_rest_meta() {
 		if ( $this->rest_registered ) { return; }
 		$this->rest_registered = true;
-		$integer = array( 'compound_id' );
+		$integer = array( 'compound_id', 'vials_tested' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
 		$boolean = array( 'is_current' );
 		// The ops app (control.pepselect.co) drives the operational lifecycle over
@@ -38,6 +38,11 @@ final class COA_Test_Fields {
 		$safe = array(
 			'compound_id', 'workflow_stage', 'coa_status', 'public_status_note',
 			'batch_number', 'coa_number', 'purity_percentage', 'average_net_content', 'test_date', 'is_current',
+			// §16 visibility gate: the ops app must also write the fields the public
+			// gate checks so a stamped record stays visible — the expected COA date
+			// (submitted-to-lab + in-testing), the lab slug (in-testing + complete),
+			// and vials tested (completed approved).
+			'expected_coa_date', 'testing_lab', 'other_testing_lab', 'vials_tested',
 		);
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
@@ -127,7 +132,7 @@ final class COA_Test_Fields {
 	}
 
 	/** Returns lab choices. @return array */
-	public static function labs() { return array( 'ils-labs' => 'ILS Labs', 'janoshik' => 'Janoshik Analytical', 'mz-biotech' => 'MZ Biolabs', 'other' => 'Other' ); }
+	public static function labs() { return array( 'ils-labs' => 'ILS Labs', 'freedom-labs' => 'Freedom Diagnostics Testing', 'janoshik' => 'Janoshik Analytical', 'other' => 'Other' ); }
 	/** Returns overall statuses. @return array */
 	public static function statuses() { return array( 'pending' => 'Pending', 'approved' => 'Approved', 'failed' => 'Failed' ); }
 	/** Returns final outcomes accepted for legacy preservation. @return array */
