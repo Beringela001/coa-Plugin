@@ -26,27 +26,28 @@ final class COA_Test_Fields {
 	public function register_rest_meta() {
 		if ( $this->rest_registered ) { return; }
 		$this->rest_registered = true;
-		$integer = array( 'compound_id', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
+		$integer = array( 'compound_id', 'vials_submitted', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
-		$boolean = array( 'is_current' );
-		// The ops app (control.pepselect.co) drives the operational lifecycle over
-		// REST — Ops Spec §16. Beyond the state trio (workflow_stage/coa_status/
-		// public_status_note) it also owns the batch identity, the "current COA"
-		// flag, and the certificate scalars it captures at COA time, so those are
-		// REST-writable too. Rich enrichment (photos, methods, notes, lab identity)
-		// stays owner-only in wp-admin.
+		$boolean = array( 'is_current', 'partial_results_available' );
+		// Ops is now the single entry point (Ops Spec §16 item — mirror the COA
+		// form): the ops app owns the ENTIRE ps_coa_test field vocabulary over REST,
+		// matching class-coa-test-importer.php::field_map() so one CSV template and
+		// one form serve both. The array/gallery metas are registered separately
+		// below. The two ID media metas (coa_pdf_id/batch_vial_photo) are ops-managed
+		// uploads, not CSV columns, but ride the same list.
 		$safe = array(
-			'compound_id', 'workflow_stage', 'coa_status', 'public_status_note',
-			'batch_number', 'coa_number', 'purity_percentage', 'average_net_content', 'test_date', 'is_current',
-			// §16 visibility gate: the ops app must also write the fields the public
-			// gate checks so a stamped record stays visible — the expected COA date
-			// (submitted-to-lab + in-testing), the lab slug (in-testing + complete),
-			// and vials tested (completed approved).
-			'expected_coa_date', 'testing_lab', 'other_testing_lab', 'vials_tested',
-			// §16 media: the ops app pushes the COA PDF and vial photo to the WP
-			// media library on COA pass and links them by attachment ID. coa_pdf_id
-			// is REQUIRED by the plugin for an approved completed report, so without
-			// these every published record was incomplete by the plugin's own rules.
+			'compound_id', 'batch_number', 'internal_batch_id', 'workflow_stage', 'coa_status', 'test_date',
+			'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number',
+			'is_current', 'partial_results_available',
+			'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color',
+			'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested',
+			'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance',
+			'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method',
+			'endotoxin_status', 'endotoxin_result', 'endotoxin_unit',
+			'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result',
+			'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes',
+			'coa_number', 'lab_report_url', 'pending_lab_url', 'verification_code', 'lab_verification_url', 'certificate_version',
+			'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes',
 			'coa_pdf_id', 'batch_vial_photo',
 		);
 		foreach ( $safe as $key ) {
@@ -54,19 +55,22 @@ final class COA_Test_Fields {
 			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
 		}
 
-		// batch_identity_photos is an ACF gallery — an ARRAY of attachment IDs — so
-		// it needs an explicit array schema rather than the scalar loop above.
-		register_post_meta(
-			Post_Types::COA_TEST,
-			'batch_identity_photos',
-			array(
-				'single'        => true,
-				'type'          => 'array',
-				'show_in_rest'  => array( 'schema' => array( 'type' => 'array', 'items' => array( 'type' => 'integer' ) ) ),
-				'auth_callback' => array( $this, 'authorize_meta_edit' ),
-				'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize_gallery' ),
-			)
-		);
+		// Gallery metas are ARRAYS of attachment IDs, so they need an explicit array
+		// schema rather than the scalar loop above: batch_identity_photos (vial
+		// identity shots) and coa_page_images (the COA report page scans).
+		foreach ( array( 'batch_identity_photos', 'coa_page_images' ) as $gallery_key ) {
+			register_post_meta(
+				Post_Types::COA_TEST,
+				$gallery_key,
+				array(
+					'single'            => true,
+					'type'              => 'array',
+					'show_in_rest'      => array( 'schema' => array( 'type' => 'array', 'items' => array( 'type' => 'integer' ) ) ),
+					'auth_callback'     => array( $this, 'authorize_meta_edit' ),
+					'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize_gallery' ),
+				)
+			);
+		}
 	}
 
 	/** Restricts REST writes to users who can edit the record. @param bool $allowed Existing result. @param string $key Meta key. @param int $post_id Post ID. @return bool */

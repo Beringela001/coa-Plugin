@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.10 - 2026-07-28
+
+- Ops as single entry point: the ENTIRE ps_coa_test field vocabulary is now REST-writable so ops can populate a complete record and the WP record never needs hand-editing. Added the full class-coa-test-importer.php::field_map() set to the REST-safe list (internal_batch_id, date_received, lab_accession_number, partial_results_available, vial cap/crimp colours, claimed_content, content_unit, vials_submitted, net-content min/max/std-dev/variance, sample_appearance, purity/identity/endotoxin/heavy-metals/sterility/fentanyl status+method fields, lab_report_url, pending_lab_url, verification_code, lab_verification_url, certificate_version, vendor_status_note, release_decision_note, public_notes, report_notes, internal_notes). Added `coa_page_images` as an array meta (it was NOT in 0.5.9). vials_submitted typed integer; partial_results_available boolean.
+
 ## 0.5.9 - 2026-07-28
 
 - COA PDF + vial photos from the ops app. Added attachment-ID metas to the REST-safe list so the ops app can link media it pushes to the WP media library on COA pass: `coa_pdf_id` and `batch_vial_photo` (single integer), and `batch_identity_photos` (array of integers, registered with an explicit array schema and the gallery sanitizer). The plugin requires `coa_pdf_id` for an approved completed report, so until now every ops-published record was incomplete by the plugin's own rules.
