@@ -72,7 +72,11 @@ final class Frontend_Router {
 		$current_model = $latest_model && $latest_model['is_current'] ? $latest_model : null;
 		$compound_model['current_approved_test'] = $current_model;
 		$compound_model['previous_approved_tests'] = array_map( function ( $test ) use ( $compound ) { return $this->view_model->history_report( $test, $compound ); }, $previous );
-		$hero_image = $latest_model ? array( 'id' => $latest_model['vial_image_id'], 'url' => $latest_model['vial_image_url'], 'srcset' => $latest_model['vial_image_srcset'], 'sizes' => $latest_model['vial_image_sizes'], 'alt' => $latest_model['vial_image_alt'], 'source' => $latest_model['vial_image_source'] ) : array( 'id' => $compound_model['compound_image_id'], 'url' => $compound_model['compound_image_url'] ?: plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE ), 'srcset' => $compound_model['compound_image_srcset'], 'sizes' => $compound_model['compound_image_sizes'], 'alt' => $compound_model['compound_image_alt'], 'source' => $compound_model['compound_image_url'] ? 'compound-image' : 'local-placeholder' );
+		// The compound header covers EVERY batch, so it must show the compound's own
+		// stock image (compound_image_id -> Woo product image -> placeholder), never
+		// a single lot's batch_vial_photo. The batch vial photo belongs only on the
+		// individual COA/report page. (Fixes vial-photo leak into the compound header.)
+		$hero_image = array( 'id' => $compound_model['compound_image_id'], 'url' => $compound_model['compound_image_url'] ?: plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE ), 'srcset' => $compound_model['compound_image_srcset'], 'sizes' => $compound_model['compound_image_sizes'], 'alt' => $compound_model['compound_image_alt'], 'source' => $compound_model['compound_image_url'] ? 'compound-image' : 'local-placeholder' );
 		return array(
 			'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $compound_model['url'], 'archive_url' => $this->view_model->archive_url(),
 			'compound' => $compound_model, 'hero_image' => $hero_image, 'current_report' => $current_model, 'latest_report' => $latest_model,

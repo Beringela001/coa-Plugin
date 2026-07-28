@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.11 - 2026-07-28
+
+- Fixed a batch vial photo leaking into compound-level images. The archive card grid (Frontend_View_Model::archive_compound) and the compound history header (Frontend_Router::build_compound) both overrode the compound's stock image with the latest/completed batch's `batch_vial_photo` whenever one existed, so the two compounds with uploaded vial photos showed a specific lot's vials instead of the studio product shot. Both now use the compound's own image only (compound_image_id / Woo product image / placeholder). The individual COA/report page still shows the batch vial photo — unchanged — so a customer can match the exact vial in hand.
+
 ## 0.5.10 - 2026-07-28
 
 - Ops as single entry point: the ENTIRE ps_coa_test field vocabulary is now REST-writable so ops can populate a complete record and the WP record never needs hand-editing. Added the full class-coa-test-importer.php::field_map() set to the REST-safe list (internal_batch_id, date_received, lab_accession_number, partial_results_available, vial cap/crimp colours, claimed_content, content_unit, vials_submitted, net-content min/max/std-dev/variance, sample_appearance, purity/identity/endotoxin/heavy-metals/sterility/fentanyl status+method fields, lab_report_url, pending_lab_url, verification_code, lab_verification_url, certificate_version, vendor_status_note, release_decision_note, public_notes, report_notes, internal_notes). Added `coa_page_images` as an array meta (it was NOT in 0.5.9). vials_submitted typed integer; partial_results_available boolean.
