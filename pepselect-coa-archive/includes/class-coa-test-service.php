@@ -103,7 +103,6 @@ final class COA_Test_Service {
 		$outcome = COA_Workflow::outcome( $post_id );
 		$messages = array();
 		if ( 'complete' === $stage && 'pending' === $outcome ) { $messages[] = __( 'Workflow is complete, but a final Approved or Failed COA outcome has not been selected.', 'pepselect-coa-archive' ); }
-		if ( 'in-testing' === $stage && '' === trim( (string) get_post_meta( $post_id, 'pending_lab_url', true ) ) ) { $messages[] = __( 'A pending laboratory URL is recommended while verification is in progress.', 'pepselect-coa-archive' ); }
 		$image_id = absint( get_post_meta( $post_id, 'batch_vial_photo', true ) );
 		if ( in_array( $stage, array( 'in-testing', 'complete' ), true ) && ( ! $image_id || ! wp_attachment_is_image( $image_id ) ) ) { $messages[] = __( 'Add a valid Batch Vial Photo showing the exact tested vial before the next material update.', 'pepselect-coa-archive' ); }
 		$expected = get_post_meta( $post_id, 'expected_coa_date', true );

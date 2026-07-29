@@ -27,9 +27,9 @@ final class COA_Test_Validation {
 		if ( 'workflow_stage' === $key ) { return COA_Workflow::normalize_stage( $value ); }
 		if ( in_array( $key, self::integer_fields(), true ) ) { return absint( $value ); }
 		if ( in_array( $key, self::number_fields(), true ) ) { return '' === $value ? '' : ( is_numeric( $value ) ? (float) $value : $value ); }
-		if ( in_array( $key, array( 'is_current', 'partial_results_available' ), true ) ) { return empty( $value ) ? 0 : 1; }
+		if ( in_array( $key, array( 'is_current' ), true ) ) { return empty( $value ) ? 0 : 1; }
 		if ( in_array( $key, array( 'public_notes', 'report_notes', 'internal_notes', 'heavy_metals_summary', 'release_decision_note' ), true ) ) { return sanitize_textarea_field( trim( (string) $value ) ); }
-		if ( in_array( $key, array( 'lab_verification_url', 'lab_report_url', 'pending_lab_url' ), true ) ) { return esc_url_raw( trim( (string) $value ), array( 'http', 'https' ) ); }
+		if ( in_array( $key, array( 'lab_verification_url', 'lab_report_url' ), true ) ) { return esc_url_raw( trim( (string) $value ), array( 'http', 'https' ) ); }
 		return sanitize_text_field( trim( (string) $value ) );
 	}
 
@@ -63,7 +63,6 @@ final class COA_Test_Validation {
 			array( 'label' => __( 'Expected COA Date', 'pepselect-coa-archive' ), 'fields' => array( 'expected_coa_date' ), 'required' => 'stage', 'stages' => array( 'submitted-to-lab', 'in-testing' ), 'starts' => 'submitted-to-lab' ),
 			array( 'label' => __( 'Claimed Content', 'pepselect-coa-archive' ), 'fields' => array( 'claimed_content' ), 'required' => 'optional' ),
 			array( 'label' => __( 'Claimed-Content Unit', 'pepselect-coa-archive' ), 'fields' => array( 'content_unit' ), 'required' => 'optional' ),
-			array( 'label' => __( 'Vials Submitted', 'pepselect-coa-archive' ), 'fields' => array( 'vials_submitted' ), 'required' => 'optional' ),
 			array( 'label' => __( 'Vials Tested', 'pepselect-coa-archive' ), 'fields' => array( 'vials_tested' ), 'required' => 'approved', 'starts' => 'complete', 'validator' => 'positive' ),
 			array( 'label' => __( 'Sample Information', 'pepselect-coa-archive' ), 'fields' => array( 'sample_appearance', 'average_net_content' ), 'required' => 'optional', 'starts' => 'submitted-to-lab' ),
 			array( 'label' => __( 'Test Date', 'pepselect-coa-archive' ), 'fields' => array( 'test_date' ), 'required' => 'approved', 'starts' => 'complete' ),
@@ -112,13 +111,13 @@ final class COA_Test_Validation {
 		unset( $input ); if ( true !== $valid ) { return $valid; }
 		$name = $field['name']; $raw = is_string( $value ) ? trim( $value ) : $value;
 		$stage = COA_Workflow::normalize_stage( $this->posted( 'workflow_stage' ) );
-		$partial = ! empty( $this->posted( 'partial_results_available' ) );
+		$partial = false; // Partial-results feature removed (Ops §16); never gate on it.
 		if ( ! COA_Test_Form::field_available( $name, $stage, $partial ) ) { return $valid; }
 		if ( 'compound_id' === $name && ( ! $raw || Post_Types::COMPOUND !== get_post_type( absint( $raw ) ) ) ) { return __( 'Select a valid related compound.', 'pepselect-coa-archive' ); }
 		if ( 'batch_number' === $name && 'in-testing' === $stage && '' === $raw ) { return __( 'Batch Number is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
 		if ( 'batch_number' === $name && 'complete' === $stage && '' === $raw ) { return __( 'Batch Number is required before saving a Completed test.', 'pepselect-coa-archive' ); }
 		if ( 'batch_number' === $name && '' !== $raw && ( $this->length( $raw ) > 120 || ! preg_match( '/^[\p{L}\p{N} _\.\/-]+$/u', $raw ) ) ) { return __( 'Batch Number must be 120 characters or fewer and use only letters, numbers, spaces, hyphens, underscores, periods, or slashes.', 'pepselect-coa-archive' ); }
-		$lengths = array( 'internal_batch_id' => 120, 'other_testing_lab' => 120, 'lab_accession_number' => 120, 'vendor_status_note' => 200, 'public_status_note' => 240, 'release_decision_note' => 500, 'other_vial_crimp_color' => 80, 'other_vial_cap_color' => 80, 'sample_appearance' => 200, 'purity_method' => 120, 'identity_method' => 120, 'endotoxin_result' => 120, 'endotoxin_unit' => 50, 'heavy_metals_summary' => 500, 'sterility_result' => 200, 'fentanyl_result' => 200, 'fentanyl_method' => 120, 'fentanyl_specification' => 200, 'fentanyl_notes' => 500, 'coa_number' => 120, 'verification_code' => 200, 'certificate_version' => 50, 'public_notes' => 1000, 'report_notes' => 1000 );
+		$lengths = array( 'other_testing_lab' => 120, 'lab_accession_number' => 120, 'vendor_status_note' => 200, 'public_status_note' => 240, 'release_decision_note' => 500, 'other_vial_crimp_color' => 80, 'other_vial_cap_color' => 80, 'sample_appearance' => 200, 'purity_method' => 120, 'identity_method' => 120, 'endotoxin_result' => 120, 'endotoxin_unit' => 50, 'heavy_metals_summary' => 500, 'sterility_result' => 200, 'fentanyl_result' => 200, 'fentanyl_method' => 120, 'fentanyl_specification' => 200, 'fentanyl_notes' => 500, 'coa_number' => 120, 'verification_code' => 200, 'certificate_version' => 50, 'public_notes' => 1000, 'report_notes' => 1000 );
 		if ( isset( $lengths[ $name ] ) && $this->length( $raw ) > $lengths[ $name ] ) { return sprintf( __( 'This value must be %d characters or fewer.', 'pepselect-coa-archive' ), $lengths[ $name ] ); }
 		if ( 'workflow_stage' === $name && ! array_key_exists( COA_Workflow::normalize_stage( $raw ), COA_Workflow::stages() ) ) { return __( 'Select a valid workflow stage.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, array( 'test_date', 'date_received', 'expected_coa_date' ), true ) && '' !== $raw && ! $this->valid_date( $raw ) ) { return __( 'Enter a valid date.', 'pepselect-coa-archive' ); }
@@ -151,12 +150,12 @@ final class COA_Test_Validation {
 		if ( 'fentanyl_status' !== $name && in_array( $name, self::result_fields(), true ) && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::result_choices() ) ) { return __( 'Select a valid result status.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, self::number_fields(), true ) && '' !== $raw && ! is_numeric( $raw ) ) { return __( 'Enter a valid number.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, self::nonnegative_fields(), true ) && '' !== $raw && (float) $raw < 0 ) { return __( 'This value cannot be negative.', 'pepselect-coa-archive' ); }
-		if ( in_array( $name, array( 'vials_submitted', 'vials_tested' ), true ) && '' !== $raw && false === filter_var( $raw, FILTER_VALIDATE_INT ) ) { return __( 'Enter a whole number.', 'pepselect-coa-archive' ); }
+		if ( 'vials_tested' === $name && '' !== $raw && false === filter_var( $raw, FILTER_VALIDATE_INT ) ) { return __( 'Enter a whole number.', 'pepselect-coa-archive' ); }
 		if ( 'vials_tested' === $name && ( '' !== $raw || $this->is_approved() ) && ( false === filter_var( $raw, FILTER_VALIDATE_INT ) || ( $this->is_approved() && (int) $raw < 1 ) ) ) { return __( 'Vials Tested must be a whole number of at least 1 for approved reports.', 'pepselect-coa-archive' ); }
 		if ( 'purity_percentage' === $name && '' !== $raw && ( (float) $raw < 0 || (float) $raw > 100 ) ) { return __( 'Purity Percentage must be between 0 and 100.', 'pepselect-coa-archive' ); }
 		if ( 'maximum_net_content' === $name && '' !== $raw && '' !== $this->posted( 'minimum_net_content' ) && (float) $this->posted( 'minimum_net_content' ) > (float) $raw ) { return __( 'Maximum Net Content cannot be less than Minimum Net Content.', 'pepselect-coa-archive' ); }
 		if ( 'minimum_net_content' === $name && '' !== $raw && '' !== $this->posted( 'maximum_net_content' ) && (float) $raw > (float) $this->posted( 'maximum_net_content' ) ) { return __( 'Minimum Net Content cannot exceed Maximum Net Content.', 'pepselect-coa-archive' ); }
-		if ( in_array( $name, array( 'lab_verification_url', 'lab_report_url', 'pending_lab_url' ), true ) && '' !== $raw && ! wp_http_validate_url( $raw ) ) { return __( 'Enter a valid HTTP or HTTPS URL.', 'pepselect-coa-archive' ); }
+		if ( in_array( $name, array( 'lab_verification_url', 'lab_report_url' ), true ) && '' !== $raw && ! wp_http_validate_url( $raw ) ) { return __( 'Enter a valid HTTP or HTTPS URL.', 'pepselect-coa-archive' ); }
 		if ( 'batch_vial_photo' === $name && $raw && ! $this->valid_image( absint( $raw ), true ) ) { return __( 'Select an image attachment you have permission to use.', 'pepselect-coa-archive' ); }
 		if ( 'laboratory_logo' === $name && $raw && ! $this->valid_laboratory_logo( absint( $raw ) ) ) { return __( 'Select a safe image attachment you have permission to use as the laboratory logo.', 'pepselect-coa-archive' ); }
 		if ( 'batch_vial_photo' === $name && ! $raw && 'in-testing' === $stage && ! $this->legacy_batch_photo_exempt( $stage ) ) { return __( 'Batch Vial Photo is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
@@ -214,7 +213,7 @@ final class COA_Test_Validation {
 	private function legacy_batch_photo_exempt( $stage ) {
 		$post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! $post_id || 'publish' !== get_post_status( $post_id ) || $stage !== COA_Workflow::stage( $post_id ) || get_post_meta( $post_id, 'batch_vial_photo', true ) ) { return false; }
-		$material = array( 'coa_status', 'batch_number', 'batch_identity_photos', 'test_date', 'date_received', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'certificate_version', 'coa_pdf_id', 'coa_page_images', 'public_notes', 'report_notes', 'release_decision_note' );
+		$material = array( 'coa_status', 'batch_number', 'batch_identity_photos', 'test_date', 'date_received', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'certificate_version', 'coa_pdf_id', 'coa_page_images', 'public_notes', 'report_notes', 'release_decision_note' );
 		foreach ( $material as $name ) {
 			$key = array_search( $name, self::field_map(), true ); if ( ! $key || ! isset( $_POST['acf'][ $key ] ) ) { continue; } // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$posted = wp_unslash( $_POST['acf'][ $key ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -288,9 +287,9 @@ final class COA_Test_Validation {
 	/** Returns number fields. @return string[] */
 	private static function number_fields() { return array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' ); }
 	/** Returns nonnegative fields. @return string[] */
-	private static function nonnegative_fields() { return array( 'claimed_content', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'purity_percentage' ); }
+	private static function nonnegative_fields() { return array( 'claimed_content', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'purity_percentage' ); }
 	/** Returns integer fields. @return string[] */
-	private static function integer_fields() { return array( 'compound_id', 'vials_submitted', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo', 'laboratory_logo' ); }
+	private static function integer_fields() { return array( 'compound_id', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo', 'laboratory_logo' ); }
 	/** Returns result status fields. @return string[] */
 	private static function result_fields() { return array( 'purity_status', 'identity_status', 'endotoxin_status', 'heavy_metals_status', 'sterility_status', 'fentanyl_status' ); }
 	/** Returns exact administrative labels for result fields. @return array */
@@ -304,7 +303,7 @@ final class COA_Test_Validation {
 	}
 	/** Maps stable ACF keys to stored names. @return array */
 	private static function field_map() {
-		$names = array( 'compound_id', 'batch_number', 'batch_vial_photo', 'batch_identity_photos', 'internal_batch_id', 'test_date', 'workflow_stage', 'expected_coa_date', 'vendor_status_note', 'public_status_note', 'partial_results_available', 'release_decision_note', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'lab_accession_number', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'pending_lab_url', 'verification_code', 'lab_verification_url', 'certificate_version', 'coa_pdf_id', 'public_notes', 'report_notes', 'internal_notes' );
+		$names = array( 'compound_id', 'batch_number', 'batch_vial_photo', 'batch_identity_photos', 'test_date', 'workflow_stage', 'expected_coa_date', 'vendor_status_note', 'public_status_note', 'release_decision_note', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'lab_accession_number', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version', 'coa_pdf_id', 'public_notes', 'report_notes', 'internal_notes' );
 		$map = array( 'field_ps_coa_test_status' => 'coa_status', 'field_ps_coa_test_page_images' => 'coa_page_images' );
 		foreach ( $names as $name ) { $map[ 'field_ps_coa_test_' . $name ] = $name; }
 		return $map;

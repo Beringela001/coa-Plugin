@@ -41,11 +41,13 @@ final class COA_Test_Importer {
 
 	/** Returns supported CSV column-to-ACF-key mappings. @return array */
 	private function field_map() {
-		$names = array( 'compound_id', 'batch_number', 'internal_batch_id', 'workflow_stage', 'test_date', 'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'is_current', 'partial_results_available', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'pending_lab_url', 'verification_code', 'lab_verification_url', 'certificate_version', 'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes' );
+		$names = array( 'compound_id', 'batch_number', 'workflow_stage', 'test_date', 'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version', 'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes' );
 		$map = array( 'coa_status' => 'field_ps_coa_test_status' );
 		foreach ( $names as $name ) { $map[ $name ] = 'field_ps_coa_test_' . $name; }
 		$map['vial_crimp_color_other'] = 'field_ps_coa_test_other_vial_crimp_color';
 		$map['vial_cap_color_other'] = 'field_ps_coa_test_other_vial_cap_color';
+		// Older templates used vials_submitted; map it onto the single Vials field.
+		$map['vials_submitted'] = 'field_ps_coa_test_vials_tested';
 		return $map;
 	}
 

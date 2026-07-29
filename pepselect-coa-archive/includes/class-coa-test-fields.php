@@ -26,9 +26,9 @@ final class COA_Test_Fields {
 	public function register_rest_meta() {
 		if ( $this->rest_registered ) { return; }
 		$this->rest_registered = true;
-		$integer = array( 'compound_id', 'vials_submitted', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
+		$integer = array( 'compound_id', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
-		$boolean = array( 'is_current', 'partial_results_available' );
+		$boolean = array( 'is_current' );
 		// Ops is now the single entry point (Ops Spec §16 item — mirror the COA
 		// form): the ops app owns the ENTIRE ps_coa_test field vocabulary over REST,
 		// matching class-coa-test-importer.php::field_map() so one CSV template and
@@ -36,17 +36,17 @@ final class COA_Test_Fields {
 		// below. The two ID media metas (coa_pdf_id/batch_vial_photo) are ops-managed
 		// uploads, not CSV columns, but ride the same list.
 		$safe = array(
-			'compound_id', 'batch_number', 'internal_batch_id', 'workflow_stage', 'coa_status', 'test_date',
+			'compound_id', 'batch_number', 'workflow_stage', 'coa_status', 'test_date',
 			'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number',
-			'is_current', 'partial_results_available',
+			'is_current',
 			'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color',
-			'claimed_content', 'content_unit', 'vials_submitted', 'vials_tested',
+			'claimed_content', 'content_unit', 'vials_tested',
 			'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance',
 			'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method',
 			'endotoxin_status', 'endotoxin_result', 'endotoxin_unit',
 			'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result',
 			'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes',
-			'coa_number', 'lab_report_url', 'pending_lab_url', 'verification_code', 'lab_verification_url', 'certificate_version',
+			'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version',
 			'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes',
 			'coa_pdf_id', 'batch_vial_photo',
 		);
@@ -86,16 +86,13 @@ final class COA_Test_Fields {
 			$this->f( 'compound_id', 'Related Compound', 'post_object', array( 'required' => 1, 'post_type' => array( Post_Types::COMPOUND ), 'post_status' => array( 'publish', 'private' ), 'return_format' => 'id', 'multiple' => 0, 'allow_null' => 0 ) ),
 			$this->f( 'workflow_stage', 'Workflow Stage', 'select', array( 'required' => 1, 'choices' => COA_Workflow::stages(), 'default_value' => 'vendor-vetting', 'return_format' => 'value', 'instructions' => __( 'Select the current operational stage for this batch.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'status', 'COA Status', 'select', array( 'name' => 'coa_status', 'required' => 1, 'choices' => self::statuses(), 'default_value' => 'pending', 'return_format' => 'value' ) ),
-			$this->f( 'internal_batch_id', 'Internal Batch ID', 'text', array( 'maxlength' => 120 ) ),
 			$this->f( 'test_date', 'Test Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Required for approved reports; record it for failed reports when available.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'date_received', 'Date Received', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1 ) ),
 			$this->f( 'is_current', 'Current COA', 'true_false', array( 'default_value' => 0, 'ui' => 1 ) ),
 			$this->tab( 'vetting_progress', __( 'Vetting Progress', 'pepselect-coa-archive' ) ),
 			$this->f( 'expected_coa_date', 'Expected COA Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Required after submission while testing or the final COA is pending.', 'pepselect-coa-archive' ) ) ),
-			$this->f( 'pending_lab_url', 'Pending Laboratory URL', 'url', array( 'instructions' => __( 'Optional exact public laboratory status page. Kept separate from the final report URL.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'vendor_status_note', 'Vendor Status Note', 'text', array( 'maxlength' => 200 ) ),
 			$this->f( 'public_status_note', 'Public Status Note', 'text', array( 'maxlength' => 240 ) ),
-			$this->f( 'partial_results_available', 'Partial Results Available', 'true_false', array( 'default_value' => 0, 'ui' => 1, 'instructions' => __( 'Enable only when real partial laboratory results are ready for entry and public display.', 'pepselect-coa-archive' ) ) ),
 			$this->tab( 'batch_vial', __( 'Batch & Vial Identity', 'pepselect-coa-archive' ) ),
 			$this->f( 'batch_number', 'Batch Number', 'text', array( 'required' => 0, 'maxlength' => 120 ) ),
 			$this->f( 'batch_vial_photo', 'Batch Vial Photo', 'image', array( 'return_format' => 'id', 'preview_size' => 'medium', 'library' => 'all', 'mime_types' => 'jpg,jpeg,png,webp', 'instructions' => __( 'Upload a clear photo of the exact vial submitted for this batch. The label, strength, cap, and crimp should be visible whenever possible. Required during Verification in Progress and Complete.', 'pepselect-coa-archive' ) ) ),
@@ -106,8 +103,7 @@ final class COA_Test_Fields {
 			$this->f( 'other_vial_cap_color', 'Other Cap Color', 'text', array( 'maxlength' => 80, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_vial_cap_color', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
 			$this->number( 'claimed_content', 'Claimed Content', 0 ),
 			$this->f( 'content_unit', 'Content Unit', 'select', array( 'choices' => $units, 'default_value' => 'mg', 'return_format' => 'value' ) ),
-			$this->number( 'vials_submitted', 'Vials Submitted', 0, 1 ),
-			$this->number( 'vials_tested', 'Vials Tested', 1, 1, false ),
+			$this->number( 'vials_tested', 'Vials', 1, 1, false ),
 			$this->f( 'testing_lab', 'Testing Laboratory', 'select', array( 'choices' => self::labs(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required during verification and for approved reports.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'laboratory_logo', 'Laboratory Logo', 'image', array( 'return_format' => 'id', 'preview_size' => 'thumbnail', 'library' => 'all', 'mime_types' => 'jpg,jpeg,png,webp,gif,svg', 'instructions' => __( 'Optional logo for the testing laboratory shown on the public report. Upload a transparent PNG, SVG supported safely by WordPress policy, or another appropriately sized image.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'other_testing_lab', 'Other Laboratory Name', 'text', array( 'maxlength' => 120, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_testing_lab', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
@@ -118,7 +114,7 @@ final class COA_Test_Fields {
 			$this->number( 'maximum_net_content', 'Maximum Net Content', 0 ),
 			$this->number( 'net_content_std_dev', 'Net Content Standard Deviation', 0 ),
 			$this->number( 'content_variance_percent', 'Content Variance Percent', null, 0.0001 ),
-			$this->f( 'sample_appearance', 'Sample Appearance', 'text', array( 'maxlength' => 200, 'default_value' => 'White lyophilized powder' ) ),
+			$this->f( 'sample_appearance', 'Sample Appearance', 'text', array( 'maxlength' => 200, 'default_value' => 'White Lyophilized Powder' ) ),
 			$this->tab( 'results', __( 'Test Results', 'pepselect-coa-archive' ) ),
 			$this->f( 'purity_percentage', 'Purity Percentage', 'number', array( 'min' => 0, 'max' => 100, 'step' => 0.0001 ) ),
 			$this->result( 'purity_status', 'Purity Status', 'pending', $result ),

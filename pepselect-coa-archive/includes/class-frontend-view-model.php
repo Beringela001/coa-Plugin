@@ -101,7 +101,7 @@ final class Frontend_View_Model {
 		$coa_status = COA_Workflow::outcome( $test ); $workflow_stage = COA_Workflow::stage( $test );
 		$complete = 'complete' === $workflow_stage; $testing = 'in-testing' === $workflow_stage;
 		$batch_public = $complete || $testing; $lab_public = $complete || $testing; $expected_public = in_array( $workflow_stage, array( 'waiting-on-vendor', 'submitted-to-lab', 'in-testing' ), true );
-		$partial = $testing && 'publish' === $test->post_status && (bool) absint( get_post_meta( $test->ID, 'partial_results_available', true ) );
+		$partial = false; // Partial-results feature removed (Ops §16): results are public only when Complete.
 		$results_public = $complete || $partial;
 		$date = $complete ? (string) get_post_meta( $test->ID, 'test_date', true ) : '';
 		$claimed = $results_public ? (string) get_post_meta( $test->ID, 'claimed_content', true ) : '';
@@ -164,7 +164,7 @@ final class Frontend_View_Model {
 			'assurance_label' => $full_qc ? Design_Settings::copy( 'full_qc_label' ) : Design_Settings::copy( 'neutral_label' ),
 			'coa_number' => $complete ? (string) get_post_meta( $test->ID, 'coa_number', true ) : '',
 			'lab_report_url' => $complete ? $this->http_url( get_post_meta( $test->ID, 'lab_report_url', true ) ) : '',
-			'pending_lab_url' => $testing ? $this->http_url( get_post_meta( $test->ID, 'pending_lab_url', true ) ) : '',
+			'pending_lab_url' => '', // Field removed (Ops §16); never surfaced.
 			'vendor_status_note' => in_array( $workflow_stage, array( 'vendor-vetting', 'waiting-on-vendor' ), true ) ? (string) get_post_meta( $test->ID, 'vendor_status_note', true ) : '',
 			'public_status_note' => $public_note,
 			'release_decision_note' => $complete && 'failed' === $coa_status ? (string) get_post_meta( $test->ID, 'release_decision_note', true ) : '',
