@@ -9,7 +9,8 @@
 			<?php if ( $test['laboratory'] ) : ?><li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6m-1 0v6l5 9a2 2 0 0 1-1.7 3H6.7A2 2 0 0 1 5 18l5-9V3m-3 12h10"/></svg> <?php echo esc_html( $test['laboratory'] ); ?></li><?php endif; ?>
 		</ul>
 		<p class="ps-coa-hero-copy"><?php echo esc_html( 'complete' === $test['workflow_stage'] ? \PepSelect\COAArchive\Design_Settings::copy( 'report_hero_copy' ) : $test['public_status_copy'] ); ?></p>
-		<?php if ( $test['public_notes'] || $test['report_notes'] ) : ?><div class="ps-coa-hero-notes"><?php if ( $test['public_notes'] ) { echo wp_kses_post( wpautop( $test['public_notes'] ) ); } ?><?php if ( $test['report_notes'] ) { echo wp_kses_post( wpautop( $test['report_notes'] ) ); } ?></div><?php endif; ?>
+		<?php if ( $test['public_notes'] ) : ?><div class="ps-coa-hero-notes"><?php echo wp_kses_post( wpautop( $test['public_notes'] ) ); ?></div><?php endif; ?>
+		<?php if ( $test['report_notes'] ) : ?><div class="ps-coa-hero-note-card"><?php echo wp_kses_post( wpautop( $test['report_notes'] ) ); ?></div><?php endif; ?>
 		<?php include pepselect_coa_template_path( 'partials/batch-identity-meta.php' ); ?>
 	</div>
 	<?php include pepselect_coa_template_path( 'partials/batch-vial-image.php' ); ?>

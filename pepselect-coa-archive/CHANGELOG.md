@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.14 - 2026-08-04
+
+- Report hero ("banner") card rebalanced after the 0.5.13 note card. Verified against the live Retatrutide 10 mg report at 1440px. The hero copy and the report-note card were capped at 55ch inside a 508px column, so the note wrapped to eight bold lines with ~110px of unused column beside it; both now use the full identity column, dropping the note to six lines and tightening it to .79rem/1.5 line-height with slightly roomier 12px 14px padding. The hero grid moves from `1.36fr / minmax(210px, .7fr) / 1fr` to `1.3fr / minmax(230px, .8fr) / 1fr`, and the vial image changes from a fixed 320px height to `height: auto; max-height: 100%`, so the vial fills the taller panel (249x309 to 283x351) instead of floating in ~190px of dead space. The stacked layout at 800px and below keeps the previous fixed image heights (320px, and 294px at 520px and below) unchanged. CSS only; markup, view models, and data untouched.
+
+## 0.5.13 - 2026-08-04
+
+- Report Notes now render as their own emphasised card in the report hero. The note previously sat as light grey body text inside the white hero card and read as an afterthought next to the certificate introduction. It is now a separate element (`ps-coa-hero-note-card` in `templates/partials/report-hero.php`) on a pale blue tinted surface with a rounded border, a navy left accent rule, a soft shadow, and bold darker text, so a batch-specific note such as the mislabelled-packaging explanation is clearly distinguished from the standard hero copy. Public Notes keep their existing quiet `ps-coa-hero-notes` treatment. Presentation only — no change to stored data, visibility gating, or the complete-stage rule that report notes appear only on completed records.
+
 ## 0.5.11 - 2026-07-28
 
 - Fixed a batch vial photo leaking into compound-level images. The archive card grid (Frontend_View_Model::archive_compound) and the compound history header (Frontend_Router::build_compound) both overrode the compound's stock image with the latest/completed batch's `batch_vial_photo` whenever one existed, so the two compounds with uploaded vial photos showed a specific lot's vials instead of the studio product shot. Both now use the compound's own image only (compound_image_id / Woo product image / placeholder). The individual COA/report page still shows the batch vial photo — unchanged — so a customer can match the exact vial in hand.

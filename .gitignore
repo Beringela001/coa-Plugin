@@ -1,0 +1,7 @@
+# Build artifacts — packaged plugin zips are produced from source, not tracked
+*.zip
+zips/
+
+# Local working copies of deployed/reference builds
+.live-*/
+.pristine-*/
