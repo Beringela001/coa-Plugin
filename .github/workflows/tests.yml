@@ -84,13 +84,8 @@ jobs:
       - name: Annotate the failure tail
         if: failure()
         run: |
-          tail -n 60 /tmp/phpunit.log > /tmp/tail.txt 2>/dev/null || echo "no phpunit output" > /tmp/tail.txt
-          encoded=$(python3 -c "
-import sys
-data = open('/tmp/tail.txt', encoding='utf-8', errors='replace').read()
-data = data.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
-sys.stdout.write(data[:8000])
-")
+          if [ ! -s /tmp/phpunit.log ]; then echo "::error::no phpunit output captured"; exit 0; fi
+          encoded=$(tail -n 60 /tmp/phpunit.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-8000)
           echo "::error title=PHPUnit PHP ${{ matrix.php }} WP ${{ matrix.wp }}::${encoded}"
 
       - name: Upload PHPUnit log
