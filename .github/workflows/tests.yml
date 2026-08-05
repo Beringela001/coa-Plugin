@@ -97,7 +97,7 @@ jobs:
           n=0
           for chunk in /tmp/annot_chunk_*; do
             n=$((n + 1))
-            if [ "$n" -gt 12 ]; then break; fi
+            if [ "$n" -gt 24 ]; then break; fi
             encoded=$(sed 's/%/%25/g' "$chunk" | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-3000)
             echo "::error title=idx ${n} (PHP ${{ matrix.php }})::${encoded}"
           done
