@@ -11,6 +11,35 @@ final class Compound_Validation {
 	/** @var bool Prevents duplicate hook registration. */
 	private $hooks_registered = false;
 
+	/**
+	 * Injected value context used instead of $_POST when validating a non-form
+	 * write. Null means "read the ACF form payload".
+	 *
+	 * Shape: array( 'values' => array<string,mixed>, 'post_id' => int ).
+	 *
+	 * @var array|null
+	 */
+	private $context = null;
+
+	/**
+	 * Supplies field values from outside an ACF form submission.
+	 *
+	 * Callers must pass a COMPLETE merged value set; see COA_Test_Validation::set_context().
+	 *
+	 * @param array $values  Field name => value, already merged.
+	 * @param int   $post_id Target post, 0 for a create.
+	 * @return void
+	 */
+	public function set_context( array $values, $post_id = 0 ) {
+		$this->context = array( 'values' => $values, 'post_id' => absint( $post_id ) );
+	}
+
+	/** Restores $_POST-backed reads. @return void */
+	public function clear_context() { $this->context = null; }
+
+	/** Returns whether an injected context is active. @return bool */
+	public function has_context() { return null !== $this->context; }
+
 	/** Registers ACF validation, normalization, and save hooks. @return void */
 	public function register_hooks() {
 		if ( $this->hooks_registered ) { return; }
@@ -57,19 +86,45 @@ final class Compound_Validation {
 		if ( 'strength_unit' === $name && ! array_key_exists( $value, self::units() ) ) { return __( 'Select a valid strength unit.', 'pepselect-coa-archive' ); }
 		if ( 'compound_category' === $name && '' !== $value && ! array_key_exists( $value, self::categories() ) ) { return __( 'Select a valid compound category.', 'pepselect-coa-archive' ); }
 		if ( 'display_order' === $name && ( false === filter_var( $raw_value, FILTER_VALIDATE_INT ) || (int) $raw_value < 0 ) ) { return __( 'Display Order must be a whole number of zero or greater.', 'pepselect-coa-archive' ); }
+		// Parity with the ACF definition: compound_image_id is an image field, so the
+		// form can only ever store a real image attachment. Nothing validated this.
+		if ( 'compound_image_id' === $name && absint( $value ) && ! $this->valid_image( absint( $value ) ) ) { return __( 'The Compound Image must be an image attachment you have permission to use.', 'pepselect-coa-archive' ); }
 		return $valid;
+	}
+
+	/** Returns the post being validated, from context or the ACF form. @return int */
+	private function context_post_id() {
+		if ( null !== $this->context ) { return $this->context['post_id']; }
+		return isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	}
+
+	/** Reads a field value from the injected context. @param string $name Field name. @return mixed */
+	private function posted( $name ) {
+		if ( null === $this->context ) { return ''; }
+		return array_key_exists( $name, $this->context['values'] ) ? $this->context['values'][ $name ] : '';
+	}
+
+	/** Validates an image attachment the caller may use. @param int $id Attachment ID. @return bool */
+	private function valid_image( $id ) {
+		return $id > 0 && 'attachment' === get_post_type( $id ) && wp_attachment_is_image( $id ) && current_user_can( 'edit_post', $id );
 	}
 
 	/** Blocks an exact compound-name, strength, and unit duplicate. @param mixed $valid Existing result. @param mixed $value Unit. @param array $field Field. @param string $input Input. @return mixed */
 	public function validate_duplicate( $valid, $value, $field, $input ) {
 		unset( $field, $input );
-		if ( true !== $valid || empty( $_POST['acf'] ) || ! is_array( $_POST['acf'] ) ) { return $valid; } // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF validates its form nonce.
-		$acf      = wp_unslash( $_POST['acf'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$name     = isset( $acf['field_ps_compound_name'] ) ? sanitize_text_field( trim( $acf['field_ps_compound_name'] ) ) : '';
-		$strength = isset( $acf['field_ps_compound_strength_value'] ) ? $acf['field_ps_compound_strength_value'] : '';
-		$unit     = sanitize_text_field( (string) $value );
+		if ( true !== $valid ) { return $valid; }
+		if ( null !== $this->context ) {
+			$name     = sanitize_text_field( trim( (string) $this->posted( 'compound_name' ) ) );
+			$strength = $this->posted( 'strength_value' );
+		} else {
+			if ( empty( $_POST['acf'] ) || ! is_array( $_POST['acf'] ) ) { return $valid; } // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF validates its form nonce.
+			$acf      = wp_unslash( $_POST['acf'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$name     = isset( $acf['field_ps_compound_name'] ) ? sanitize_text_field( trim( $acf['field_ps_compound_name'] ) ) : '';
+			$strength = isset( $acf['field_ps_compound_strength_value'] ) ? $acf['field_ps_compound_strength_value'] : '';
+		}
+		$unit = sanitize_text_field( (string) $value );
 		if ( '' === $name || ! is_numeric( $strength ) || ! array_key_exists( $unit, self::units() ) ) { return $valid; }
-		$current_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$current_id = $this->context_post_id();
 		$matches = get_posts( array( 'post_type' => Post_Types::COMPOUND, 'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future' ), 'posts_per_page' => 20, 'post__not_in' => $current_id ? array( $current_id ) : array(), 'fields' => 'ids', 'no_found_rows' => true, 'meta_query' => array( 'relation' => 'AND', array( 'key' => 'strength_value', 'value' => (string) (float) $strength, 'compare' => '=' ), array( 'key' => 'strength_unit', 'value' => $unit, 'compare' => '=' ) ) ) );
 		foreach ( $matches as $match_id ) {
 			if ( 0 === strcasecmp( trim( (string) get_post_meta( $match_id, 'compound_name', true ) ), $name ) ) {

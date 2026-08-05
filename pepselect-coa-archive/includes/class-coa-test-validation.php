@@ -8,6 +8,39 @@ final class COA_Test_Validation {
 	/** @var bool */
 	private $registered = false;
 
+	/**
+	 * Injected value context used instead of $_POST when validating a non-form
+	 * write (the REST write endpoint). Null means "read the ACF form payload",
+	 * which keeps the admin path and the existing test suite byte-identical.
+	 *
+	 * Shape: array( 'values' => array<string,mixed>, 'post_id' => int, 'post_status' => string ).
+	 *
+	 * @var array|null
+	 */
+	private $context = null;
+
+	/**
+	 * Supplies field values from outside an ACF form submission.
+	 *
+	 * Callers must pass a COMPLETE merged value set (stored values overlaid with
+	 * the submitted ones). Cross-field rules read siblings through posted(), so a
+	 * partial set would make a valid stored record fail against its own data.
+	 *
+	 * @param array  $values      Field name => value, already merged.
+	 * @param int    $post_id     Target post, 0 for a create.
+	 * @param string $post_status Intended post status.
+	 * @return void
+	 */
+	public function set_context( array $values, $post_id = 0, $post_status = '' ) {
+		$this->context = array( 'values' => $values, 'post_id' => absint( $post_id ), 'post_status' => sanitize_key( (string) $post_status ) );
+	}
+
+	/** Restores $_POST-backed reads. @return void */
+	public function clear_context() { $this->context = null; }
+
+	/** Returns whether an injected context is active. @return bool */
+	public function has_context() { return null !== $this->context; }
+
 	/** Registers stable field-specific ACF hooks. @return void */
 	public function register_hooks() {
 		if ( $this->registered ) { return; }
@@ -140,6 +173,9 @@ final class COA_Test_Validation {
 		if ( 'other_vial_cap_color' === $name && 'other' === $this->posted( 'vial_cap_color' ) && '' === $raw ) { return __( 'Enter the other cap color.', 'pepselect-coa-archive' ); }
 		if ( 'content_unit' === $name && '' !== $raw && ! array_key_exists( $raw, Compound_Validation::units() ) ) { return __( 'Select a valid content unit.', 'pepselect-coa-archive' ); }
 		if ( 'fentanyl_status' === $name && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::fentanyl_choices() ) ) { return __( 'Select a valid Fentanyl Screen status.', 'pepselect-coa-archive' ); }
+		// Parity with the ACF definition: the Fentanyl Screen select is allow_null=0
+		// with a 'not-tested' default, so a form can never submit an empty value.
+		if ( 'fentanyl_status' === $name && '' === $raw ) { return __( 'Select a valid Fentanyl Screen status.', 'pepselect-coa-archive' ); }
 		if ( 'fentanyl_result' === $name ) {
 			$status = sanitize_key( (string) $this->posted( 'fentanyl_status' ) );
 			$expected = 'pass' === $status ? 'Not detected' : ( 'fail' === $status ? 'Detected' : '' );
@@ -152,11 +188,17 @@ final class COA_Test_Validation {
 		if ( in_array( $name, self::nonnegative_fields(), true ) && '' !== $raw && (float) $raw < 0 ) { return __( 'This value cannot be negative.', 'pepselect-coa-archive' ); }
 		if ( 'vials_tested' === $name && '' !== $raw && false === filter_var( $raw, FILTER_VALIDATE_INT ) ) { return __( 'Enter a whole number.', 'pepselect-coa-archive' ); }
 		if ( 'vials_tested' === $name && ( '' !== $raw || $this->is_approved() ) && ( false === filter_var( $raw, FILTER_VALIDATE_INT ) || ( $this->is_approved() && (int) $raw < 1 ) ) ) { return __( 'Vials Tested must be a whole number of at least 1 for approved reports.', 'pepselect-coa-archive' ); }
+		// Parity with the ACF definition (min => 1): a recorded vial count is always
+		// at least one, at every stage, not only for approved reports.
+		if ( 'vials_tested' === $name && '' !== $raw && (int) $raw < 1 ) { return __( 'Vials Tested must be at least 1 when recorded.', 'pepselect-coa-archive' ); }
 		if ( 'purity_percentage' === $name && '' !== $raw && ( (float) $raw < 0 || (float) $raw > 100 ) ) { return __( 'Purity Percentage must be between 0 and 100.', 'pepselect-coa-archive' ); }
 		if ( 'maximum_net_content' === $name && '' !== $raw && '' !== $this->posted( 'minimum_net_content' ) && (float) $this->posted( 'minimum_net_content' ) > (float) $raw ) { return __( 'Maximum Net Content cannot be less than Minimum Net Content.', 'pepselect-coa-archive' ); }
 		if ( 'minimum_net_content' === $name && '' !== $raw && '' !== $this->posted( 'maximum_net_content' ) && (float) $raw > (float) $this->posted( 'maximum_net_content' ) ) { return __( 'Minimum Net Content cannot exceed Maximum Net Content.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, array( 'lab_verification_url', 'lab_report_url' ), true ) && '' !== $raw && ! wp_http_validate_url( $raw ) ) { return __( 'Enter a valid HTTP or HTTPS URL.', 'pepselect-coa-archive' ); }
 		if ( 'batch_vial_photo' === $name && $raw && ! $this->valid_image( absint( $raw ), true ) ) { return __( 'Select an image attachment you have permission to use.', 'pepselect-coa-archive' ); }
+		// Parity with the ACF definition (mime_types jpg,jpeg,png,webp): valid_image()
+		// alone would also accept GIF, which the form can never produce.
+		if ( 'batch_vial_photo' === $name && $raw && ! in_array( get_post_mime_type( absint( $raw ) ), array( 'image/jpeg', 'image/png', 'image/webp' ), true ) ) { return __( 'The Batch Vial Photo must be a JPG, PNG, or WebP image.', 'pepselect-coa-archive' ); }
 		if ( 'laboratory_logo' === $name && $raw && ! $this->valid_laboratory_logo( absint( $raw ) ) ) { return __( 'Select a safe image attachment you have permission to use as the laboratory logo.', 'pepselect-coa-archive' ); }
 		if ( 'batch_vial_photo' === $name && ! $raw && 'in-testing' === $stage && ! $this->legacy_batch_photo_exempt( $stage ) ) { return __( 'Batch Vial Photo is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
 		if ( 'batch_vial_photo' === $name && ! $raw && 'complete' === $stage && ! $this->legacy_batch_photo_exempt( $stage ) ) { return __( 'Batch Vial Photo is required before saving a Completed test.', 'pepselect-coa-archive' ); }
@@ -170,7 +212,7 @@ final class COA_Test_Validation {
 	public function validate_duplicate( $valid, $value, $field, $input ) {
 		unset( $field, $input ); if ( true !== $valid ) { return $valid; }
 		$compound = absint( $this->posted( 'compound_id' ) ); $batch = trim( (string) $value ); if ( ! $compound || '' === $batch ) { return $valid; }
-		$current = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF validates its nonce.
+		$current = $this->context_post_id();
 		$ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future' ), 'posts_per_page' => 50, 'fields' => 'ids', 'no_found_rows' => true, 'post__not_in' => $current ? array( $current ) : array(), 'meta_key' => 'compound_id', 'meta_value' => $compound ) );
 		foreach ( $ids as $id ) { if ( 0 === strcasecmp( trim( (string) get_post_meta( $id, 'batch_number', true ) ), $batch ) ) { $link = get_edit_post_link( $id, 'raw' ); return sprintf( __( 'This compound and batch already exist as “%1$s”. Edit: %2$s', 'pepselect-coa-archive' ), get_the_title( $id ), $link ? esc_url_raw( $link ) : __( 'unavailable', 'pepselect-coa-archive' ) ); } }
 		return $valid;
@@ -202,21 +244,44 @@ final class COA_Test_Validation {
 	}
 
 	/** Reads an ACF value from the current validated request. @param string $name Field name. @return mixed */
-	private function posted( $name ) { $key = array_search( $name, self::field_map(), true ); return $key && isset( $_POST['acf'][ $key ] ) ? wp_unslash( $_POST['acf'][ $key ] ) : ''; } // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	private function posted( $name ) {
+		if ( null !== $this->context ) { return array_key_exists( $name, $this->context['values'] ) ? $this->context['values'][ $name ] : ''; }
+		$key = array_search( $name, self::field_map(), true );
+		return $key && isset( $_POST['acf'][ $key ] ) ? wp_unslash( $_POST['acf'][ $key ] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	}
+
+	/** Returns the post being validated, from context or the ACF form. @return int */
+	private function context_post_id() {
+		if ( null !== $this->context ) { return $this->context['post_id']; }
+		return isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	}
+
+	/** Returns whether a field was explicitly supplied by the caller. @param string $name Field. @return bool */
+	private function supplied( $name ) {
+		if ( null !== $this->context ) { return array_key_exists( $name, $this->context['values'] ); }
+		$key = array_search( $name, self::field_map(), true );
+		return (bool) ( $key && isset( $_POST['acf'][ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	}
 	/** Returns whether the submitted final outcome is approved. @return bool */
 	private function is_approved() { return 'approved' === $this->posted( 'coa_status' ); }
 	/** Returns whether the current record is retaining its own read-only legacy outcome. @param string $status Submitted status. @return bool */
-	private function preserves_legacy_status( $status ) { $post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; return $post_id && in_array( $status, array( 'archived', 'superseded' ), true ) && $status === get_post_meta( $post_id, 'coa_status', true ); } // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	private function preserves_legacy_status( $status ) { $post_id = $this->context_post_id(); return $post_id && in_array( $status, array( 'archived', 'superseded' ), true ) && $status === get_post_meta( $post_id, 'coa_status', true ); }
 	/** Returns whether an edit retains its own formerly supported vial-color value. @param string $name Field. @param string $value Submitted value. @return bool */
-	private function preserves_legacy_color( $name, $value ) { $post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; return $post_id && $value === get_post_meta( $post_id, $name, true ); } // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	private function preserves_legacy_color( $name, $value ) { $post_id = $this->context_post_id(); return $post_id && $value === get_post_meta( $post_id, $name, true ); }
 	/** Allows a published legacy record to remain untouched without forcing a destructive migration. @param string $stage Submitted stage. @return bool */
 	private function legacy_batch_photo_exempt( $stage ) {
-		$post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = $this->context_post_id();
 		if ( ! $post_id || 'publish' !== get_post_status( $post_id ) || $stage !== COA_Workflow::stage( $post_id ) || get_post_meta( $post_id, 'batch_vial_photo', true ) ) { return false; }
+		// Outside an ACF form the "nothing material changed" inference below is not
+		// available: a partial PATCH cannot distinguish an omitted field from an
+		// unchanged one, so omitting fields would silently buy the exemption. Under
+		// an injected context the exemption is therefore allowlist-only — an
+		// explicit, fixed set of batches that predate the vial-photo convention.
+		if ( null !== $this->context ) { return in_array( $post_id, self::legacy_photo_exempt_ids(), true ); }
 		$material = array( 'coa_status', 'batch_number', 'batch_identity_photos', 'test_date', 'date_received', 'testing_lab', 'laboratory_logo', 'other_testing_lab', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'claimed_content', 'content_unit', 'vials_tested', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance', 'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method', 'endotoxin_status', 'endotoxin_result', 'endotoxin_unit', 'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_number', 'lab_report_url', 'certificate_version', 'coa_pdf_id', 'coa_page_images', 'public_notes', 'report_notes', 'release_decision_note' );
 		foreach ( $material as $name ) {
-			$key = array_search( $name, self::field_map(), true ); if ( ! $key || ! isset( $_POST['acf'][ $key ] ) ) { continue; } // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$posted = wp_unslash( $_POST['acf'][ $key ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( ! $this->supplied( $name ) ) { continue; }
+			$posted = $this->posted( $name );
 			$posted = is_array( $posted ) ? self::sanitize_gallery( $posted ) : self::sanitize( $posted, $name );
 			$stored = get_post_meta( $post_id, $name, true ); $stored = is_array( $stored ) ? self::sanitize_gallery( $stored ) : self::sanitize( $stored, $name );
 			if ( $posted !== $stored ) { return false; }
@@ -224,7 +289,28 @@ final class COA_Test_Validation {
 		return true;
 	}
 	/** Returns the submitted/core post status. @return string */
-	private function posted_post_status() { if ( isset( $_POST['post_status'] ) ) { return sanitize_key( wp_unslash( $_POST['post_status'] ) ); } $post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; return $post_id ? (string) get_post_status( $post_id ) : 'publish'; } // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	private function posted_post_status() {
+		if ( null !== $this->context ) {
+			if ( '' !== $this->context['post_status'] ) { return $this->context['post_status']; }
+			return $this->context['post_id'] ? (string) get_post_status( $this->context['post_id'] ) : 'publish';
+		}
+		if ( isset( $_POST['post_status'] ) ) { return sanitize_key( wp_unslash( $_POST['post_status'] ) ); } // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = $this->context_post_id();
+		return $post_id ? (string) get_post_status( $post_id ) : 'publish';
+	}
+
+	/**
+	 * Returns COA Test IDs exempt from the Batch Vial Photo requirement.
+	 *
+	 * Deliberately an explicit list rather than an inference. Populate it with the
+	 * batches that predate the convention via the filter; an empty list means no
+	 * exemption, which is the correct default for every record created since.
+	 *
+	 * @return int[]
+	 */
+	public static function legacy_photo_exempt_ids() {
+		return array_values( array_filter( array_map( 'absint', (array) apply_filters( 'pepselect_coa_legacy_photo_exempt_ids', array() ) ) ) );
+	}
 	/** Validates ACF's raw Ymd or normalized Y-m-d date without locale parsing. @param string $date Date. @return bool */
 	private function valid_date( $date ) {
 		$format = preg_match( '/^\d{8}$/', $date ) ? '!Ymd' : ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? '!Y-m-d' : '' );
