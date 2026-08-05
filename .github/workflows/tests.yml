@@ -91,8 +91,16 @@ jobs:
           if [ ! -s /tmp/phpunit.log ]; then echo "::error::no phpunit output captured"; exit 0; fi
           tail -n 6 /tmp/phpunit.log > /tmp/annot.txt
           python3 bin/ci-failure-index.py /tmp/junit.xml >> /tmp/annot.txt || true
-          encoded=$(sed 's/%/%25/g' /tmp/annot.txt | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-30000)
-          echo "::error title=PHPUnit PHP ${{ matrix.php }} WP ${{ matrix.wp }}::${encoded}"
+          # GitHub truncates a single annotation message at roughly 4KB regardless
+          # of what is sent, so the index is emitted in chunks instead of one blob.
+          split -l 6 /tmp/annot.txt /tmp/annot_chunk_
+          n=0
+          for chunk in /tmp/annot_chunk_*; do
+            n=$((n + 1))
+            if [ "$n" -gt 12 ]; then break; fi
+            encoded=$(sed 's/%/%25/g' "$chunk" | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-3000)
+            echo "::error title=idx ${n} (PHP ${{ matrix.php }})::${encoded}"
+          done
 
       - name: Upload PHPUnit log
         if: always()
