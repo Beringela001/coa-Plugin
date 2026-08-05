@@ -271,7 +271,11 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 				'vials_tested'    => 3,
 				'coa_pdf_id'      => $pdf,
 				'coa_page_images' => array( $this->image() ),
-				'lab_report_url'  => 'https://lab.example/report',
+				// wp_http_validate_url() resolves non-local hosts with gethostbyname()
+				// and rejects anything that does not resolve, so an invented domain
+				// makes the fixture depend on DNS. The site's own host short-circuits
+				// that check entirely.
+				'lab_report_url'  => home_url( '/lab-report' ),
 				'is_current'      => 0,
 			)
 		);

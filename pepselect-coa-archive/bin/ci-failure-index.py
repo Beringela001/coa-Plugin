@@ -35,7 +35,13 @@ for case in root.iter("testcase"):
             location = f"{locations[-1][0].split('/')[-1]}:{locations[-1][1]}"
         if not location:
             location = f"{case.get('file', '?').split('/')[-1]}:{case.get('line', '?')}"
-        first = next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
+        # JUnit puts "Class::method" on the first line; the assertion body follows.
+        body = [
+            ln.strip()
+            for ln in text.splitlines()
+            if ln.strip() and not re.fullmatch(r"\S+::\S+", ln.strip()) and not re.fullmatch(r"[^\s]+\.php:\d+", ln.strip())
+        ]
+        first = " / ".join(body[:4])
         rows.append((kind.upper(), case.get("class", "?"), case.get("name", "?"), location, first[:130]))
         break
 
