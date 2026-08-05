@@ -172,10 +172,12 @@ final class COA_Test_Validation {
 		if ( 'other_vial_crimp_color' === $name && 'other' === $this->posted( 'vial_crimp_color' ) && '' === $raw ) { return __( 'Enter the other crimp color.', 'pepselect-coa-archive' ); }
 		if ( 'other_vial_cap_color' === $name && 'other' === $this->posted( 'vial_cap_color' ) && '' === $raw ) { return __( 'Enter the other cap color.', 'pepselect-coa-archive' ); }
 		if ( 'content_unit' === $name && '' !== $raw && ! array_key_exists( $raw, Compound_Validation::units() ) ) { return __( 'Select a valid content unit.', 'pepselect-coa-archive' ); }
+		// NOTE: a blank Fentanyl Screen status is deliberately valid — it means "no
+		// screen recorded", which is NOT the same as a pass. The CSV importer
+		// encodes this explicitly and test_24_blank_status_is_not_inferred_as_pass
+		// protects it, so allow_null=0 on the ACF select must not become a
+		// required-value rule here.
 		if ( 'fentanyl_status' === $name && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::fentanyl_choices() ) ) { return __( 'Select a valid Fentanyl Screen status.', 'pepselect-coa-archive' ); }
-		// Parity with the ACF definition: the Fentanyl Screen select is allow_null=0
-		// with a 'not-tested' default, so a form can never submit an empty value.
-		if ( 'fentanyl_status' === $name && '' === $raw ) { return __( 'Select a valid Fentanyl Screen status.', 'pepselect-coa-archive' ); }
 		if ( 'fentanyl_result' === $name ) {
 			$status = sanitize_key( (string) $this->posted( 'fentanyl_status' ) );
 			$expected = 'pass' === $status ? 'Not detected' : ( 'fail' === $status ? 'Detected' : '' );

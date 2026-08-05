@@ -18,7 +18,10 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 		wp_set_current_user( $this->administrator );
 		global $wp_rest_server;
 		$wp_rest_server = new WP_REST_Server();
-		$this->endpoint->register_routes();
+		// Routes must be declared ON the action, not before it: registering early
+		// trips WordPress's _doing_it_wrong notice, which fails every test in the
+		// class regardless of its assertions.
+		$this->endpoint->register();
 		PepSelect\COAArchive\REST_Write_Guard::register_hooks();
 		do_action( 'rest_api_init', $wp_rest_server );
 	}
@@ -52,11 +55,13 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 	/* ---------------------- M1 parity: constraints that were ACF-only */
 
 	public function test_acf_only_constraints_are_now_enforced_by_validate() {
-		$gif = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'image/gif' ) );
+		$gif = $this->attachment( 'image/gif', '2026/08/vial.gif' );
 		$this->test_validation->set_context( array( 'workflow_stage' => 'complete' ), 0, 'publish' );
-		$this->assertNotTrue( $this->test_validation->validate( true, '', array( 'name' => 'fentanyl_status' ), '' ), 'empty fentanyl_status must be rejected' );
 		$this->assertNotTrue( $this->test_validation->validate( true, '0', array( 'name' => 'vials_tested' ), '' ), 'vials_tested below 1 must be rejected' );
 		$this->assertNotTrue( $this->test_validation->validate( true, $gif, array( 'name' => 'batch_vial_photo' ), '' ), 'GIF vial photo must be rejected' );
+		// A blank Fentanyl Screen status means "no screen recorded" and stays valid;
+		// allow_null=0 on the ACF select must not become a required-value rule.
+		$this->assertTrue( $this->test_validation->validate( true, '', array( 'name' => 'fentanyl_status' ), '' ), 'blank fentanyl_status must remain valid' );
 		$this->test_validation->clear_context();
 
 		$post = self::factory()->post->create( array( 'post_type' => 'post' ) );
@@ -234,9 +239,19 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 		return $id;
 	}
 
-	private function image() {
-		return self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'image/jpeg' ) );
+	/**
+	 * wp_attachment_is_image() requires an attached FILE, not just a MIME type —
+	 * a bare factory attachment fails valid_image() and the vial-photo rule.
+	 */
+	private function attachment( $mime, $file ) {
+		$id = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => $mime ) );
+		update_post_meta( $id, '_wp_attached_file', $file );
+		return $id;
 	}
+
+	private function image() { return $this->attachment( 'image/jpeg', '2026/08/vial-' . wp_rand( 1000, 9999 ) . '.jpg' ); }
+
+	private function pdf() { return $this->attachment( 'application/pdf', '2026/08/coa-' . wp_rand( 1000, 9999 ) . '.pdf' ); }
 
 	/** A stored record that is complete + failed and passes every rule. */
 	private function failed_test( $compound, $batch, $note ) {
@@ -245,7 +260,7 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/** A stored record that is complete + approved and passes every rule. */
 	private function approved_test( $compound, $batch ) {
-		$pdf = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'application/pdf' ) );
+		$pdf = $this->pdf();
 		return $this->stored_test(
 			$compound,
 			$batch,

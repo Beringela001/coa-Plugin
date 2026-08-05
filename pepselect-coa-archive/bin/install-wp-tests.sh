@@ -50,6 +50,15 @@ mkdir -p "$WP_TESTS_DIR"
 cp -r "${EXTRACTED}/tests/phpunit/includes" "$WP_TESTS_DIR/"
 cp -r "${EXTRACTED}/tests/phpunit/data" "$WP_TESTS_DIR/"
 
+# phpunit6-compat.php aliases PHPUnit 5 class names onto PHPUnit 6/7 internals.
+# Under PHPUnit 9 that is a hard fatal — PHPUnit\Util\Test is final, and
+# PHPUnit\Util\Getopt no longer exists — so the file is emptied rather than
+# deleted, because the bootstrap requires it unconditionally. Nothing in a
+# PHPUnit 9 run needs those aliases.
+if [ -f "${WP_TESTS_DIR}/includes/phpunit6-compat.php" ]; then
+	printf '<?php\n// Emptied by install-wp-tests.sh: incompatible with PHPUnit 9.\n' > "${WP_TESTS_DIR}/includes/phpunit6-compat.php"
+fi
+
 cat > "${WP_TESTS_DIR}/wp-tests-config.php" <<PHP
 <?php
 define( 'ABSPATH', '${WP_CORE_DIR}/' );

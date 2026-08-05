@@ -240,11 +240,17 @@ final class REST_Write_Endpoint {
 	private function persist( $post_type, $post_id, $post_status, array $persist, $request ) {
 		$title = $request->get_param( 'title' );
 		if ( ! $post_id ) {
+			// The title MUST be resolved before the insert. wp_insert_post() derives
+			// post_name from the title at insert time and falls back to the post ID
+			// when the title is empty, so a later populate_empty_title() fixes the
+			// title but leaves the numeric slug burned in — which is exactly the
+			// /testing/961/ defect this endpoint exists to prevent.
+			$initial = null === $title ? $this->derive_title( $post_type, $persist ) : sanitize_text_field( (string) $title );
 			$post_id = wp_insert_post(
 				array(
 					'post_type'   => $post_type,
 					'post_status' => $post_status,
-					'post_title'  => null === $title ? '' : sanitize_text_field( (string) $title ),
+					'post_title'  => $initial,
 				),
 				true
 			);
@@ -266,6 +272,29 @@ final class REST_Write_Endpoint {
 			update_post_meta( $post_id, $name, $clean );
 		}
 		return $post_id;
+	}
+
+	/**
+	 * Derives an insert-time title so WordPress never falls back to the post ID
+	 * when building the slug.
+	 *
+	 * Compounds carry their identity in display_name; COA Tests are addressed by
+	 * batch number, which is also what Frontend_View_Model::batch_slug() uses.
+	 * COA_Test_Service::synchronize_title() refines the test title afterwards and
+	 * preserves the slug it finds.
+	 *
+	 * @param string $post_type Post type.
+	 * @param array  $values    Values about to be written.
+	 * @return string
+	 */
+	private function derive_title( $post_type, array $values ) {
+		if ( Post_Types::COMPOUND === $post_type ) {
+			return sanitize_text_field( trim( (string) ( isset( $values['display_name'] ) ? $values['display_name'] : '' ) ) );
+		}
+		$batch = sanitize_text_field( trim( (string) ( isset( $values['batch_number'] ) ? $values['batch_number'] : '' ) ) );
+		if ( '' !== $batch ) { return $batch; }
+		$compound = absint( isset( $values['compound_id'] ) ? $values['compound_id'] : 0 );
+		return $compound ? sanitize_text_field( trim( (string) get_post_meta( $compound, 'display_name', true ) ) ) : '';
 	}
 
 	/**
