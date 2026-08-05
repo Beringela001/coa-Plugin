@@ -79,6 +79,20 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # Step summaries and artifacts both need authentication to read. Annotations
+      # do not, so emit the failure tail as one so it can be diagnosed publicly.
+      - name: Annotate the failure tail
+        if: failure()
+        run: |
+          tail -n 60 /tmp/phpunit.log > /tmp/tail.txt 2>/dev/null || echo "no phpunit output" > /tmp/tail.txt
+          encoded=$(python3 -c "
+import sys
+data = open('/tmp/tail.txt', encoding='utf-8', errors='replace').read()
+data = data.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+sys.stdout.write(data[:8000])
+")
+          echo "::error title=PHPUnit PHP ${{ matrix.php }} WP ${{ matrix.wp }}::${encoded}"
+
       - name: Upload PHPUnit log
         if: always()
         uses: actions/upload-artifact@v4
