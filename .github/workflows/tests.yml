@@ -61,7 +61,28 @@ jobs:
           bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }}
 
       - name: Run PHPUnit
+        id: phpunit
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
           WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/pepselect-coa-archive/vendor/yoast/phpunit-polyfills
-        run: vendor/bin/phpunit --testdox
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit --testdox 2>&1 | tee /tmp/phpunit.log
+
+      - name: Publish PHPUnit output to the run summary
+        if: always()
+        run: |
+          {
+            echo "### PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}"
+            echo '```'
+            tail -c 60000 /tmp/phpunit.log 2>/dev/null || echo "no phpunit output captured"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload PHPUnit log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-php${{ matrix.php }}-wp${{ matrix.wp }}
+          path: /tmp/phpunit.log
+          if-no-files-found: warn
