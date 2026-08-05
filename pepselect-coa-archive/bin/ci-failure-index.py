@@ -40,5 +40,18 @@ for case in root.iter("testcase"):
         break
 
 print(f"TOTAL {len(rows)} (failures+errors)")
-for kind, cls, name, location, first in sorted(rows, key=lambda r: (r[1], r[2])):
+
+# Anything in the new REST write suite is the delta under investigation, so it
+# must never be the part that gets truncated away. Print it first and in full.
+new_suite = [r for r in rows if "REST_Write" in r[1]]
+rest = [r for r in rows if "REST_Write" not in r[1]]
+
+if new_suite:
+    print(f"--- NEW SUITE ({len(new_suite)}) ---")
+    for kind, cls, name, location, first in sorted(new_suite, key=lambda r: r[2]):
+        print(f"{kind} | {name} | {location}")
+        print(f"    {first[:400]}")
+
+print(f"--- PRE-EXISTING ({len(rest)}) ---")
+for kind, cls, name, location, first in sorted(rest, key=lambda r: (r[1], r[2])):
     print(f"{kind} | {cls}::{name} | {location} | {first}")
