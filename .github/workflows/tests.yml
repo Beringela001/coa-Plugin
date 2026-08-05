@@ -93,12 +93,12 @@ jobs:
           python3 bin/ci-failure-index.py /tmp/junit.xml >> /tmp/annot.txt || true
           # GitHub truncates a single annotation message at roughly 4KB regardless
           # of what is sent, so the index is emitted in chunks instead of one blob.
-          split -l 6 /tmp/annot.txt /tmp/annot_chunk_
+          split -l 14 /tmp/annot.txt /tmp/annot_chunk_
           n=0
           for chunk in /tmp/annot_chunk_*; do
             n=$((n + 1))
             if [ "$n" -gt 24 ]; then break; fi
-            encoded=$(sed 's/%/%25/g' "$chunk" | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-3000)
+            encoded=$(sed 's/%/%25/g' "$chunk" | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-3800)
             echo "::error title=idx ${n} (PHP ${{ matrix.php }})::${encoded}"
           done
 
