@@ -25,6 +25,7 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	public function tear_down() {
 		unset( $_POST['acf'], $_POST['post_status'], $_POST['post_ID'] );
+		PepSelect\COAArchive\COA_Test_Validation::flush_legacy_photo_exempt_cache();
 		global $wp_rest_server;
 		$wp_rest_server = null;
 		parent::tear_down();
@@ -193,9 +194,22 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 		$allow = static function () use ( $test ) { return array( $test ); };
 		add_filter( 'pepselect_coa_legacy_photo_exempt_ids', $allow );
+		PepSelect\COAArchive\COA_Test_Validation::flush_legacy_photo_exempt_cache();
 		$allowed = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'public_notes' => 'x' ) );
 		remove_filter( 'pepselect_coa_legacy_photo_exempt_ids', $allow );
 		$this->assertSame( 200, $allowed->get_status(), $this->explain( $allowed ) );
+	}
+
+	public function test_shipped_legacy_batches_resolve_by_batch_number() {
+		$compound = $this->compound();
+		foreach ( PepSelect\COAArchive\COA_Test_Validation::LEGACY_PHOTO_EXEMPT_BATCHES as $batch ) {
+			$test = $this->failed_test( $compound, $batch, 'Rejected after review.' );
+			delete_post_meta( $test, 'batch_vial_photo' );
+			PepSelect\COAArchive\COA_Test_Validation::flush_legacy_photo_exempt_cache();
+			$this->assertContains( $test, PepSelect\COAArchive\COA_Test_Validation::legacy_photo_exempt_ids(), $batch . ' must resolve to its post ID' );
+			$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'public_notes' => 'x' ) );
+			$this->assertSame( 200, $response->get_status(), $this->explain( $response ) );
+		}
 	}
 
 	/* -------------------------------------------------------- helpers */

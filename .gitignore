@@ -5,3 +5,7 @@ zips/
 # Local working copies of deployed/reference builds
 .live-*/
 .pristine-*/
+
+# Composer dev dependencies (PHPUnit and the WordPress polyfills)
+vendor/
+composer.lock

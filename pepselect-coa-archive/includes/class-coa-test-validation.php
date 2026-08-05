@@ -300,17 +300,64 @@ final class COA_Test_Validation {
 	}
 
 	/**
+	 * Batch numbers that predate the Batch Vial Photo convention.
+	 *
+	 * SITE-SPECIFIC DATA, kept here deliberately: this is the whole exemption
+	 * list, it is closed, and it will never grow — every record created since the
+	 * convention has a vial photo. Batch numbers rather than post IDs because IDs
+	 * differ between staging and production and these must resolve in both.
+	 *
+	 * @var string[]
+	 */
+	const LEGACY_PHOTO_EXEMPT_BATCHES = array( 'ND_R30_060326', 'TB10-6926' );
+
+	/** @var int[]|null Resolved exemption IDs for this request. */
+	private static $legacy_exempt_cache = null;
+
+	/**
 	 * Returns COA Test IDs exempt from the Batch Vial Photo requirement.
 	 *
-	 * Deliberately an explicit list rather than an inference. Populate it with the
-	 * batches that predate the convention via the filter; an empty list means no
-	 * exemption, which is the correct default for every record created since.
+	 * Deliberately an explicit list rather than an inference: a partial request
+	 * cannot distinguish an omitted field from an unchanged one, so inferring the
+	 * exemption would let a caller buy it by omission.
 	 *
 	 * @return int[]
 	 */
 	public static function legacy_photo_exempt_ids() {
-		return array_values( array_filter( array_map( 'absint', (array) apply_filters( 'pepselect_coa_legacy_photo_exempt_ids', array() ) ) ) );
+		if ( null !== self::$legacy_exempt_cache ) { return self::$legacy_exempt_cache; }
+		/**
+		 * Batch numbers exempt from the Batch Vial Photo requirement.
+		 *
+		 * @param string[] $batches Batch numbers.
+		 */
+		$batches = array_filter( array_map( 'strval', (array) apply_filters( 'pepselect_coa_legacy_photo_exempt_batches', self::LEGACY_PHOTO_EXEMPT_BATCHES ) ) );
+		$ids     = array();
+		foreach ( $batches as $batch ) {
+			$matches = get_posts(
+				array(
+					'post_type'      => Post_Types::COA_TEST,
+					'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+					'posts_per_page' => 5,
+					'fields'         => 'ids',
+					'no_found_rows'  => true,
+					'meta_key'       => 'batch_number',
+					'meta_value'     => $batch,
+				)
+			);
+			foreach ( $matches as $match ) { $ids[] = absint( $match ); }
+		}
+		/**
+		 * Additional exempt COA Test IDs, for cases a batch number cannot express.
+		 *
+		 * @param int[] $ids Post IDs.
+		 */
+		$explicit = array_map( 'absint', (array) apply_filters( 'pepselect_coa_legacy_photo_exempt_ids', array() ) );
+		self::$legacy_exempt_cache = array_values( array_unique( array_filter( array_merge( $ids, $explicit ) ) ) );
+		return self::$legacy_exempt_cache;
 	}
+
+	/** Clears the resolved exemption cache. @return void */
+	public static function flush_legacy_photo_exempt_cache() { self::$legacy_exempt_cache = null; }
 	/** Validates ACF's raw Ymd or normalized Y-m-d date without locale parsing. @param string $date Date. @return bool */
 	private function valid_date( $date ) {
 		$format = preg_match( '/^\d{8}$/', $date ) ? '!Ymd' : ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? '!Y-m-d' : '' );

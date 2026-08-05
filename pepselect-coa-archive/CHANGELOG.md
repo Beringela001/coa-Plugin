@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.0 - 2026-08-05
+
+**Breaking for REST integrations.** Direct `wp/v2` writes to `ps_coa_test` and `ps_compound` now return `403 pepselect_coa_write_route_required`. Reads are untouched. Minor rather than patch because an existing write path stops working the moment the plugin updates.
+
+- New validated write endpoint under `pepselect-coa/v1`: `POST /coa-test`, `PATCH /coa-test/<id>`, `POST /compound`, `PATCH /compound/<id>`. It runs the same validators and the same post-save side effects as the admin form, so an integration no longer has to reimplement roughly sixty rules and keep them in sync. Failures return `400 pepselect_coa_invalid_record` with `data.errors[]` of `{field, message}` carrying the plugin's own text; advisory guidance returns as `warnings[]` on a success and never blocks.
+- Core REST writes previously bypassed every `acf/validate_value` rule and every `acf/save_post` side effect, so a caller could publish a Failed report with no Release Decision Note, mark a failed batch as the Current COA, or approve a record whose sub-tests read Failed. All are now rejected. `pepselect_coa_allow_core_rest_write` reopens `wp/v2` for migrations.
+- Both validators accept an injected value context, so the rules run outside an ACF form submission. Partial updates merge stored values under the submitted ones before validating: a `PATCH` carrying one field can never fail a record against its own stored, valid data. Creates receive the same `default_value` set the form applies.
+- Post-save invariants now reach REST writes: `populate_empty_title` (a compound created without a title took the post ID as its slug, which is why one report sits at `/testing/961/`), `synchronize_title`, `clear_other_current_tests` and `apply_ils_verification_default`.
+- Four constraints that existed only in the ACF field definitions moved into `validate()` so the endpoint has real parity: `fentanyl_status` may not be empty, `vials_tested` must be at least 1 whenever recorded, `batch_vial_photo` is restricted to JPG/PNG/WebP, and `compound_image_id` must be an image attachment — it was previously unvalidated entirely.
+- The Batch Vial Photo legacy exemption is now an explicit closed list (`ND_R30_060326`, `TB10-6926`) resolved by batch number, replacing an inference that compared submitted against stored values. Under a partial request that inference could not tell an omitted field from an unchanged one, so a caller could have bought the exemption by omission. The admin form keeps the original behaviour.
+- Continuous integration: PHPUnit now runs on GitHub Actions against PHP 8.1/WP 6.5.5 and PHP 8.3/WP latest.
+
+Known gap: `DELETE /wp/v2/ps_coa_test/<id>` remains open. `rest_pre_insert_*` has no delete counterpart, and nothing deletes COA records today.
+
 ## 0.5.14 - 2026-08-04
 
 - Report hero ("banner") card rebalanced after the 0.5.13 note card. Verified against the live Retatrutide 10 mg report at 1440px. The hero copy and the report-note card were capped at 55ch inside a 508px column, so the note wrapped to eight bold lines with ~110px of unused column beside it; both now use the full identity column, dropping the note to six lines and tightening it to .79rem/1.5 line-height with slightly roomier 12px 14px padding. The hero grid moves from `1.36fr / minmax(210px, .7fr) / 1fr` to `1.3fr / minmax(230px, .8fr) / 1fr`, and the vial image changes from a fixed 320px height to `height: auto; max-height: 100%`, so the vial fills the taller panel (249x309 to 283x351) instead of floating in ~190px of dead space. The stacked layout at 800px and below keeps the previous fixed image heights (320px, and 294px at 520px and below) unchanged. CSS only; markup, view models, and data untouched.
