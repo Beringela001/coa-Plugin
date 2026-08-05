@@ -67,7 +67,7 @@ jobs:
           WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/pepselect-coa-archive/vendor/yoast/phpunit-polyfills
         run: |
           set -o pipefail
-          vendor/bin/phpunit --testdox 2>&1 | tee /tmp/phpunit.log
+          vendor/bin/phpunit --testdox --log-junit /tmp/junit.xml 2>&1 | tee /tmp/phpunit.log
 
       - name: Publish PHPUnit output to the run summary
         if: always()
@@ -85,7 +85,9 @@ jobs:
         if: failure()
         run: |
           if [ ! -s /tmp/phpunit.log ]; then echo "::error::no phpunit output captured"; exit 0; fi
-          encoded=$(tail -n 60 /tmp/phpunit.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-8000)
+          tail -n 6 /tmp/phpunit.log > /tmp/annot.txt
+          python3 bin/ci-failure-index.py /tmp/junit.xml >> /tmp/annot.txt || true
+          encoded=$(sed 's/%/%25/g' /tmp/annot.txt | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-9000)
           echo "::error title=PHPUnit PHP ${{ matrix.php }} WP ${{ matrix.wp }}::${encoded}"
 
       - name: Upload PHPUnit log
