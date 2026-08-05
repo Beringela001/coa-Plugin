@@ -61,6 +61,9 @@ final class Plugin {
 	private $archive_search;
 	private $compound_resolver;
 
+	/** @var REST_Write_Endpoint */
+	private $rest_write;
+
 	/** @var Product_COA_Carousel */
 	private $product_carousel;
 
@@ -102,6 +105,9 @@ final class Plugin {
 		$this->archive_search->register();
 		$this->compound_resolver    = new Compound_Resolver_Endpoint( $this->product_matching );
 		$this->compound_resolver->register();
+		$this->rest_write           = new REST_Write_Endpoint( $this->coa_test_validation, $this->compound_validation, $this->coa_test_service );
+		$this->rest_write->register();
+		REST_Write_Guard::register_hooks();
 		$this->product_carousel     = new Product_COA_Carousel( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->product_coa_button   = new Product_COA_Button( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		Archive_Cache::register_hooks();
