@@ -58,6 +58,7 @@ final class Plugin {
 
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
+	private $seo_sitemaps;
 	private $archive_search;
 	private $compound_resolver;
 
@@ -101,6 +102,7 @@ final class Plugin {
 		$frontend_view_model        = new Frontend_View_Model();
 		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
+		$this->seo_sitemaps         = new SEO_Sitemaps( $frontend_visibility, $coa_test_repository, $frontend_view_model );
 		$this->archive_search       = new Archive_Search_Endpoint( $frontend_view_model, $frontend_visibility, $coa_test_repository );
 		$this->archive_search->register();
 		$this->compound_resolver    = new Compound_Resolver_Endpoint( $this->product_matching );
@@ -132,6 +134,7 @@ final class Plugin {
 		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
 		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
 		$this->frontend_templates->register_hooks();
+		$this->seo_sitemaps->register_hooks();
 		$this->product_carousel->register_hooks();
 		$this->product_coa_button->register_hooks();
 		add_action( 'admin_init', array( 'PepSelect\\COAArchive\\Capabilities', 'ensure_administrator_capabilities' ) );

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Corrected Yoast XML sitemap URLs for the COA archive. Public compounds and reports now use the plugin-owned `/testing/{compound}/` and `/testing/{compound}/{batch}/` routes instead of intentionally blocked raw custom-post-type permalinks. The `/testing/` archive is included once, while private, invalid, empty, or ambiguous records are excluded through the same visibility and route-resolution rules as the frontend. No COA data, batch identity, product relationship, commerce behavior, or public copy changes.
+
 ## 0.6.0 - 2026-08-05
 
 **Breaking for REST integrations.** Direct `wp/v2` writes to `ps_coa_test` and `ps_compound` now return `403 pepselect_coa_write_route_required`. Reads are untouched. Minor rather than patch because an existing write path stops working the moment the plugin updates.
