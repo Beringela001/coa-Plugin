@@ -46,6 +46,16 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertFalse( get_post_type_object( 'ps_compound' )->has_archive );
 	}
 
+	public function test_printed_nad500_qr_path_redirects_only_to_the_approved_batch() {
+		$redirects = new PepSelect\COAArchive\QR_Redirects();
+		$target = home_url( '/testing/nad-500-mg/nd50026205jp/' );
+		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/progress-1269/' ) );
+		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/progress-1269' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/progress-1270/' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/other-compound/progress-1269/' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205jp/' ) );
+	}
+
 	public function test_virtual_routes_render_without_page_shells_or_frontend_redirects() {
 		$rewrites = file_get_contents( dirname( __DIR__ ) . '/includes/class-rewrites.php' );
 		$router = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-router.php' );

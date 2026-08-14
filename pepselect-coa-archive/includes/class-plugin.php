@@ -58,6 +58,7 @@ final class Plugin {
 
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
+	private $qr_redirects;
 	private $seo_sitemaps;
 	private $archive_search;
 	private $compound_resolver;
@@ -102,6 +103,7 @@ final class Plugin {
 		$frontend_view_model        = new Frontend_View_Model();
 		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
+		$this->qr_redirects         = new QR_Redirects();
 		$this->seo_sitemaps         = new SEO_Sitemaps( $frontend_visibility, $coa_test_repository, $frontend_view_model );
 		$this->archive_search       = new Archive_Search_Endpoint( $frontend_view_model, $frontend_visibility, $coa_test_repository );
 		$this->archive_search->register();
@@ -132,6 +134,7 @@ final class Plugin {
 		add_filter( 'query_vars', array( $this->rewrites, 'register_query_vars' ) );
 		add_action( 'init', array( 'PepSelect\\COAArchive\\Upgrade', 'maybe_upgrade' ), 99 );
 		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
+		$this->qr_redirects->register_hooks();
 		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
 		$this->frontend_templates->register_hooks();
 		$this->seo_sitemaps->register_hooks();

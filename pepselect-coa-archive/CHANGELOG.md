@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 - 2026-08-14
+
+- Added one exact permanent redirect for the printed NAD500 QR path `/testing/nad-500-mg/progress-1269/` to the approved batch report `/testing/nad-500-mg/nd50026205jp/`. No wildcard redirects, COA records, batch identities, product/SKU relationships, commerce behavior, OPS behavior, or visible copy were changed.
+
 ## 0.6.2 - 2026-08-13
 
 - Added route-specific SEO titles, factual meta descriptions, and connected WebPage/CollectionPage plus breadcrumb schema for the plugin-owned COA archive, compound history, and batch report routes. The change uses existing public compound and batch identity only; visible page copy, COA records, SKU/product relationships, commerce, and OPS behavior are unchanged.
