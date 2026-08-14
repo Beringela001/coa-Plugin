@@ -70,6 +70,34 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		set_query_var( 'ps_coa_view', '' );
 	}
 
+	public function test_virtual_routes_supply_specific_seo_metadata_and_schema_without_touching_visible_copy() {
+		set_query_var( 'ps_coa_view', 'archive' );
+		$router = $this->router(); $router->resolve();
+		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+		$this->assertSame( 'Certificate of Analysis Archive - ' . get_bloginfo( 'name' ), $loader->filter_title( 'Pep Select' ) );
+		$this->assertStringContainsString( 'Certificates of Analysis', $loader->filter_description( '' ) );
+		$graph = $loader->filter_schema_graph( array() );
+		$this->assertSame( 'CollectionPage', $graph[0]['@type'] );
+		$this->assertSame( home_url( '/testing/' ), $graph[0]['url'] );
+		$this->assertSame( 'BreadcrumbList', $graph[1]['@type'] );
+		$this->assertCount( 2, $graph[1]['itemListElement'] );
+
+		$compound_id = $this->compound();
+		$test_id = $this->test_record( $compound_id, 'approved', 'publish', 'RT30-0726-A' );
+		set_query_var( 'ps_coa_view', 'report' );
+		set_query_var( 'ps_compound_slug', get_post_field( 'post_name', $compound_id ) );
+		set_query_var( 'ps_batch_slug', get_post_field( 'post_name', $test_id ) );
+		$report_router = $this->router(); $report_router->resolve();
+		$report_loader = new PepSelect\COAArchive\Frontend_Template_Loader( $report_router );
+		$this->assertSame( 'Retatrutide 30mg Batch RT30-0726-A COA - ' . get_bloginfo( 'name' ), $report_loader->filter_title( 'Pep Select' ) );
+		$this->assertStringContainsString( 'batch RT30-0726-A', $report_loader->filter_description( '' ) );
+		$this->assertCount( 4, $report_loader->filter_schema_graph( array() )[1]['itemListElement'] );
+
+		set_query_var( 'ps_coa_view', '' );
+		set_query_var( 'ps_compound_slug', '' );
+		set_query_var( 'ps_batch_slug', '' );
+	}
+
 	public function test_valid_route_contexts_resolve_without_redirect_helpers() {
 		$compound = $this->compound(); $test = $this->test_record( $compound, 'approved', 'publish', 'RT30-0726-A' );
 		$router = $this->router();

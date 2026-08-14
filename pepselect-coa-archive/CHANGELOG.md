@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 - 2026-08-13
+
+- Added route-specific SEO titles, factual meta descriptions, and connected WebPage/CollectionPage plus breadcrumb schema for the plugin-owned COA archive, compound history, and batch report routes. The change uses existing public compound and batch identity only; visible page copy, COA records, SKU/product relationships, commerce, and OPS behavior are unchanged.
+
 ## 0.6.1 - 2026-08-13
 
 - Corrected Yoast XML sitemap URLs for the COA archive. Public compounds and reports now use the plugin-owned `/testing/{compound}/` and `/testing/{compound}/{batch}/` routes instead of intentionally blocked raw custom-post-type permalinks. The `/testing/` archive is included once, while private, invalid, empty, or ambiguous records are excluded through the same visibility and route-resolution rules as the frontend. No COA data, batch identity, product relationship, commerce behavior, or public copy changes.

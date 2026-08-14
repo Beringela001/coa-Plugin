@@ -15,6 +15,15 @@ final class Frontend_Template_Loader {
 		add_filter( 'redirect_canonical', array( $this, 'filter_redirect_canonical' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_head', array( $this, 'output_canonical' ), 1 );
+		add_filter( 'pre_get_document_title', array( $this, 'filter_title' ), 20 );
+		add_filter( 'wpseo_title', array( $this, 'filter_title' ), 20 );
+		add_filter( 'wpseo_metadesc', array( $this, 'filter_description' ), 20 );
+		add_filter( 'wpseo_opengraph_title', array( $this, 'filter_title' ), 20 );
+		add_filter( 'wpseo_opengraph_desc', array( $this, 'filter_description' ), 20 );
+		add_filter( 'wpseo_twitter_title', array( $this, 'filter_title' ), 20 );
+		add_filter( 'wpseo_twitter_description', array( $this, 'filter_description' ), 20 );
+		add_filter( 'wpseo_schema_graph', array( $this, 'filter_schema_graph' ), 20, 2 );
+		add_action( 'wp_head', array( $this, 'output_fallback_seo' ), 2 );
 		add_filter( 'wpseo_canonical', array( $this, 'filter_canonical' ) );
 		add_filter( 'rank_math/frontend/canonical', array( $this, 'filter_canonical' ) );
 		add_filter( 'seopress_titles_canonical', array( $this, 'filter_canonical' ) );
@@ -74,11 +83,112 @@ final class Frontend_Template_Loader {
 	public function filter_canonical( $canonical ) { $url = $this->router->canonical_url(); return $url ?: $canonical; }
 	public function filter_redirect_canonical( $redirect_url, $requested_url ) { unset( $requested_url ); return $this->router->is_route() ? false : $redirect_url; }
 
+	/** Supplies route-aware titles without changing any visible archive copy. */
+	public function filter_title( $title ) {
+		$seo = $this->seo_data();
+		return $seo ? $seo['title'] : $title;
+	}
+
+	/** Supplies factual route-aware meta descriptions from already-public data. */
+	public function filter_description( $description ) {
+		$seo = $this->seo_data();
+		return $seo ? $seo['description'] : $description;
+	}
+
+	/** Adds the missing COA WebPage and breadcrumb pieces to Yoast's graph. */
+	public function filter_schema_graph( $graph, $yoast_context = null ) {
+		unset( $yoast_context );
+		$pieces = $this->schema_pieces();
+		if ( ! $pieces ) { return $graph; }
+		$existing_ids = array_filter( wp_list_pluck( $graph, '@id' ) );
+		foreach ( $pieces as $piece ) {
+			if ( ! in_array( $piece['@id'], $existing_ids, true ) ) { $graph[] = $piece; }
+		}
+		return $graph;
+	}
+
+	/** Outputs metadata only when a supported SEO plugin is not already presenting it. */
+	public function output_fallback_seo() {
+		$seo = $this->seo_data();
+		if ( ! $seo ) { return; }
+		$known_seo = defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'SEOPRESS_VERSION' ) || defined( 'SURERANK_VERSION' );
+		if ( ! $known_seo ) {
+			printf( "<meta name=\"description\" content=\"%s\" />\n", esc_attr( $seo['description'] ) );
+			printf( "<script type=\"application/ld+json\">%s</script>\n", wp_json_encode( array( '@context' => 'https://schema.org', '@graph' => $this->schema_pieces() ), JSON_UNESCAPED_SLASHES ) );
+		}
+	}
+
 	/** Outputs a fallback canonical only when core/known SEO integrations will not. */
 	public function output_canonical() {
 		$url = $this->router->canonical_url();
 		if ( ! $url || is_singular() || defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'SEOPRESS_VERSION' ) || defined( 'SURERANK_VERSION' ) || class_exists( 'SureRank\\Inc\\Frontend\\Meta_Tag_Injection' ) ) { return; }
 		printf( "<link rel=\"canonical\" href=\"%s\" />\n", esc_url( $url ) );
+	}
+
+	/** Returns the route's title, description, and breadcrumb labels. */
+	private function seo_data() {
+		$context = $this->router->context();
+		if ( ! $this->router->is_route() || $this->router->is_404() || empty( $context['view'] ) ) { return array(); }
+		$site = get_bloginfo( 'name' ) ?: 'Pep Select';
+		$archive_label = __( 'Certificate of Analysis Archive', 'pepselect-coa-archive' );
+		if ( 'archive' === $context['view'] ) {
+			return array(
+				'title' => sprintf( '%1$s - %2$s', $archive_label, $site ),
+				'description' => __( 'Browse Pep Select Certificates of Analysis and batch documentation by compound and batch.', 'pepselect-coa-archive' ),
+				'breadcrumbs' => array( $archive_label ),
+			);
+		}
+		$name = isset( $context['compound']['display_name'] ) ? trim( (string) $context['compound']['display_name'] ) : '';
+		if ( ! $name ) { return array(); }
+		if ( 'compound' === $context['view'] ) {
+			return array(
+				'title' => sprintf( __( '%1$s COA & Batch History - %2$s', 'pepselect-coa-archive' ), $name, $site ),
+				'description' => sprintf( __( 'View Pep Select Certificates of Analysis and batch documentation for %s.', 'pepselect-coa-archive' ), $name ),
+				'breadcrumbs' => array( $archive_label, $name ),
+			);
+		}
+		$batch = isset( $context['test']['batch_number'] ) ? trim( (string) $context['test']['batch_number'] ) : '';
+		$label = $batch ? sprintf( __( 'Batch %s COA', 'pepselect-coa-archive' ), $batch ) : __( 'Batch Documentation', 'pepselect-coa-archive' );
+		return array(
+			'title' => sprintf( '%1$s %2$s - %3$s', $name, $label, $site ),
+			'description' => $batch
+				? sprintf( __( 'View the Pep Select Certificate of Analysis and batch documentation for %1$s, batch %2$s.', 'pepselect-coa-archive' ), $name, $batch )
+				: sprintf( __( 'View Pep Select batch documentation for %s.', 'pepselect-coa-archive' ), $name ),
+			'breadcrumbs' => array( $archive_label, $name, $label ),
+		);
+	}
+
+	/** Builds connected, public-only Schema.org pieces for the virtual routes. */
+	private function schema_pieces() {
+		$seo = $this->seo_data();
+		$canonical = $this->router->canonical_url();
+		if ( ! $seo || ! $canonical ) { return array(); }
+		$breadcrumb_id = trailingslashit( $canonical ) . '#breadcrumb';
+		$items = array( array( '@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url( '/' ) ) );
+		$archive_url = home_url( user_trailingslashit( 'testing' ) );
+		foreach ( $seo['breadcrumbs'] as $index => $label ) {
+			$item = array( '@type' => 'ListItem', 'position' => $index + 2, 'name' => $label );
+			if ( 0 === $index ) { $item['item'] = $archive_url; }
+			elseif ( $index < count( $seo['breadcrumbs'] ) - 1 ) {
+				$context = $this->router->context();
+				$item['item'] = isset( $context['compound']['url'] ) ? $context['compound']['url'] : $canonical;
+			}
+			$items[] = $item;
+		}
+		$context = $this->router->context();
+		return array(
+			array(
+				'@type' => 'archive' === $context['view'] ? 'CollectionPage' : 'WebPage',
+				'@id' => trailingslashit( $canonical ) . '#webpage',
+				'url' => $canonical,
+				'name' => $seo['title'],
+				'description' => $seo['description'],
+				'isPartOf' => array( '@id' => trailingslashit( home_url( '/' ) ) . '#website' ),
+				'breadcrumb' => array( '@id' => $breadcrumb_id ),
+				'inLanguage' => get_bloginfo( 'language' ),
+			),
+			array( '@type' => 'BreadcrumbList', '@id' => $breadcrumb_id, 'itemListElement' => $items ),
+		);
 	}
 
 	private function render( $template, $context ) {
