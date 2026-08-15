@@ -100,9 +100,14 @@ final class Frontend_Template_Loader {
 		unset( $yoast_context );
 		$pieces = $this->schema_pieces();
 		if ( ! $pieces ) { return $graph; }
-		$existing_ids = array_filter( wp_list_pluck( $graph, '@id' ) );
 		foreach ( $pieces as $piece ) {
-			if ( ! in_array( $piece['@id'], $existing_ids, true ) ) { $graph[] = $piece; }
+			$existing_ids = array_filter( wp_list_pluck( $graph, '@id' ) );
+			$index = array_search( $piece['@id'], $existing_ids, true );
+			if ( false === $index ) {
+				$graph[] = $piece;
+			} elseif ( isset( $piece['mainEntity'] ) ) {
+				$graph[ $index ]['mainEntity'] = $piece['mainEntity'];
+			}
 		}
 		return $graph;
 	}
@@ -133,7 +138,7 @@ final class Frontend_Template_Loader {
 		$archive_label = __( 'Certificate of Analysis Archive', 'pepselect-coa-archive' );
 		if ( 'archive' === $context['view'] ) {
 			return array(
-				'title' => sprintf( '%1$s - %2$s', $archive_label, $site ),
+				'title' => sprintf( __( 'Peptide COA Archive: Search by Compound & Batch | %s', 'pepselect-coa-archive' ), $site ),
 				'description' => __( 'Browse Pep Select Certificates of Analysis and batch documentation by compound and batch.', 'pepselect-coa-archive' ),
 				'breadcrumbs' => array( $archive_label ),
 			);
@@ -142,7 +147,7 @@ final class Frontend_Template_Loader {
 		if ( ! $name ) { return array(); }
 		if ( 'compound' === $context['view'] ) {
 			return array(
-				'title' => sprintf( __( '%1$s COA & Batch History - %2$s', 'pepselect-coa-archive' ), $name, $site ),
+				'title' => sprintf( __( '%1$s COAs & Batch History | %2$s', 'pepselect-coa-archive' ), $name, $site ),
 				'description' => sprintf( __( 'View Pep Select Certificates of Analysis and batch documentation for %s.', 'pepselect-coa-archive' ), $name ),
 				'breadcrumbs' => array( $archive_label, $name ),
 			);
@@ -150,7 +155,9 @@ final class Frontend_Template_Loader {
 		$batch = isset( $context['test']['batch_number'] ) ? trim( (string) $context['test']['batch_number'] ) : '';
 		$label = $batch ? sprintf( __( 'Batch %s COA', 'pepselect-coa-archive' ), $batch ) : __( 'Batch Documentation', 'pepselect-coa-archive' );
 		return array(
-			'title' => sprintf( '%1$s %2$s - %3$s', $name, $label, $site ),
+			'title' => $batch
+				? sprintf( __( '%1$s Batch %2$s Lab Report | %3$s', 'pepselect-coa-archive' ), $name, $batch, $site )
+				: sprintf( __( '%1$s Batch Documentation | %2$s', 'pepselect-coa-archive' ), $name, $site ),
 			'description' => $batch
 				? sprintf( __( 'View the Pep Select Certificate of Analysis and batch documentation for %1$s, batch %2$s.', 'pepselect-coa-archive' ), $name, $batch )
 				: sprintf( __( 'View Pep Select batch documentation for %s.', 'pepselect-coa-archive' ), $name ),
@@ -176,8 +183,7 @@ final class Frontend_Template_Loader {
 			$items[] = $item;
 		}
 		$context = $this->router->context();
-		return array(
-			array(
+		$webpage = array(
 				'@type' => 'archive' === $context['view'] ? 'CollectionPage' : 'WebPage',
 				'@id' => trailingslashit( $canonical ) . '#webpage',
 				'url' => $canonical,
@@ -186,9 +192,92 @@ final class Frontend_Template_Loader {
 				'isPartOf' => array( '@id' => trailingslashit( home_url( '/' ) ) . '#website' ),
 				'breadcrumb' => array( '@id' => $breadcrumb_id ),
 				'inLanguage' => get_bloginfo( 'language' ),
-			),
+			);
+		$dataset = $this->report_dataset_piece( $context, $canonical );
+		if ( $dataset ) {
+			$webpage['mainEntity'] = array( '@id' => $dataset['@id'] );
+		}
+		$pieces = array(
+			$webpage,
 			array( '@type' => 'BreadcrumbList', '@id' => $breadcrumb_id, 'itemListElement' => $items ),
 		);
+		if ( $dataset ) { $pieces[] = $dataset; }
+		return $pieces;
+	}
+
+	/** Builds a truthful Dataset entity from completed, public report values. */
+	private function report_dataset_piece( $context, $canonical ) {
+		if ( 'report' !== $context['view'] || empty( $context['test'] ) || 'complete' !== $context['test']['workflow_stage'] ) {
+			return array();
+		}
+
+		$test  = $context['test'];
+		$name  = isset( $context['compound']['display_name'] ) ? trim( (string) $context['compound']['display_name'] ) : '';
+		$batch = isset( $test['batch_number'] ) ? trim( (string) $test['batch_number'] ) : '';
+		if ( ! $name || ! $batch ) { return array(); }
+
+		$variables = array();
+		$this->add_dataset_variable( $variables, __( 'Claimed content', 'pepselect-coa-archive' ), $test['claimed_content_display'], $test['content_unit'] );
+		$this->add_dataset_variable( $variables, __( 'Average net content', 'pepselect-coa-archive' ), $test['average_net_content_display'], $test['content_unit'] );
+		$this->add_dataset_variable( $variables, __( 'Purity', 'pepselect-coa-archive' ), $test['purity_percentage_display'], '%' );
+		if ( ! empty( $test['identity_status']['value'] ) ) { $this->add_dataset_variable( $variables, __( 'Identity', 'pepselect-coa-archive' ), $test['identity_status']['label'] ); }
+		$this->add_dataset_variable( $variables, __( 'Endotoxin', 'pepselect-coa-archive' ), $test['endotoxin_result'], $test['endotoxin_unit'] );
+		$this->add_dataset_variable( $variables, __( 'Heavy metals', 'pepselect-coa-archive' ), $test['heavy_metals_summary'] );
+		$this->add_dataset_variable( $variables, __( 'Sterility', 'pepselect-coa-archive' ), $test['sterility_result'] );
+		$this->add_dataset_variable( $variables, __( 'Fentanyl screen', 'pepselect-coa-archive' ), $test['fentanyl_result'] );
+		if ( ! $variables ) { return array(); }
+
+		$dataset = array(
+			'@type' => 'Dataset',
+			'@id' => trailingslashit( $canonical ) . '#dataset',
+			'name' => sprintf( __( '%1$s batch %2$s laboratory results', 'pepselect-coa-archive' ), $name, $batch ),
+			'description' => sprintf( __( 'Batch-specific laboratory results published by Pep Select for %1$s, batch %2$s. This dataset records the public measurements and methods shown on the laboratory report page.', 'pepselect-coa-archive' ), $name, $batch ),
+			'url' => $canonical,
+			'identifier' => $batch,
+			'mainEntityOfPage' => array( '@id' => trailingslashit( $canonical ) . '#webpage' ),
+			'isAccessibleForFree' => true,
+			'creator' => array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ) ?: 'Pep Select', 'url' => home_url( '/' ) ),
+			'includedInDataCatalog' => array( '@type' => 'DataCatalog', 'name' => __( 'Pep Select Quality Archive', 'pepselect-coa-archive' ), 'url' => home_url( user_trailingslashit( 'testing' ) ) ),
+			'variableMeasured' => $variables,
+		);
+
+		if ( ! empty( $test['laboratory'] ) ) { $dataset['provider'] = array( '@type' => 'Organization', 'name' => $test['laboratory'] ); }
+		$date = $this->schema_date( isset( $test['test_date'] ) ? $test['test_date'] : '' );
+		if ( $date ) { $dataset['dateCreated'] = $date; }
+		$methods = array_values( array_unique( array_filter( array( $test['identity_method'], $test['purity_method'], $test['fentanyl_method'] ) ) ) );
+		if ( $methods ) { $dataset['measurementTechnique'] = $methods; }
+		if ( ! empty( $test['pdf_url'] ) ) {
+			$dataset['distribution'] = array( array( '@type' => 'DataDownload', 'encodingFormat' => 'application/pdf', 'contentUrl' => $test['pdf_url'] ) );
+		}
+
+		$images = array();
+		if ( ! empty( $test['vial_image_is_exact'] ) && ! empty( $test['vial_image_url'] ) ) { $images[] = $test['vial_image_url']; }
+		foreach ( array( 'page_images', 'batch_identity_photos' ) as $gallery_key ) {
+			foreach ( isset( $test[ $gallery_key ] ) && is_array( $test[ $gallery_key ] ) ? $test[ $gallery_key ] : array() as $image ) {
+				if ( ! empty( $image['full_url'] ) ) { $images[] = $image['full_url']; }
+			}
+		}
+		$images = array_values( array_unique( $images ) );
+		if ( $images ) { $dataset['image'] = $images; }
+
+		return $dataset;
+	}
+
+	/** Adds one non-empty public measurement. */
+	private function add_dataset_variable( &$variables, $name, $value, $unit = '' ) {
+		$value = trim( (string) $value );
+		if ( '' === $value ) { return; }
+		$variable = array( '@type' => 'PropertyValue', 'name' => $name, 'value' => $value );
+		if ( '' !== trim( (string) $unit ) ) { $variable['unitText'] = trim( (string) $unit ); }
+		$variables[] = $variable;
+	}
+
+	/** Normalizes the plugin's supported report-date shapes for Schema.org. */
+	private function schema_date( $value ) {
+		$digits = preg_replace( '/\D/', '', (string) $value );
+		if ( 8 !== strlen( $digits ) ) { return ''; }
+		$date = \DateTimeImmutable::createFromFormat( '!Ymd', $digits );
+		return $date && $date->format( 'Ymd' ) === $digits ? $date->format( 'Y-m-d' ) : '';
 	}
 
 	private function render( $template, $context ) {

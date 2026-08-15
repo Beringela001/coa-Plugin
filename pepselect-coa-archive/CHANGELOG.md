@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 - 2026-08-15
+
+- Added a connected `Dataset` entity to completed public batch-report pages only when a public laboratory measurement exists. The markup uses the existing public view-model allowlist and never exposes private verification, internal, product relationship, customer, or OPS data.
+- Replaced generic archive and report titles with a page-specific search and share title system for the Quality Archive, compound histories, and exact batch lab reports. Visible page copy, routes, canonicals, QR behavior, COA records, SKUs, and commerce remain unchanged.
+
+## 0.6.4 - 2026-08-14
+
+- Replaced the one verified legacy numeric Retatrutide 10mg compound slug with `/testing/retatrutide-10mg/` through a guarded, idempotent upgrade that checks the compound name, 10mg strength, and destination availability before writing. Added exact permanent redirects for the old compound and approved batch URLs. COA records, batch identity, product/SKU relationships, commerce behavior, OPS behavior, and visible copy are unchanged.
+
 ## 0.6.3 - 2026-08-14
 
 - Added one exact permanent redirect for the printed NAD500 QR path `/testing/nad-500-mg/progress-1269/` to the approved batch report `/testing/nad-500-mg/nd50026205jp/`. No wildcard redirects, COA records, batch identities, product/SKU relationships, commerce behavior, OPS behavior, or visible copy were changed.

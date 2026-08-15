@@ -11,6 +11,7 @@ final class Upgrade {
 	public static function maybe_upgrade() {
 		if ( PEPSELECT_COA_ARCHIVE_VERSION === get_option( self::VERSION_OPTION ) ) { return; }
 		self::migrate_archive_catalog_copy();
+		self::migrate_legacy_retatrutide_slug();
 		( new Product_Matching( new Dependencies() ) )->backfill_existing_links();
 		Archive_Cache::invalidate();
 		flush_rewrite_rules( false );
@@ -18,7 +19,24 @@ final class Upgrade {
 	}
 
 	/** Records activation after the activation transaction has flushed rules. @return void */
-	public static function mark_current() { self::migrate_archive_catalog_copy(); ( new Product_Matching( new Dependencies() ) )->backfill_existing_links(); Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+	public static function mark_current() { self::migrate_archive_catalog_copy(); self::migrate_legacy_retatrutide_slug(); ( new Product_Matching( new Dependencies() ) )->backfill_existing_links(); Archive_Cache::invalidate(); update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false ); }
+
+	/** Replaces the one known numeric compound slug after verifying its identity. @return void */
+	private static function migrate_legacy_retatrutide_slug() {
+		$compound = get_page_by_path( '961', OBJECT, Post_Types::COMPOUND );
+		if ( ! $compound || '961' !== $compound->post_name ) { return; }
+
+		$display_name   = strtolower( trim( (string) get_post_meta( $compound->ID, 'display_name', true ) ) );
+		$strength_value = (float) get_post_meta( $compound->ID, 'strength_value', true );
+		$strength_unit  = strtolower( trim( (string) get_post_meta( $compound->ID, 'strength_unit', true ) ) );
+		$valid_names    = array( 'retatrutide', 'retatrutide 10mg', 'retatrutide 10 mg' );
+		if ( ! in_array( $display_name, $valid_names, true ) || 10.0 !== $strength_value || 'mg' !== $strength_unit ) { return; }
+
+		$existing = get_page_by_path( 'retatrutide-10mg', OBJECT, Post_Types::COMPOUND );
+		if ( $existing && (int) $existing->ID !== (int) $compound->ID ) { return; }
+
+		wp_update_post( array( 'ID' => $compound->ID, 'post_name' => 'retatrutide-10mg' ) );
+	}
 
 	/** Replaces only untouched legacy archive defaults while preserving customized copy. @return void */
 	private static function migrate_archive_catalog_copy() {

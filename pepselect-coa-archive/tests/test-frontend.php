@@ -56,6 +56,14 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205jp/' ) );
 	}
 
+	public function test_legacy_numeric_retatrutide_paths_redirect_only_to_descriptive_routes() {
+		$redirects = new PepSelect\COAArchive\QR_Redirects();
+		$this->assertSame( home_url( '/testing/retatrutide-10mg/' ), $redirects->destination_for_path( '/testing/961/' ) );
+		$this->assertSame( home_url( '/testing/retatrutide-10mg/rt2026205jp/' ), $redirects->destination_for_path( '/testing/961/rt2026205jp/' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/961/unrelated-batch/' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/962/' ) );
+	}
+
 	public function test_virtual_routes_render_without_page_shells_or_frontend_redirects() {
 		$rewrites = file_get_contents( dirname( __DIR__ ) . '/includes/class-rewrites.php' );
 		$router = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-router.php' );
@@ -84,7 +92,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		set_query_var( 'ps_coa_view', 'archive' );
 		$router = $this->router(); $router->resolve();
 		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
-		$this->assertSame( 'Certificate of Analysis Archive - ' . get_bloginfo( 'name' ), $loader->filter_title( 'Pep Select' ) );
+		$this->assertSame( 'Peptide COA Archive: Search by Compound & Batch | ' . get_bloginfo( 'name' ), $loader->filter_title( 'Pep Select' ) );
 		$this->assertStringContainsString( 'Certificates of Analysis', $loader->filter_description( '' ) );
 		$graph = $loader->filter_schema_graph( array() );
 		$this->assertSame( 'CollectionPage', $graph[0]['@type'] );
@@ -99,9 +107,33 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		set_query_var( 'ps_batch_slug', get_post_field( 'post_name', $test_id ) );
 		$report_router = $this->router(); $report_router->resolve();
 		$report_loader = new PepSelect\COAArchive\Frontend_Template_Loader( $report_router );
-		$this->assertSame( 'Retatrutide 30mg Batch RT30-0726-A COA - ' . get_bloginfo( 'name' ), $report_loader->filter_title( 'Pep Select' ) );
+		$this->assertSame( 'Retatrutide 30mg Batch RT30-0726-A Lab Report | ' . get_bloginfo( 'name' ), $report_loader->filter_title( 'Pep Select' ) );
 		$this->assertStringContainsString( 'batch RT30-0726-A', $report_loader->filter_description( '' ) );
 		$this->assertCount( 4, $report_loader->filter_schema_graph( array() )[1]['itemListElement'] );
+
+		set_query_var( 'ps_coa_view', '' );
+		set_query_var( 'ps_compound_slug', '' );
+		set_query_var( 'ps_batch_slug', '' );
+	}
+
+	public function test_complete_report_with_public_measurements_adds_connected_dataset_schema() {
+		$compound_id = $this->compound();
+		$test_id = $this->test_record( $compound_id, 'approved', 'publish', 'RT30-0726-A' );
+		update_post_meta( $test_id, 'purity_percentage', '99.4' );
+		update_post_meta( $test_id, 'purity_method', 'HPLC-UV' );
+		set_query_var( 'ps_coa_view', 'report' );
+		set_query_var( 'ps_compound_slug', get_post_field( 'post_name', $compound_id ) );
+		set_query_var( 'ps_batch_slug', get_post_field( 'post_name', $test_id ) );
+
+		$router = $this->router(); $router->resolve();
+		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+		$graph = $loader->filter_schema_graph( array() );
+		$this->assertSame( 'Dataset', $graph[2]['@type'] );
+		$this->assertSame( 'RT30-0726-A', $graph[2]['identifier'] );
+		$this->assertSame( '99.4', $graph[2]['variableMeasured'][0]['value'] );
+		$this->assertSame( 'HPLC-UV', $graph[2]['measurementTechnique'][0] );
+		$this->assertSame( $graph[2]['@id'], $graph[0]['mainEntity']['@id'] );
+		$this->assertSame( $graph[0]['@id'], $graph[2]['mainEntityOfPage']['@id'] );
 
 		set_query_var( 'ps_coa_view', '' );
 		set_query_var( 'ps_compound_slug', '' );
