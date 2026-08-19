@@ -183,6 +183,8 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Current Batch', $compact );
 		$this->assertStringContainsString( 'CURRENT', $compact );
 		$this->assertStringContainsString( '99.87%', $compact );
+		$this->assertStringNotContainsString( 'QC Passed', $compact );
+		$this->assertStringNotContainsString( 'Fully Vetted', $compact );
 		$this->assertStringNotContainsString( 'OLDER', $compact );
 		$this->assertStringContainsString( 'CURRENT', $full );
 		$this->assertStringContainsString( 'OLDER', $full );

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.5 - 2026-08-19
+
+- Reduced the purchase-area batch summary height and tightened its desktop and mobile spacing.
+- Kept the record role (`Current Batch` or `Latest Report`) while removing `QC Passed` and `Fully Vetted` from the compact purchase-area card; the complete history cards retain their detailed status labels.
+- Kept current, incoming, previous, and failed-record selection rules unchanged.
+
 ## 0.7.4 - 2026-08-19
 
 - Added a compact, product-specific batch-documentation summary that reads the same current or incoming COA model as the full product testing history.
