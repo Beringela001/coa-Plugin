@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3 - 2026-08-19
+
+- Added an accessible information card directly below the Quality Archive hero that links visitors to the approved COA reading guide. The card uses archive-specific copy and responsive presentation without changing COA records, search, batch identity, product relationships, or commerce behavior.
+
 ## 0.7.2 - 2026-08-18
 
 - Connected public Dataset creator markup to the existing Pep Select `/#organization` entity and added the real WordPress record publication time as `datePublished`. No license, business identity, laboratory result, or commerce data is invented or changed.

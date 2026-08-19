@@ -9,6 +9,15 @@ if ( ! $ps_embedded ) { get_header(); }
 ?>
 <main class="ps-coa ps-coa-app ps-coa-archive ps-coa-archive--catalog-layout" id="ps-coa-main">
 	<?php include pepselect_coa_template_path( 'partials/archive-hero.php' ); ?>
+	<aside class="ps-coa-guide-callout" aria-labelledby="ps-coa-guide-callout-title">
+		<div class="ps-coa-guide-callout__icon" aria-hidden="true">?</div>
+		<div class="ps-coa-guide-callout__copy">
+			<p class="ps-coa-guide-callout__eyebrow"><?php esc_html_e( 'COA reading guide', 'pepselect-coa-archive' ); ?></p>
+			<h2 id="ps-coa-guide-callout-title"><?php esc_html_e( 'What should you look for in a COA?', 'pepselect-coa-archive' ); ?></h2>
+			<p><?php esc_html_e( 'Match the compound, labeled strength, batch code, laboratory, method, result, and release decision. The guide walks through each field with examples from this archive.', 'pepselect-coa-archive' ); ?></p>
+		</div>
+		<a class="ps-coa-button ps-coa-guide-callout__link" href="<?php echo esc_url( home_url( '/guides/how-to-review-research-peptide-documentation/' ) ); ?>"><?php esc_html_e( 'Read the COA Guide', 'pepselect-coa-archive' ); ?></a>
+	</aside>
 	<section class="ps-coa-archive-catalog" aria-labelledby="ps-coa-catalog-title">
 		<header class="ps-coa-archive-catalog__header">
 			<div><h2 id="ps-coa-catalog-title" class="ps-coa-catalog-title--accent">The selection, <span class="ps-coa-archive-hero__accent">on the record.</span></h2></div>
