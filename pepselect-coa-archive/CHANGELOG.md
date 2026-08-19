@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.4 - 2026-08-19
+
+- Added a compact, product-specific batch-documentation summary that reads the same current or incoming COA model as the full product testing history.
+- Kept current, latest, incoming, previous, failed, missing-result, and product-strength distinctions unchanged; the compact summary renders nothing when the product has no eligible public record.
+- Allowed the compact summary and full history carousel to appear on the same product page without copying report values into WooCommerce content.
+
 ## 0.7.3 - 2026-08-19
 
 - Added an accessible information card directly below the Quality Archive hero that links visitors to the approved COA reading guide. The card uses archive-specific copy and responsive presentation without changing COA records, search, batch identity, product relationships, or commerce behavior.

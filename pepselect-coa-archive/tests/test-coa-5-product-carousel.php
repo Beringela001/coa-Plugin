@@ -172,6 +172,35 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 		$this->assertSame( '', $carousel->shortcode() );
 	}
 
+	public function test_compact_and_full_variants_render_from_the_same_current_report() {
+		$product = $this->product( 'NAD+', 'NAD500' ); $compound = $this->compound( 'NAD+ 500 mg', $product );
+		$this->record( $compound, 'OLDER', '2026-07-01' );
+		$this->record( $compound, 'CURRENT', '2026-07-30', array( 'is_current' => 1, 'purity_percentage' => '99.87' ) );
+		$this->go_to( get_permalink( $product ) ); $carousel = $this->carousel();
+		$compact = $carousel->shortcode( array( 'variant' => 'compact' ) );
+		$full = $carousel->shortcode();
+		$this->assertStringContainsString( 'ps-coa-product-summary--documented', $compact );
+		$this->assertStringContainsString( 'Current Batch', $compact );
+		$this->assertStringContainsString( 'CURRENT', $compact );
+		$this->assertStringContainsString( '99.87%', $compact );
+		$this->assertStringNotContainsString( 'OLDER', $compact );
+		$this->assertStringContainsString( 'CURRENT', $full );
+		$this->assertStringContainsString( 'OLDER', $full );
+		$this->assertSame( '', $carousel->shortcode( array( 'variant' => 'compact' ) ) );
+		$this->assertSame( '', $carousel->shortcode() );
+	}
+
+	public function test_compact_variant_uses_truthful_incoming_state_without_fake_results() {
+		$product = $this->product( 'Compound', 'CMP10' ); $compound = $this->compound( 'Compound 10 mg', $product );
+		$this->record( $compound, 'INCOMING', '', array( 'coa_status' => 'pending', 'workflow_stage' => 'in-testing', 'expected_coa_date' => '2099-08-01' ) );
+		$this->go_to( get_permalink( $product ) ); $html = $this->carousel()->shortcode( array( 'variant' => 'compact' ) );
+		$this->assertStringContainsString( 'ps-coa-product-summary--incoming', $html );
+		$this->assertStringContainsString( 'Verification in Progress', $html );
+		$this->assertStringContainsString( 'Independent testing is underway.', $html );
+		$this->assertStringNotContainsString( '>Purity<', $html );
+		$this->assertStringNotContainsString( 'QC Passed', $html );
+	}
+
 	public function test_existing_product_button_uses_current_or_latest_report_and_never_another_strength() {
 		$product = $this->product( 'Retatrutide 30', 'RETA30' ); $compound = $this->compound( 'Retatrutide 30 mg', $product );
 		$older = $this->record( $compound, 'OLDER', '2026-07-01' ); $current = $this->record( $compound, 'CURRENT', '2026-07-10', array( 'is_current' => 1 ) );

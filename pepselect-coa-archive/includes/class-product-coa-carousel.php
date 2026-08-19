@@ -9,7 +9,7 @@ final class Product_COA_Carousel {
 	/** @var Compound_Repository */ private $compounds;
 	/** @var COA_Test_Repository */ private $tests;
 	/** @var Frontend_View_Model */ private $view_model;
-	/** @var int[] */ private $rendered_product_ids = array();
+	/** @var string[] */ private $rendered_instances = array();
 	/** @var bool */ private $variables_added = false;
 
 	public function __construct( Product_Matching $matching, Compound_Repository $compounds, COA_Test_Repository $tests, Frontend_View_Model $view_model ) {
@@ -22,11 +22,14 @@ final class Product_COA_Carousel {
 	/** Registers the Elementor-compatible shortcode. @return void */
 	public function register_hooks() { add_shortcode( 'pepselect_product_coa_carousel', array( $this, 'shortcode' ) ); }
 
-	/** Renders up to four truthful Current, Incoming, and Previous cards for the exact connected product. @param array $attributes Shortcode attributes. @return string */
+	/** Renders the full history carousel or one compact summary for the exact connected product. @param array $attributes Shortcode attributes. @return string */
 	public function shortcode( $attributes = array() ) {
-		$attributes = shortcode_atts( array( 'product_id' => 0 ), $attributes, 'pepselect_product_coa_carousel' );
+		$attributes = shortcode_atts( array( 'product_id' => 0, 'variant' => 'carousel' ), $attributes, 'pepselect_product_coa_carousel' );
+		$variant_attribute = is_scalar( $attributes['variant'] ) ? (string) $attributes['variant'] : '';
+		$variant = 'compact' === sanitize_key( $variant_attribute ) ? 'compact' : 'carousel';
 		$product_id = $this->resolve_product_id( absint( $attributes['product_id'] ) );
-		if ( ! $product_id || in_array( $product_id, $this->rendered_product_ids, true ) ) { return ''; }
+		$instance_key = $variant . ':' . $product_id;
+		if ( ! $product_id || in_array( $instance_key, $this->rendered_instances, true ) ) { return ''; }
 
 		$compound_ids = array_values( array_unique( array_map( 'absint', $this->matching->compounds_for_product( $product_id ) ) ) );
 		if ( 1 !== count( $compound_ids ) ) { return ''; }
@@ -61,8 +64,16 @@ final class Product_COA_Carousel {
 		}
 		if ( ! $reports ) { return ''; }
 
-		$this->rendered_product_ids[] = $product_id;
+		$this->rendered_instances[] = $instance_key;
 		$this->ensure_assets();
+		if ( 'compact' === $variant ) {
+			return $this->render_compact( array(
+				'product_id' => $product_id,
+				'compound_id' => $compound->ID,
+				'report' => $reports[0],
+			) );
+		}
+
 		return $this->render( array(
 			'instance_id' => wp_unique_id( 'ps-coa-product-carousel-' ),
 			'product_id' => $product_id,
@@ -96,6 +107,14 @@ final class Product_COA_Carousel {
 		$ps_product_carousel = $context;
 		ob_start();
 		include pepselect_coa_template_path( 'shortcodes/product-coa-carousel.php' );
+		return (string) ob_get_clean();
+	}
+
+	/** Renders the compact purchase-area summary from the same report model as the full carousel. */
+	private function render_compact( $context ) {
+		$ps_product_summary = $context;
+		ob_start();
+		include pepselect_coa_template_path( 'shortcodes/product-coa-summary.php' );
 		return (string) ob_get_clean();
 	}
 }
