@@ -100,7 +100,8 @@
 .ps-coa-batch-pill--vendor { background: color-mix(in srgb, var(--ps-coa-vendor) 9%, var(--ps-coa-surface)); border-color: color-mix(in srgb, var(--ps-coa-vendor) 32%, var(--ps-coa-border)); color: var(--ps-coa-vendor); }
 .ps-coa-batch-pill--failed { background: color-mix(in srgb, var(--ps-coa-danger) 8%, var(--ps-coa-surface)); border-color: color-mix(in srgb, var(--ps-coa-danger) 30%, var(--ps-coa-border)); color: var(--ps-coa-danger); }
 .ps-coa-batch-pill time { color: inherit; opacity: .8; }
-.ps-coa-compound-card__footer { border-top: 1px solid var(--ps-coa-border); padding: .85rem 1.1rem; }
+.ps-coa-compound-card__footer { align-items: center; border-top: 1px solid var(--ps-coa-border); display: flex; flex-wrap: wrap; gap: .65rem 1rem; justify-content: space-between; padding: .85rem 1.1rem; }
+.ps-coa-compound-card__product-link { font-size: .82rem; }
 .ps-coa-report-count { background: var(--ps-coa-surface-muted); border-radius: 999px; display: inline-block; font-size: .76rem; margin-inline-start: .25rem; padding: .1rem .4rem; }
 .ps-coa-incoming-count { color: var(--ps-coa-info); font-size: .76rem; font-weight: 680; margin-inline-start: .35rem; }
 .ps-coa-assurance { align-items: center; display: flex; gap: .55rem; margin-block: .75rem 1rem; }
@@ -314,7 +315,8 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-history-hero__title { align-items: baseline; display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
 .ps-coa-history-hero__title h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 5vw, 4.25rem); font-weight: 400; letter-spacing: -.045em; line-height: .95; margin: 0; }
 .ps-coa-history-hero__title > span { color: #52647a; font-size: 1.45rem; font-weight: 650; }
-.ps-coa-history-hero__identity > p:last-child { color: var(--ps-history-muted); font-size: .94rem; line-height: 1.65; margin: 0; max-width: 590px; }
+.ps-coa-history-hero__description { color: var(--ps-history-muted); font-size: .94rem; line-height: 1.65; margin: 0; max-width: 590px; }
+.ps-coa-history-hero__product-link { display: inline-block; margin-top: .75rem; }
 .ps-coa-history-hero__current { border-left: 1px solid var(--ps-history-border); display: grid; gap: 28px; margin: 0; padding-left: 34px; }
 .ps-coa-history-hero__current dt,
 .ps-coa-history-latest__summary dt,

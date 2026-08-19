@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.2 - 2026-08-18
+
+- Connected public Dataset creator markup to the existing Pep Select `/#organization` entity and added the real WordPress record publication time as `datePublished`. No license, business identity, laboratory result, or commerce data is invented or changed.
+
+## 0.7.1 - 2026-08-18
+
+- Added conditional links from the public Quality Archive compound cards and compound-history heroes to the exact published WooCommerce product already stored by the existing product-matching system. Unmatched or unpublished products render no product link; COA records, matching data, batch identity, and commerce behavior are unchanged.
+
 ## 0.7.0 - 2026-08-15
 
 - Added a connected `Dataset` entity to completed public batch-report pages only when a public laboratory measurement exists. The markup uses the existing public view-model allowlist and never exposes private verification, internal, product relationship, customer, or OPS data.

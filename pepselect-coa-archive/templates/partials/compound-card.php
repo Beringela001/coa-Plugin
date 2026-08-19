@@ -24,5 +24,10 @@
 			<ul><?php foreach ( array_slice( $compound['recent_batches'], 0, 3 ) as $batch ) : ?><li><a class="ps-coa-batch-pill ps-coa-batch-pill--<?php echo esc_attr( $batch['public_status_tone'] ); ?>" href="<?php echo esc_url( $batch['detail_url'] ); ?>"><?php if ( $batch['batch_number'] ) : ?><span><?php echo esc_html( $batch['batch_number'] ); ?></span><?php endif; ?><small><?php echo esc_html( 'failed' === $batch['coa_status'] ? __( 'Not Released', 'pepselect-coa-archive' ) : ( 'pending' === $batch['coa_status'] ? $batch['workflow_stage_label'] : $batch['coa_status_data']['label'] ) ); ?></small><?php if ( $batch['test_date_label'] || $batch['expected_coa_date_label'] ) : ?><time datetime="<?php echo esc_attr( $batch['test_date'] ?: $batch['expected_coa_date'] ); ?>"><?php echo esc_html( $batch['test_date_label'] ?: $batch['expected_coa_date_label'] ); ?></time><?php endif; ?></a></li><?php endforeach; ?></ul>
 		</div><?php endif; ?>
 	</div>
-	<footer class="ps-coa-compound-card__footer"><a class="ps-coa-text-link" href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'view_history' ) ); ?> <span class="ps-coa-report-count"><?php echo esc_html( number_format_i18n( $compound['public_report_count'] ) ); ?></span> <span aria-hidden="true">&rarr;</span></a></footer>
+	<footer class="ps-coa-compound-card__footer">
+		<a class="ps-coa-text-link" href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'view_history' ) ); ?> <span class="ps-coa-report-count"><?php echo esc_html( number_format_i18n( $compound['public_report_count'] ) ); ?></span> <span aria-hidden="true">&rarr;</span></a>
+		<?php if ( $compound['woocommerce_product_url'] ) : ?>
+			<a class="ps-coa-text-link ps-coa-compound-card__product-link" href="<?php echo esc_url( $compound['woocommerce_product_url'] ); ?>"><?php esc_html_e( 'View compound details', 'pepselect-coa-archive' ); ?> <span aria-hidden="true">&rarr;</span></a>
+		<?php endif; ?>
+	</footer>
 </article>

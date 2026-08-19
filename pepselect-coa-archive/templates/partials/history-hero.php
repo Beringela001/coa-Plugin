@@ -4,7 +4,8 @@
 	<div class="ps-coa-history-hero__identity">
 		<p class="ps-coa-history-badge"><span aria-hidden="true">▤</span><?php esc_html_e( 'Batch Vetting Record', 'pepselect-coa-archive' ); ?></p>
 		<div class="ps-coa-history-hero__title"><h1><?php echo esc_html( $compound['public_name'] ); ?></h1><?php if ( $compound['strength_value_display'] ) : ?><span><?php echo esc_html( trim( $compound['strength_value_display'] . ' ' . $compound['strength_unit'] ) ); ?></span><?php endif; ?></div>
-		<p><?php echo esc_html( sprintf( __( 'Independent testing records and certificate history for every documented %1$s%2$s batch released by Pep Select.', 'pepselect-coa-archive' ), $compound['public_name'], $compound['strength_value_display'] ? ' ' . trim( $compound['strength_value_display'] . ' ' . $compound['strength_unit'] ) : '' ) ); ?></p>
+		<p class="ps-coa-history-hero__description"><?php echo esc_html( sprintf( __( 'Independent testing records and certificate history for every documented %1$s%2$s batch released by Pep Select.', 'pepselect-coa-archive' ), $compound['public_name'], $compound['strength_value_display'] ? ' ' . trim( $compound['strength_value_display'] . ' ' . $compound['strength_unit'] ) : '' ) ); ?></p>
+		<?php if ( $compound['woocommerce_product_url'] ) : ?><a class="ps-coa-text-link ps-coa-history-hero__product-link" href="<?php echo esc_url( $compound['woocommerce_product_url'] ); ?>"><?php esc_html_e( 'View compound details', 'pepselect-coa-archive' ); ?> <span aria-hidden="true">&rarr;</span></a><?php endif; ?>
 	</div>
 	<dl class="ps-coa-history-hero__current">
 		<div><dt><?php esc_html_e( 'Current Batch', 'pepselect-coa-archive' ); ?></dt><dd><?php echo esc_html( $current && $current['batch_number'] ? $current['batch_number'] : __( 'Not yet documented', 'pepselect-coa-archive' ) ); ?></dd></div>

@@ -132,6 +132,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$this->assertSame( 'RT30-0726-A', $graph[2]['identifier'] );
 		$this->assertSame( '99.4', $graph[2]['variableMeasured'][0]['value'] );
 		$this->assertSame( 'HPLC-UV', $graph[2]['measurementTechnique'][0] );
+		$this->assertSame( home_url( '/#organization' ), $graph[2]['creator']['@id'] );
+		$this->assertSame( get_post_time( DATE_W3C, true, $test_id ), $graph[2]['datePublished'] );
 		$this->assertSame( $graph[2]['@id'], $graph[0]['mainEntity']['@id'] );
 		$this->assertSame( $graph[0]['@id'], $graph[2]['mainEntityOfPage']['@id'] );
 

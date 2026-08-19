@@ -9,3 +9,6 @@ zips/
 # Composer dev dependencies (PHPUnit and the WordPress polyfills)
 vendor/
 composer.lock
+
+# Local agent session settings
+.claude/

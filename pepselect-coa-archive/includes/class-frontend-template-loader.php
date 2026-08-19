@@ -236,10 +236,12 @@ final class Frontend_Template_Loader {
 			'identifier' => $batch,
 			'mainEntityOfPage' => array( '@id' => trailingslashit( $canonical ) . '#webpage' ),
 			'isAccessibleForFree' => true,
-			'creator' => array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ) ?: 'Pep Select', 'url' => home_url( '/' ) ),
+			'creator' => array( '@type' => 'Organization', '@id' => home_url( '/#organization' ), 'name' => get_bloginfo( 'name' ) ?: 'Pep Select', 'url' => home_url( '/' ) ),
 			'includedInDataCatalog' => array( '@type' => 'DataCatalog', 'name' => __( 'Pep Select Quality Archive', 'pepselect-coa-archive' ), 'url' => home_url( user_trailingslashit( 'testing' ) ) ),
 			'variableMeasured' => $variables,
 		);
+		$published = ! empty( $test['test_id'] ) ? get_post_time( DATE_W3C, true, absint( $test['test_id'] ) ) : '';
+		if ( $published ) { $dataset['datePublished'] = $published; }
 
 		if ( ! empty( $test['laboratory'] ) ) { $dataset['provider'] = array( '@type' => 'Organization', 'name' => $test['laboratory'] ); }
 		$date = $this->schema_date( isset( $test['test_date'] ) ? $test['test_date'] : '' );
