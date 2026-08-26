@@ -29,6 +29,7 @@ final class Compound_Resolver_Endpoint {
 
 	const NAMESPACE   = 'pepselect-coa/v1';
 	const ROUTE       = '/compound';
+	const ROUTE_CONNECT = '/compound/connect';
 	const ROUTE_TEST  = '/coa-test';
 
 	/**
@@ -79,6 +80,26 @@ final class Compound_Resolver_Endpoint {
 						'type'              => 'string',
 						'required'          => false,
 						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
+
+		// Ops-safe equivalent of Product Matching's "Create and Connect" action.
+		// Delegate to Product_Matching so its uniqueness, eligibility, locking,
+		// and duplicate protections remain identical to the wp-admin workflow.
+		register_rest_route(
+			self::NAMESPACE,
+			self::ROUTE_CONNECT,
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'create_and_connect' ),
+				'permission_callback' => array( $this, 'can_create' ),
+				'args'                => array(
+					'product_id' => array(
+						'type'              => 'integer',
+						'required'          => true,
+						'sanitize_callback' => 'absint',
 					),
 				),
 			)
@@ -151,6 +172,41 @@ final class Compound_Resolver_Endpoint {
 	 */
 	public function can_read() {
 		return current_user_can( 'edit_posts' );
+	}
+
+	/** Only compound managers may create a new archive relationship. */
+	public function can_create() {
+		return current_user_can( 'manage_ps_compounds' );
+	}
+
+	/**
+	 * Create and connect through the plugin's canonical matching service.
+	 * Existing unambiguous connections are returned unchanged, so retries are
+	 * idempotent. Product_Matching returns WP_Error for every unsafe case.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function create_and_connect( $request ) {
+		$product_id = absint( $request->get_param( 'product_id' ) );
+		if ( ! $product_id ) {
+			return new \WP_Error( 'missing_product_id', __( 'A valid WooCommerce product ID is required.', 'pepselect-coa-archive' ), array( 'status' => 400 ) );
+		}
+
+		$result = $this->matching->create_and_connect( $product_id );
+		if ( is_wp_error( $result ) ) {
+			$result->add_data( array( 'status' => 400 ) );
+			return $result;
+		}
+
+		$compound_id = absint( $result );
+		return new \WP_REST_Response(
+			array(
+				'product_id'  => $product_id,
+				'compound_id' => $compound_id,
+			),
+			201
+		);
 	}
 
 	/**

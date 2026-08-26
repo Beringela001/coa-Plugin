@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.6 - 2026-08-26
+
+- Added an authenticated `/pepselect-coa/v1/compound/connect` endpoint for Ops. It delegates to the existing duplicate-safe Product Matching service, so Ops can create or recover a WooCommerce product relationship without wp-admin.
+- Kept publication and archive activation as a separate explicit write; the endpoint itself preserves the existing draft-first Product Matching behavior.
+
 ## 0.7.5 - 2026-08-19
 
 - Reduced the purchase-area batch summary height and tightened its desktop and mobile spacing.

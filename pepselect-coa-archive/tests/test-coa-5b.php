@@ -49,6 +49,20 @@ class PepSelect_COA_5B_Test extends WP_UnitTestCase {
 		$this->assertEmpty( get_posts( array( 'post_type' => 'ps_coa_test', 'post_status' => 'any', 'posts_per_page' => -1, 'meta_key' => 'compound_id', 'meta_value' => $compound_id ) ) );
 	}
 
+	public function test_ops_rest_endpoint_delegates_to_the_same_create_and_connect_service() {
+		$product_id = $this->eligible_product( 'KPV', 'KPV10' );
+		$endpoint = new PepSelect\COAArchive\Compound_Resolver_Endpoint( $this->matching );
+		$request = new WP_REST_Request( 'POST', '/pepselect-coa/v1/compound/connect' );
+		$request->set_param( 'product_id', $product_id );
+		$response = $endpoint->create_and_connect( $request );
+		$this->assertInstanceOf( WP_REST_Response::class, $response );
+		$this->assertSame( 201, $response->get_status() );
+		$compound_id = $response->get_data()['compound_id'];
+		$this->assertSame( (string) $product_id, get_post_meta( $compound_id, 'woocommerce_product_id', true ) );
+		$this->assertSame( $compound_id, $endpoint->create_and_connect( $request )->get_data()['compound_id'] );
+		$this->assertCount( 1, $this->matching->compounds_for_product( $product_id ) );
+	}
+
 	public function test_create_blocks_missing_duplicate_and_ambiguous_identity() {
 		$missing = $this->eligible_product( 'Missing', '' );
 		$this->assertWPError( $this->matching->create_and_connect( $missing ) );
