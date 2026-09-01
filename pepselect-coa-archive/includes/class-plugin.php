@@ -134,6 +134,7 @@ final class Plugin {
 		add_filter( 'query_vars', array( $this->rewrites, 'register_query_vars' ) );
 		add_action( 'init', array( 'PepSelect\\COAArchive\\Upgrade', 'maybe_upgrade' ), 99 );
 		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
+		add_filter( 'post_type_link', array( $this->frontend_router, 'filter_post_type_link' ), 10, 2 );
 		$this->qr_redirects->register_hooks();
 		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
 		$this->frontend_templates->register_hooks();

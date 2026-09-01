@@ -402,7 +402,10 @@ final class Frontend_View_Model {
 		}
 		$this->add_result_row( $rows, 'heavy-metals', __( 'Heavy Metals', 'pepselect-coa-archive' ), '', '', $model['heavy_metals_summary'], $model['heavy_metals_status'] );
 		$this->add_result_row( $rows, 'sterility', __( 'Sterility', 'pepselect-coa-archive' ), '', '', $model['sterility_result'], $model['sterility_status'] );
-		$this->add_result_row( $rows, 'endotoxins', __( 'Endotoxins', 'pepselect-coa-archive' ), '', '', trim( $model['endotoxin_result'] . ' ' . $model['endotoxin_unit'] ), $model['endotoxin_status'] );
+		$endotoxin_result = trim( (string) $model['endotoxin_result'] );
+		$endotoxin_unit = trim( (string) $model['endotoxin_unit'] );
+		if ( $endotoxin_unit && false === stripos( $endotoxin_result, $endotoxin_unit ) ) { $endotoxin_result = trim( $endotoxin_result . ' ' . $endotoxin_unit ); }
+		$this->add_result_row( $rows, 'endotoxins', __( 'Endotoxins', 'pepselect-coa-archive' ), '', '', $endotoxin_result, $model['endotoxin_status'] );
 		$this->add_result_row( $rows, 'fentanyl', __( 'Fentanyl Screen', 'pepselect-coa-archive' ), $model['fentanyl_method'], $model['fentanyl_specification'], $model['fentanyl_result'], $model['fentanyl_status'] );
 		return $rows;
 	}

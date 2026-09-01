@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.7 - 2026-09-01
+
+- Preserved literal scientific references such as `USP <85>` while continuing to remove HTML markup.
+- Converted missing-field publication locks into visible workflow guidance; format, attachment, duplicate, and cross-field truth validation remain enforced.
+- Redirected raw COA post links and wp-admin View links to the canonical public `/testing/{compound}/{batch}/` report.
+- Replaced the dash-heavy fixed results table with conditional laboratory evidence and prevented duplicate endotoxin units.
+
 ## 0.7.6 - 2026-08-26
 
 - Added an authenticated `/pepselect-coa/v1/compound/connect` endpoint for Ops. It delegates to the existing duplicate-safe Product Matching service, so Ops can create or recover a WooCommerce product relationship without wp-admin.

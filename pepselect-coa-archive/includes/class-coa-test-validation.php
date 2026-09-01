@@ -63,7 +63,19 @@ final class COA_Test_Validation {
 		if ( in_array( $key, array( 'is_current' ), true ) ) { return empty( $value ) ? 0 : 1; }
 		if ( in_array( $key, array( 'public_notes', 'report_notes', 'internal_notes', 'heavy_metals_summary', 'release_decision_note' ), true ) ) { return sanitize_textarea_field( trim( (string) $value ) ); }
 		if ( in_array( $key, array( 'lab_verification_url', 'lab_report_url' ), true ) ) { return esc_url_raw( trim( (string) $value ), array( 'http', 'https' ) ); }
-		return sanitize_text_field( trim( (string) $value ) );
+		/*
+		 * Scientific method names frequently contain literal angle brackets —
+		 * USP <85> is the common endotoxin example. sanitize_text_field() treats
+		 * <85> as an HTML tag and silently removes it, changing the laboratory
+		 * statement after a successful REST write. Protect the two literal
+		 * characters while WordPress removes control characters and whitespace,
+		 * then restore them. Public templates escape every value with esc_html().
+		 */
+		$text = trim( (string) $value );
+		$token = md5( $text );
+		$protected = preg_replace( '/<([0-9]+)>/', '__PS_COA_NUM_' . $token . '_$1__', $text );
+		$clean = sanitize_text_field( $protected );
+		return preg_replace( '/__PS_COA_NUM_' . preg_quote( $token, '/' ) . '_([0-9]+)__/', '<$1>', $clean );
 	}
 
 	/** Sanitizes gallery IDs while preserving order. @param mixed $value Value. @return array */
@@ -129,11 +141,11 @@ final class COA_Test_Validation {
 		$stage = COA_Workflow::normalize_stage( $stage );
 		if ( 'vendor-vetting' === $stage ) { return __( 'Do not guess physical-batch or laboratory data. Add it only after a real vendor batch exists.', 'pepselect-coa-archive' ); }
 		if ( 'waiting-on-vendor' === $stage ) { return __( 'Claimed content, unit, vial counts, and known packaging details may be recorded. Cap, crimp, and the exact Batch Vial Photo remain optional.', 'pepselect-coa-archive' ); }
-		if ( 'submitted-to-lab' === $stage ) { return __( 'Expected COA Date and the known vial colors are required by current validation. Laboratory identity and batch information remain protected from public display until Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'in-testing' === $stage ) { return __( 'Complete the actual batch, vial photo, cap, crimp, laboratory, and expected-date requirements before saving Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'failed' === $status ) { return __( 'A Failed completed record requires a Release Decision Note. Successful result language is not required.', 'pepselect-coa-archive' ); }
-		if ( 'approved' === $status ) { return __( 'Approved completed records require their final date, laboratory, documents, Lab Report URL, and applicable ILS Fentanyl Screen evidence.', 'pepselect-coa-archive' ); }
-		return __( 'Complete final evidence before changing COA Status to Approved or Failed.', 'pepselect-coa-archive' );
+		if ( 'submitted-to-lab' === $stage ) { return __( 'Add the expected COA date and known vial colors when available. Laboratory identity and batch information remain protected from public display until Verification in Progress.', 'pepselect-coa-archive' ); }
+		if ( 'in-testing' === $stage ) { return __( 'The checklist shows missing batch, vial, laboratory, and timing evidence without blocking a save.', 'pepselect-coa-archive' ); }
+		if ( 'failed' === $status ) { return __( 'Add a Release Decision Note so customers can understand the failed outcome. Missing evidence remains visible but does not lock the record.', 'pepselect-coa-archive' ); }
+		if ( 'approved' === $status ) { return __( 'Add the final date, laboratory documents, Lab Report URL, and applicable screening evidence. The checklist is guidance and never locks the record.', 'pepselect-coa-archive' ); }
+		return __( 'Complete final evidence when available. Drafts and corrections always remain saveable.', 'pepselect-coa-archive' );
 	}
 
 	/** Sanitizes an ACF value before storage. @param mixed $value Value. @param int|string $post_id Post ID. @param array $field Field. @return mixed */
@@ -146,31 +158,18 @@ final class COA_Test_Validation {
 		$stage = COA_Workflow::normalize_stage( $this->posted( 'workflow_stage' ) );
 		$partial = false; // Partial-results feature removed (Ops §16); never gate on it.
 		if ( ! COA_Test_Form::field_available( $name, $stage, $partial ) ) { return $valid; }
-		if ( 'compound_id' === $name && ( ! $raw || Post_Types::COMPOUND !== get_post_type( absint( $raw ) ) ) ) { return __( 'Select a valid related compound.', 'pepselect-coa-archive' ); }
-		if ( 'batch_number' === $name && 'in-testing' === $stage && '' === $raw ) { return __( 'Batch Number is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'batch_number' === $name && 'complete' === $stage && '' === $raw ) { return __( 'Batch Number is required before saving a Completed test.', 'pepselect-coa-archive' ); }
+		if ( 'compound_id' === $name && $raw && Post_Types::COMPOUND !== get_post_type( absint( $raw ) ) ) { return __( 'Select a valid related compound.', 'pepselect-coa-archive' ); }
 		if ( 'batch_number' === $name && '' !== $raw && ( $this->length( $raw ) > 120 || ! preg_match( '/^[\p{L}\p{N} _\.\/-]+$/u', $raw ) ) ) { return __( 'Batch Number must be 120 characters or fewer and use only letters, numbers, spaces, hyphens, underscores, periods, or slashes.', 'pepselect-coa-archive' ); }
 		$lengths = array( 'other_testing_lab' => 120, 'lab_accession_number' => 120, 'vendor_status_note' => 200, 'public_status_note' => 240, 'release_decision_note' => 500, 'other_vial_crimp_color' => 80, 'other_vial_cap_color' => 80, 'sample_appearance' => 200, 'purity_method' => 120, 'identity_method' => 120, 'endotoxin_result' => 120, 'endotoxin_unit' => 50, 'heavy_metals_summary' => 500, 'sterility_result' => 200, 'fentanyl_result' => 200, 'fentanyl_method' => 120, 'fentanyl_specification' => 200, 'fentanyl_notes' => 500, 'coa_number' => 120, 'verification_code' => 200, 'certificate_version' => 50, 'public_notes' => 1000, 'report_notes' => 1000 );
 		if ( isset( $lengths[ $name ] ) && $this->length( $raw ) > $lengths[ $name ] ) { return sprintf( __( 'This value must be %d characters or fewer.', 'pepselect-coa-archive' ), $lengths[ $name ] ); }
 		if ( 'workflow_stage' === $name && ! array_key_exists( COA_Workflow::normalize_stage( $raw ), COA_Workflow::stages() ) ) { return __( 'Select a valid workflow stage.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, array( 'test_date', 'date_received', 'expected_coa_date' ), true ) && '' !== $raw && ! $this->valid_date( $raw ) ) { return __( 'Enter a valid date.', 'pepselect-coa-archive' ); }
-		if ( 'expected_coa_date' === $name && 'submitted-to-lab' === $stage && '' === $raw ) { return __( 'Expected COA Date is required at the Submitted to Laboratory stage.', 'pepselect-coa-archive' ); }
-		if ( 'expected_coa_date' === $name && 'in-testing' === $stage && '' === $raw ) { return __( 'Expected COA Date is required while the test is in Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'test_date' === $name && $this->is_approved() && '' === $raw ) { return __( 'Test Date is required before saving an Approved completed report.', 'pepselect-coa-archive' ); }
 		if ( 'testing_lab' === $name && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::labs() ) ) { return __( 'Select a valid testing laboratory.', 'pepselect-coa-archive' ); }
-		if ( 'testing_lab' === $name && 'in-testing' === $stage && '' === $raw ) { return __( 'Testing Laboratory is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'testing_lab' === $name && $this->is_approved() && '' === $raw ) { return __( 'Testing Laboratory is required before saving an Approved completed report.', 'pepselect-coa-archive' ); }
-		if ( 'other_testing_lab' === $name && 'other' === $this->posted( 'testing_lab' ) && '' === $raw ) { return __( 'Enter the other laboratory name.', 'pepselect-coa-archive' ); }
 		if ( 'coa_status' === $name && ! array_key_exists( $raw, COA_Test_Fields::statuses() ) && ! $this->preserves_legacy_status( $raw ) ) { return __( 'Select Pending, Approved, or Failed.', 'pepselect-coa-archive' ); }
 		if ( 'coa_status' === $name && in_array( $raw, array( 'approved', 'failed' ), true ) && 'complete' !== $this->posted( 'workflow_stage' ) ) { return __( 'Workflow Stage must be Completed before COA Status can be Approved or Failed.', 'pepselect-coa-archive' ); }
-		if ( 'release_decision_note' === $name && 'failed' === $this->posted( 'coa_status' ) && '' === $raw ) { return __( 'Release Decision Note is required before saving a Failed completed report.', 'pepselect-coa-archive' ); }
 		if ( 'is_current' === $name && ! empty( $raw ) && ( 'approved' !== $this->posted( 'coa_status' ) || 'complete' !== $this->posted( 'workflow_stage' ) ) ) { return __( 'Current COA requires an Approved outcome and Complete workflow stage.', 'pepselect-coa-archive' ); }
 		if ( 'is_current' === $name && ! empty( $raw ) && 'publish' !== $this->posted_post_status() ) { return __( 'Current COA must be published.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, array( 'vial_crimp_color', 'vial_cap_color' ), true ) && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::vial_colors() ) && ! $this->preserves_legacy_color( $name, $raw ) ) { return __( 'Select a valid vial color.', 'pepselect-coa-archive' ); }
-		if ( 'vial_cap_color' === $name && in_array( $stage, array( 'submitted-to-lab', 'in-testing', 'complete' ), true ) && '' === $raw ) { return __( 'Cap Color is required once the physical vendor batch has arrived at the Submitted to Laboratory stage.', 'pepselect-coa-archive' ); }
-		if ( 'vial_crimp_color' === $name && in_array( $stage, array( 'submitted-to-lab', 'in-testing', 'complete' ), true ) && '' === $raw ) { return __( 'Crimp Color is required once the physical vendor batch has arrived at the Submitted to Laboratory stage.', 'pepselect-coa-archive' ); }
-		if ( 'other_vial_crimp_color' === $name && 'other' === $this->posted( 'vial_crimp_color' ) && '' === $raw ) { return __( 'Enter the other crimp color.', 'pepselect-coa-archive' ); }
-		if ( 'other_vial_cap_color' === $name && 'other' === $this->posted( 'vial_cap_color' ) && '' === $raw ) { return __( 'Enter the other cap color.', 'pepselect-coa-archive' ); }
 		if ( 'content_unit' === $name && '' !== $raw && ! array_key_exists( $raw, Compound_Validation::units() ) ) { return __( 'Select a valid content unit.', 'pepselect-coa-archive' ); }
 		// NOTE: a blank Fentanyl Screen status is deliberately valid — it means "no
 		// screen recorded", which is NOT the same as a pass. The CSV importer
@@ -183,13 +182,12 @@ final class COA_Test_Validation {
 			$expected = 'pass' === $status ? 'Not detected' : ( 'fail' === $status ? 'Detected' : '' );
 			if ( $expected !== $raw ) { return __( 'The Fentanyl Screen result must match its selected status.', 'pepselect-coa-archive' ); }
 		}
-		if ( 'fentanyl_method' === $name && 'Immunoassay' !== $raw ) { return __( 'The Fentanyl Screen method must be Immunoassay.', 'pepselect-coa-archive' ); }
-		if ( 'fentanyl_specification' === $name && 'Immunoassay, 50 ng/mL cutoff' !== $raw ) { return __( 'The Fentanyl Screen specification must use the 50 ng/mL cutoff.', 'pepselect-coa-archive' ); }
+		if ( 'fentanyl_method' === $name && '' !== $raw && 'Immunoassay' !== $raw ) { return __( 'The Fentanyl Screen method must be Immunoassay when recorded.', 'pepselect-coa-archive' ); }
+		if ( 'fentanyl_specification' === $name && '' !== $raw && 'Immunoassay, 50 ng/mL cutoff' !== $raw ) { return __( 'The Fentanyl Screen specification must use the 50 ng/mL cutoff when recorded.', 'pepselect-coa-archive' ); }
 		if ( 'fentanyl_status' !== $name && in_array( $name, self::result_fields(), true ) && '' !== $raw && ! array_key_exists( $raw, COA_Test_Fields::result_choices() ) ) { return __( 'Select a valid result status.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, self::number_fields(), true ) && '' !== $raw && ! is_numeric( $raw ) ) { return __( 'Enter a valid number.', 'pepselect-coa-archive' ); }
 		if ( in_array( $name, self::nonnegative_fields(), true ) && '' !== $raw && (float) $raw < 0 ) { return __( 'This value cannot be negative.', 'pepselect-coa-archive' ); }
 		if ( 'vials_tested' === $name && '' !== $raw && false === filter_var( $raw, FILTER_VALIDATE_INT ) ) { return __( 'Enter a whole number.', 'pepselect-coa-archive' ); }
-		if ( 'vials_tested' === $name && ( '' !== $raw || $this->is_approved() ) && ( false === filter_var( $raw, FILTER_VALIDATE_INT ) || ( $this->is_approved() && (int) $raw < 1 ) ) ) { return __( 'Vials Tested must be a whole number of at least 1 for approved reports.', 'pepselect-coa-archive' ); }
 		// Parity with the ACF definition (min => 1): a recorded vial count is always
 		// at least one, at every stage, not only for approved reports.
 		if ( 'vials_tested' === $name && '' !== $raw && (int) $raw < 1 ) { return __( 'Vials Tested must be at least 1 when recorded.', 'pepselect-coa-archive' ); }
@@ -202,8 +200,6 @@ final class COA_Test_Validation {
 		// alone would also accept GIF, which the form can never produce.
 		if ( 'batch_vial_photo' === $name && $raw && ! in_array( get_post_mime_type( absint( $raw ) ), array( 'image/jpeg', 'image/png', 'image/webp' ), true ) ) { return __( 'The Batch Vial Photo must be a JPG, PNG, or WebP image.', 'pepselect-coa-archive' ); }
 		if ( 'laboratory_logo' === $name && $raw && ! $this->valid_laboratory_logo( absint( $raw ) ) ) { return __( 'Select a safe image attachment you have permission to use as the laboratory logo.', 'pepselect-coa-archive' ); }
-		if ( 'batch_vial_photo' === $name && ! $raw && 'in-testing' === $stage && ! $this->legacy_batch_photo_exempt( $stage ) ) { return __( 'Batch Vial Photo is required before moving this test to Verification in Progress.', 'pepselect-coa-archive' ); }
-		if ( 'batch_vial_photo' === $name && ! $raw && 'complete' === $stage && ! $this->legacy_batch_photo_exempt( $stage ) ) { return __( 'Batch Vial Photo is required before saving a Completed test.', 'pepselect-coa-archive' ); }
 		if ( 'batch_identity_photos' === $name && ! $this->valid_images( $value, true ) ) { return __( 'Every Batch Identity Photo must be an image attachment you have permission to use.', 'pepselect-coa-archive' ); }
 		if ( 'coa_pdf_id' === $name && $raw && ! $this->valid_pdf( absint( $raw ) ) ) { return __( 'Select a valid PDF attachment.', 'pepselect-coa-archive' ); }
 		if ( 'coa_page_images' === $name && ! $this->valid_images( $value ) ) { return __( 'Every certificate page must be a JPG, PNG, or WebP image attachment.', 'pepselect-coa-archive' ); }
@@ -226,21 +222,9 @@ final class COA_Test_Validation {
 		if ( in_array( $value, array( 'approved', 'failed' ), true ) && 'complete' !== $this->posted( 'workflow_stage' ) ) { return __( 'Workflow Stage must be Completed before COA Status can be Approved or Failed.', 'pepselect-coa-archive' ); }
 		if ( 'failed' === $value ) {
 			if ( $this->posted( 'is_current' ) ) { return __( 'Failed reports cannot be marked Current COA.', 'pepselect-coa-archive' ); }
-			if ( '' === trim( (string) $this->posted( 'release_decision_note' ) ) ) { return __( 'Release Decision Note is required before saving a Failed completed report.', 'pepselect-coa-archive' ); }
 			return $valid;
 		}
 		if ( 'approved' !== $value ) { return $valid; }
-		if ( 'ils-labs' === $this->posted( 'testing_lab' ) ) {
-			$fentanyl_status = sanitize_key( (string) $this->posted( 'fentanyl_status' ) );
-			$fentanyl_result = trim( (string) $this->posted( 'fentanyl_result' ) );
-			$fentanyl_method = trim( (string) $this->posted( 'fentanyl_method' ) );
-			$fentanyl_spec = trim( (string) $this->posted( 'fentanyl_specification' ) );
-			$fentanyl_success = 'pass' === $fentanyl_status && 'Not detected' === $fentanyl_result && 'Immunoassay' === $fentanyl_method && 'Immunoassay, 50 ng/mL cutoff' === $fentanyl_spec;
-			if ( ! $fentanyl_success ) { return __( 'Fentanyl Screen must be Pass with “Not detected” at the 50 ng/mL cutoff before saving an Approved completed ILS report.', 'pepselect-coa-archive' ); }
-		}
-		if ( ! $this->valid_pdf( absint( $this->posted( 'coa_pdf_id' ) ) ) ) { return __( 'Original COA PDF is required before saving an Approved completed report.', 'pepselect-coa-archive' ); }
-		if ( ! $this->valid_images( $this->posted( 'coa_page_images' ) ) || empty( $this->posted( 'coa_page_images' ) ) ) { return __( 'At least one Certificate Page Image is required before saving an Approved completed report.', 'pepselect-coa-archive' ); }
-		if ( ! wp_http_validate_url( trim( (string) $this->posted( 'lab_report_url' ) ) ) ) { return __( 'Lab Report URL is required before saving an Approved completed report.', 'pepselect-coa-archive' ); }
 		foreach ( self::result_field_labels() as $name => $label ) { if ( 'fail' === $this->posted( $name ) ) { return sprintf( __( 'COA Status cannot be Approved while %s is Failed.', 'pepselect-coa-archive' ), $label ); } }
 		return $valid;
 	}

@@ -28,7 +28,33 @@ final class Frontend_Router {
 	/** Blocks legacy core post-type URLs without redirecting or bypassing visibility. @return void */
 	public function protect_legacy_routes() {
 		if ( $this->is_route() || is_preview() || is_admin() ) { return; }
+		if ( is_singular( Post_Types::COA_TEST ) ) {
+			$test = get_queried_object();
+			$compound_id = $test instanceof \WP_Post ? absint( get_post_meta( $test->ID, 'compound_id', true ) ) : 0;
+			$context = $compound_id && $test instanceof \WP_Post ? $this->build_report_by_ids( $compound_id, $test->ID ) : array();
+			if ( $context && ! empty( $context['canonical'] ) ) {
+				wp_safe_redirect( $context['canonical'], 301 );
+				exit;
+			}
+		}
 		if ( is_post_type_archive( Post_Types::COMPOUND ) || is_singular( array( Post_Types::COMPOUND, Post_Types::COA_TEST ) ) ) { $this->mark_404(); }
+	}
+
+	/**
+	 * Makes wp-admin View/Preview links use the same public route customers see.
+	 * WordPress otherwise advertises /coa-test/{post-slug}/ even though that raw
+	 * post-type route is intentionally not the public certificate.
+	 *
+	 * @param string   $url  Core post-type URL.
+	 * @param \WP_Post $post Post being linked.
+	 * @return string
+	 */
+	public function filter_post_type_link( $url, $post ) {
+		if ( ! $post instanceof \WP_Post ) { return $url; }
+		if ( Post_Types::COMPOUND === $post->post_type ) { return $this->view_model->compound_url( $post ); }
+		if ( Post_Types::COA_TEST !== $post->post_type ) { return $url; }
+		$compound = get_post( absint( get_post_meta( $post->ID, 'compound_id', true ) ) );
+		return $compound && Post_Types::COMPOUND === $compound->post_type ? $this->view_model->test_url( $compound, $post ) : $url;
 	}
 
 	/** Builds the public archive context. @param int $page Page. @param string $search Search term. @return array */
