@@ -6,7 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /** Preserves exact public destinations when an approved COA URL changes. */
 final class QR_Redirects {
 	private const REDIRECTS = array(
-		'/testing/nad-500-mg/progress-1269/' => '/testing/nad-500-mg/nd50026205jp/',
+		'/testing/nad-500-mg/progress-1269/' => '/testing/nad-500-mg/nd50026205js/',
+		'/testing/nad-500-mg/nd50026205jp/' => '/testing/nad-500-mg/nd50026205js/',
 		'/testing/961/'                       => '/testing/retatrutide-10mg/',
 		'/testing/961/rt2026205jp/'           => '/testing/retatrutide-10mg/rt2026205jp/',
 	);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.8 - 2026-09-05
+
+- Permanently redirect the approved NAD URL typo `nd50026205jp` and the older printed `progress-1269` QR path directly to `nd50026205js`. Both trailing-slash forms work; unrelated routes and stored COA records remain unchanged.
+
 ## 0.7.7 - 2026-09-01
 
 - Preserved literal scientific references such as `USP <85>` while continuing to remove HTML markup.

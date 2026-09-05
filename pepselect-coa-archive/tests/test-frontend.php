@@ -48,12 +48,14 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function test_printed_nad500_qr_path_redirects_only_to_the_approved_batch() {
 		$redirects = new PepSelect\COAArchive\QR_Redirects();
-		$target = home_url( '/testing/nad-500-mg/nd50026205jp/' );
+		$target = home_url( '/testing/nad-500-mg/nd50026205js/' );
 		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/progress-1269/' ) );
 		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/progress-1269' ) );
 		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/progress-1270/' ) );
 		$this->assertSame( '', $redirects->destination_for_path( '/testing/other-compound/progress-1269/' ) );
-		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205jp/' ) );
+		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205jp/' ) );
+		$this->assertSame( $target, $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205jp' ) );
+		$this->assertSame( '', $redirects->destination_for_path( '/testing/nad-500-mg/nd50026205js/' ) );
 	}
 
 	public function test_legacy_numeric_retatrutide_paths_redirect_only_to_descriptive_routes() {
