@@ -35,7 +35,7 @@ Focused PHP contracts cover report rendering, report-only status, category order
 
 Browser checks: desktop 1440px; phone 390px; narrow phone 320px with no horizontal overflow. Certificate expansion, image loading, close control, and initial keyboard focus verified. Source-specific scientific corrections and full WordPress/theme testing remain separate.
 
-Local implementation only. No live deployment or public repository publication authorized.
+Initial previews were local only. Paulo subsequently authorized Live deployment; version 0.7.9 is installed and verified. See `../COA-0.7.9-RELEASE-2026-09-08.md`. Public repository publication remains separate.
 
 ## Follow-up refinement
 

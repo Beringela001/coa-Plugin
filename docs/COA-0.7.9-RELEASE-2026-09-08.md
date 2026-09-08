@@ -1,4 +1,4 @@
-# COA Archive 0.7.9 release preparation
+# COA Archive 0.7.9 Live release
 
 Paulo authorized deployment of the approved report refinements on September 8, 2026. Source is based on 0.7.8 with local refinement commits 34448bd and 322501e. This package also includes the preceding guarded historical/current navigation and detail-report evidence safeguards.
 
@@ -12,12 +12,27 @@ Paulo authorized deployment of the approved report refinements on September 8, 2
 
 Five focused PHP contracts passed: refinement rendering, logo URL, evidence/current mapping, historical navigation, NAD QR correction. Five JavaScript suites passed: lightbox, product links, sitemaps, redirects and integration. Plugin entry-point syntax and version consistency passed.
 
-## Deployment state
+## Deployment and backup
 
-Not installed yet. Both in-app and Chrome WordPress sessions require login; Chrome was left open for Paulo to sign in and complete the human-verification check.
+Paulo signed in to WordPress and explicitly authorized backup deletion and plugin updates on his behalf. The initial automated-review backup block was resolved by that authorization.
 
-MyKinsta is authenticated. Verified Pep Select / Live environment and manual backup list, newest to oldest. All five slots occupied. Oldest bottom backup is **Before Shipping Restrictions 0.4.2 live - 2026-09-04**, created September 4, 2026, 5:08 PM. Newer September 5, 6 and 8 backups remain present.
+Verified Pep Select / Live and manual backups newest-to-oldest. Removed only the bottom/oldest **Before Shipping Restrictions 0.4.2 live - 2026-09-04**, created September 4 at 5:08 PM. Other backups retained.
 
-Automatic approval review rejected selecting deletion of that oldest backup because deployment approval does not explicitly authorize irreversible removal of rollback data. No backup was deleted. Explicit approval is required to remove that exact oldest backup and create the named pre-release backup before installation.
+Created **Before COA mobile report 0.7.9 - 2026-09-08**, shown September 8 at 1:00 PM with Restore available, before submitting the package. Paulo completed installation; WordPress showed “Plugin updated successfully.” Plugin list independently confirms active 0.7.9 replacing 0.7.8.
 
-Next: after login and backup approval, recheck current version and manual backup order; create `Before COA mobile report 0.7.9 - 2026-09-08`; verify it completes; install the exact hashed package; clear relevant caches; inspect current/past/note reports, logo URL field, mobile layout, certificate viewer, verified product links and existing QR redirects. Do not restore the full database for a code rollback without accounting for orders since backup.
+Requested MyKinsta Clear all caches. Edge purge displayed propagation in progress; normal public report URLs subsequently served the new 0.7.9 assets and templates without cache-busting parameters.
+
+## Live verification
+
+- Current RT3026233GX report: Testing passed; three white metric cards; green purity value; green recorded-content tile; no category count; correct seven-category order; matching product and original lab/PDF links.
+- Mobile 390px: no horizontal overflow, two-column cards, full headings and correct green/neutral states. Desktop 1440px captured using the actual site theme.
+- Certificate disclosure opens; lightbox loads original image and focuses Close; close works.
+- Historical ND_R30_060326 remains explicitly historical with unchanged self-canonical, correct current-report and product links.
+- RT2026205JP customer note is inside the green outcome card, occurs once, and replaces generic prose. Original notice text preserved.
+- WordPress edit screen exposes Laboratory Logo URL under Batch & Vial Identity. No new logo URL or laboratory value was saved during verification.
+- Printed NAD typo URL still returns 301 to ND50026205JS.
+- Public testing archive, matching product page and NAD destination each returned HTTP 200.
+
+Live captures: `docs/coa-refinement/live-mobile-current.png`, `live-desktop-current.png`, `live-mobile-note.png`.
+
+No commerce, order-attribution, customer or stored scientific data changes. Source and release records remain committed locally; public repository publication remains separate. For code rollback, reinstall the saved 0.7.8 runtime package and clear caches. Do not restore the full database without accounting for orders since backup.
