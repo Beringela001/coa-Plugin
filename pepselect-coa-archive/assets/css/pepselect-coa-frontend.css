@@ -995,3 +995,8 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-typeahead__sep { color: #b6c3c0; font-size: 12px; }
 .ps-coa-typeahead__batch { color: #002A53; font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 14px; }
 .ps-coa-typeahead__meta { color: #60706d; font-size: 12px; white-space: nowrap; }
+
+/* Report review: preserve evidence while exposing the exact current route. */
+.ps-coa-report .ps-coa-current-path{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:22px;margin:0 0 24px;border:1px solid #d5e1e8;border-left:4px solid #28717c;border-radius:10px;background:#f3f8fa}
+.ps-coa-report .ps-coa-current-path p{margin:6px 0 0;font-size:14px}.ps-coa-current-path__actions{display:flex;gap:12px;flex-wrap:wrap}.ps-coa-report-source-notes summary{cursor:pointer;padding:12px 0;font-weight:600}.ps-coa-current-path a:focus-visible,.ps-coa-report-source-notes summary:focus-visible{outline:3px solid #bd851b;outline-offset:4px}
+@media(max-width:767px){.ps-coa-report .ps-coa-current-path{display:block;padding:18px}.ps-coa-current-path__actions{margin-top:16px}.ps-coa-current-path__actions a{width:100%;white-space:normal}}

@@ -291,6 +291,7 @@ final class Frontend_View_Model {
 	/** Returns full public report data including validated attachments. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @return array */
 	public function report( $test, $compound ) {
 		$model = $this->test_summary( $test, $compound );
+		$model['compound_id'] = (int) $compound->ID;
 		$laboratory_logo = $model['laboratory'] ? $this->laboratory_logo( $test, get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ) : $this->empty_laboratory_logo();
 		$model['laboratory_logo_id'] = $laboratory_logo['attachment_id']; $model['laboratory_logo_url'] = $laboratory_logo['url'];
 		$model['laboratory_logo_source'] = $laboratory_logo['source']; $model['laboratory_logo_alt'] = $laboratory_logo['alt'];
@@ -300,10 +301,10 @@ final class Frontend_View_Model {
 		$model['heavy_metals_summary'] = $results ? (string) get_post_meta( $test->ID, 'heavy_metals_summary', true ) : '';
 		$model['sterility_result'] = $results ? (string) get_post_meta( $test->ID, 'sterility_result', true ) : '';
 		$fentanyl_status = $results ? sanitize_key( (string) get_post_meta( $test->ID, 'fentanyl_status', true ) ) : '';
-		$fentanyl_saved = in_array( $fentanyl_status, array( 'pass', 'fail', 'not-tested' ), true );
-		$model['fentanyl_result'] = 'pass' === $fentanyl_status ? 'Not detected' : ( 'fail' === $fentanyl_status ? 'Detected' : '' );
-		$model['fentanyl_method'] = $fentanyl_saved ? 'Immunoassay' : '';
-		$model['fentanyl_specification'] = $fentanyl_saved ? '50 ng/mL cutoff' : '';
+		$fentanyl_evidence = Report_Evidence::fentanyl( $fentanyl_status );
+		$model['fentanyl_result'] = $fentanyl_evidence['result'];
+		$model['fentanyl_method'] = $fentanyl_evidence['method'];
+		$model['fentanyl_specification'] = $fentanyl_evidence['specification'];
 		$model['fentanyl_status'] = $this->status( $fentanyl_status );
 		$model['certificate_version'] = $complete ? (string) get_post_meta( $test->ID, 'certificate_version', true ) : '';
 		$model['report_notes'] = $complete ? (string) get_post_meta( $test->ID, 'report_notes', true ) : '';

@@ -133,7 +133,20 @@ final class Frontend_Router {
 
 	private function report_context( $compound, $test ) {
 		$adjacent = $this->tests->adjacent( $compound->ID, $test->ID );
-		return array( 'view' => 'report', 'template' => 'single-coa-report.php', 'canonical' => $this->view_model->test_url( $compound, $test ), 'archive_url' => $this->view_model->archive_url(), 'compound' => $this->view_model->compound( $compound ), 'test' => $this->view_model->report( $test, $compound ), 'previous_report' => $adjacent['previous'] ? $this->view_model->test_summary( $adjacent['previous'], $compound ) : null, 'next_report' => $adjacent['next'] ? $this->view_model->test_summary( $adjacent['next'], $compound ) : null );
+		$reports = array();
+		foreach ( $this->tests->all_for_compound( $compound->ID ) as $candidate ) {
+			if ( absint( get_post_meta( $candidate->ID, 'is_current', true ) ) ) { $reports[] = $this->view_model->report( $candidate, $compound ); }
+		}
+		$current = Report_Evidence::current_report( $compound->ID, $reports );
+		$compound_model = $this->view_model->compound( $compound );
+		$product_url = '';
+		// Product ID only. A duplicate public relationship suppresses the product CTA.
+		if ( $current && $compound_model['woocommerce_product_id'] && $compound_model['woocommerce_product_url'] ) {
+			$matching = get_posts( array( 'post_type' => Post_Types::COMPOUND, 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'woocommerce_product_id', 'meta_value' => $compound_model['woocommerce_product_id'], 'no_found_rows' => true ) );
+			$matching = array_values( array_filter( $matching, function ( $id ) { return (bool) $this->compounds->find_public_by_id( $id ); } ) );
+			$product_url = Report_Evidence::product_url( $compound->ID, $compound_model['woocommerce_product_url'], $matching );
+		}
+		return array( 'view' => 'report', 'template' => 'single-coa-report.php', 'canonical' => $this->view_model->test_url( $compound, $test ), 'archive_url' => $this->view_model->archive_url(), 'compound' => $compound_model, 'test' => $this->view_model->report( $test, $compound ), 'current_report' => $current, 'current_product_url' => $product_url, 'previous_report' => $adjacent['previous'] ? $this->view_model->test_summary( $adjacent['previous'], $compound ) : null, 'next_report' => $adjacent['next'] ? $this->view_model->test_summary( $adjacent['next'], $compound ) : null );
 	}
 
 	private function mark_404() {
