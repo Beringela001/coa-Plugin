@@ -378,7 +378,7 @@ final class REST_Write_Endpoint {
 			'endotoxin_status', 'endotoxin_result', 'endotoxin_unit',
 			'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result',
 			'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes',
-			'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version',
+			'coa_number', 'lab_report_url', 'laboratory_logo_url', 'verification_code', 'lab_verification_url', 'certificate_version',
 			'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes',
 			'coa_pdf_id', 'batch_vial_photo', 'laboratory_logo', 'batch_identity_photos', 'coa_page_images',
 		);

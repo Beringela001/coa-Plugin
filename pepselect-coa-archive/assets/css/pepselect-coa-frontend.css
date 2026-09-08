@@ -1014,7 +1014,9 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-report--mockup-layout .ps-coa-meta-crimp {grid-column:3;grid-row:2}
 .ps-coa-report--mockup-layout .ps-coa-report-metrics {grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .ps-coa-report--mockup-layout .ps-coa-report-metric {min-height:0;padding:14px;grid-template-columns:32px minmax(0,1fr);gap:10px;border-radius:6px}
-.ps-coa-report--mockup-layout .ps-coa-report-metric--pass {background:#e6f6ec;border-color:#a9d9bc}
+.ps-coa-report--mockup-layout .ps-coa-report-metric--pass {background:#fff}
+.ps-coa-report--mockup-layout .ps-coa-report-metric--pass dd {color:#087342}
+.ps-coa-report--mockup-layout .ps-coa-report-metric--pass .ps-coa-status--pass {color:#087342;background:#e1f4e8}
 .ps-coa-report--mockup-layout .ps-coa-report-metric__icon {width:32px;height:32px}
 .ps-coa-report--mockup-layout .ps-coa-report-metric dt {font-size:.85rem}
 .ps-coa-report--mockup-layout .ps-coa-report-metric__body > small {font-size:.75rem;line-height:1.5;color:#526379}

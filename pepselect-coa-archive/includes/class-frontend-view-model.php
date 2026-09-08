@@ -472,6 +472,8 @@ final class Frontend_View_Model {
 	/** Resolves a safe reusable laboratory logo without remote requests. @return array */
 	private function laboratory_logo( $test, $stored_lab, $other_lab ) {
 		$name = $this->laboratory_name( $stored_lab, $other_lab );
+		$url = $this->http_url( get_post_meta( $test->ID, 'laboratory_logo_url', true ) );
+		if ( $url ) { return array( 'attachment_id' => 0, 'url' => $url, 'source' => 'external-url', 'alt' => sprintf( __( '%s logo', 'pepselect-coa-archive' ), $name ) ); }
 		$id = absint( get_post_meta( $test->ID, 'laboratory_logo', true ) );
 		if ( ! $this->valid_laboratory_logo_id( $id ) ) { $id = $this->reusable_laboratory_logo_id( $stored_lab, $other_lab, $test->ID ); }
 		if ( $this->valid_laboratory_logo_id( $id ) ) {

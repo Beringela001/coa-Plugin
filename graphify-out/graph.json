@@ -184,7 +184,7 @@
       "label": "render_fixture()",
       "file_type": "code",
       "source_file": "docs/coa-refinement/render.php",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast"
     },
     {
@@ -1273,7 +1273,7 @@
       "label": ".labs()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L154",
+      "source_location": "L155",
       "_origin": "ast"
     },
     {
@@ -1281,7 +1281,7 @@
       "label": ".statuses()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L156",
+      "source_location": "L157",
       "_origin": "ast"
     },
     {
@@ -1289,7 +1289,7 @@
       "label": ".accepted_statuses()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L158",
+      "source_location": "L159",
       "_origin": "ast"
     },
     {
@@ -1297,7 +1297,7 @@
       "label": ".vial_colors()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L160",
+      "source_location": "L161",
       "_origin": "ast"
     },
     {
@@ -1305,7 +1305,7 @@
       "label": ".result_choices()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L162",
+      "source_location": "L163",
       "_origin": "ast"
     },
     {
@@ -1313,7 +1313,7 @@
       "label": ".fentanyl_choices()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L164",
+      "source_location": "L165",
       "_origin": "ast"
     },
     {
@@ -1321,7 +1321,7 @@
       "label": ".f()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L166",
+      "source_location": "L167",
       "_origin": "ast"
     },
     {
@@ -1329,7 +1329,7 @@
       "label": ".tab()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L168",
+      "source_location": "L169",
       "_origin": "ast"
     },
     {
@@ -1337,7 +1337,7 @@
       "label": ".number()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "_origin": "ast"
     },
     {
@@ -1345,7 +1345,7 @@
       "label": ".result()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L172",
+      "source_location": "L173",
       "_origin": "ast"
     },
     {
@@ -3602,7 +3602,7 @@
       "label": ".reusable_laboratory_logo_id()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L487",
+      "source_location": "L489",
       "_origin": "ast"
     },
     {
@@ -3610,7 +3610,7 @@
       "label": ".empty_laboratory_logo()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L504",
+      "source_location": "L506",
       "_origin": "ast"
     },
     {
@@ -3618,7 +3618,7 @@
       "label": ".fentanyl_is_documented_success()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L507",
+      "source_location": "L509",
       "_origin": "ast"
     },
     {
@@ -3626,7 +3626,7 @@
       "label": ".add_result_row()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L510",
+      "source_location": "L512",
       "_origin": "ast"
     },
     {
@@ -3634,7 +3634,7 @@
       "label": ".date_label()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L515",
+      "source_location": "L517",
       "_origin": "ast"
     },
     {
@@ -3642,7 +3642,7 @@
       "label": ".http_url()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L522",
+      "source_location": "L524",
       "_origin": "ast"
     },
     {
@@ -3650,7 +3650,7 @@
       "label": ".product_url()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L523",
+      "source_location": "L525",
       "_origin": "ast"
     },
     {
@@ -3658,7 +3658,7 @@
       "label": ".valid_image_id()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L524",
+      "source_location": "L526",
       "_origin": "ast"
     },
     {
@@ -3666,7 +3666,7 @@
       "label": ".valid_laboratory_logo_id()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L525",
+      "source_location": "L527",
       "_origin": "ast"
     },
     {
@@ -3674,7 +3674,7 @@
       "label": ".laboratory_logo_url()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L531",
+      "source_location": "L533",
       "_origin": "ast"
     },
     {
@@ -3682,7 +3682,7 @@
       "label": ".image_url()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L532",
+      "source_location": "L534",
       "_origin": "ast"
     },
     {
@@ -3690,7 +3690,7 @@
       "label": ".image_srcset()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L533",
+      "source_location": "L535",
       "_origin": "ast"
     },
     {
@@ -3698,7 +3698,7 @@
       "label": ".image_sizes()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L534",
+      "source_location": "L536",
       "_origin": "ast"
     },
     {
@@ -3706,7 +3706,7 @@
       "label": ".image_alt()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L535",
+      "source_location": "L537",
       "_origin": "ast"
     },
     {
@@ -3714,7 +3714,7 @@
       "label": ".pdf_url()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L536",
+      "source_location": "L538",
       "_origin": "ast"
     },
     {
@@ -3722,7 +3722,7 @@
       "label": ".gallery()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L537",
+      "source_location": "L539",
       "_origin": "ast"
     },
     {
@@ -3730,7 +3730,7 @@
       "label": ".compare_by_test_date()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L548",
+      "source_location": "L550",
       "_origin": "ast"
     },
     {
@@ -3738,7 +3738,7 @@
       "label": ".compare_incoming()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L556",
+      "source_location": "L558",
       "_origin": "ast"
     },
     {
@@ -5411,6 +5411,54 @@
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/report-evidence-contract.php",
       "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract",
+      "label": "report-logo-url-contract.php",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract_sanitize_key",
+      "label": "sanitize_key()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract_wp_http_validate_url",
+      "label": "wp_http_validate_url()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L4",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract_esc_url_raw",
+      "label": "esc_url_raw()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract_get_post_meta",
+      "label": "get_post_meta()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L6",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_report_logo_url_contract_check_logo",
+      "label": "check_logo()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L10",
       "_origin": "ast"
     },
     {
@@ -11830,6 +11878,14 @@
       "_origin": "ast"
     },
     {
+      "id": "coa_refinement_readme_follow_up_refinement",
+      "label": "Follow-up refinement",
+      "file_type": "document",
+      "source_file": "docs/coa-refinement/README.md",
+      "source_location": "L40",
+      "_origin": "ast"
+    },
+    {
       "id": "pepselect_coa_archive_changelog",
       "label": "CHANGELOG.md",
       "file_type": "document",
@@ -12976,7 +13032,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/coa-refinement/render.php",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -13046,7 +13102,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "docs/coa-refinement/render.php",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -13056,7 +13112,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "docs/coa-refinement/render.php",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -14631,7 +14687,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L154",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -14640,7 +14696,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L156",
+      "source_location": "L157",
       "weight": 1.0
     },
     {
@@ -14649,7 +14705,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L158",
+      "source_location": "L159",
       "weight": 1.0
     },
     {
@@ -14658,7 +14714,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L160",
+      "source_location": "L161",
       "weight": 1.0
     },
     {
@@ -14667,7 +14723,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L162",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -14676,7 +14732,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L164",
+      "source_location": "L165",
       "weight": 1.0
     },
     {
@@ -14685,7 +14741,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L166",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -14694,7 +14750,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L168",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -14703,7 +14759,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -14712,7 +14768,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L172",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -14762,7 +14818,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L120",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -14772,7 +14828,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L168",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -14782,7 +14838,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -14792,7 +14848,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-coa-test-fields.php",
-      "source_location": "L172",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -18152,7 +18208,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L487",
+      "source_location": "L489",
       "weight": 1.0
     },
     {
@@ -18161,7 +18217,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L504",
+      "source_location": "L506",
       "weight": 1.0
     },
     {
@@ -18170,7 +18226,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L507",
+      "source_location": "L509",
       "weight": 1.0
     },
     {
@@ -18179,7 +18235,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L510",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -18188,7 +18244,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L515",
+      "source_location": "L517",
       "weight": 1.0
     },
     {
@@ -18197,7 +18253,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L522",
+      "source_location": "L524",
       "weight": 1.0
     },
     {
@@ -18206,7 +18262,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L523",
+      "source_location": "L525",
       "weight": 1.0
     },
     {
@@ -18215,7 +18271,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L524",
+      "source_location": "L526",
       "weight": 1.0
     },
     {
@@ -18224,7 +18280,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L525",
+      "source_location": "L527",
       "weight": 1.0
     },
     {
@@ -18233,7 +18289,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L531",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -18242,7 +18298,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L532",
+      "source_location": "L534",
       "weight": 1.0
     },
     {
@@ -18251,7 +18307,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L533",
+      "source_location": "L535",
       "weight": 1.0
     },
     {
@@ -18260,7 +18316,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L534",
+      "source_location": "L536",
       "weight": 1.0
     },
     {
@@ -18269,7 +18325,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L535",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -18278,7 +18334,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L536",
+      "source_location": "L538",
       "weight": 1.0
     },
     {
@@ -18287,7 +18343,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L537",
+      "source_location": "L539",
       "weight": 1.0
     },
     {
@@ -18296,7 +18352,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L548",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -18305,7 +18361,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L556",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -18810,27 +18866,17 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
+      "target": "includes_class_frontend_view_model_frontend_view_model_http_url",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L475",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
       "target": "includes_class_frontend_view_model_frontend_view_model_valid_laboratory_logo_id",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L476",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
-      "target": "includes_class_frontend_view_model_frontend_view_model_reusable_laboratory_logo_id",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L476",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
-      "target": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo_url",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -18840,12 +18886,32 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
+      "target": "includes_class_frontend_view_model_frontend_view_model_reusable_laboratory_logo_id",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L478",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
+      "target": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo_url",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L480",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
       "target": "includes_class_frontend_view_model_frontend_view_model_empty_laboratory_logo",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L483",
+      "source_location": "L485",
       "weight": 1.0
     },
     {
@@ -18855,7 +18921,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L489",
+      "source_location": "L491",
       "weight": 1.0
     },
     {
@@ -18865,7 +18931,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L498",
+      "source_location": "L500",
       "weight": 1.0
     },
     {
@@ -18875,7 +18941,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L531",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -18885,7 +18951,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L533",
+      "source_location": "L535",
       "weight": 1.0
     },
     {
@@ -18895,7 +18961,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L534",
+      "source_location": "L536",
       "weight": 1.0
     },
     {
@@ -18905,7 +18971,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L541",
+      "source_location": "L543",
       "weight": 1.0
     },
     {
@@ -18915,7 +18981,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L542",
+      "source_location": "L544",
       "weight": 1.0
     },
     {
@@ -18925,7 +18991,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L542",
+      "source_location": "L544",
       "weight": 1.0
     },
     {
@@ -18935,7 +19001,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L542",
+      "source_location": "L544",
       "weight": 1.0
     },
     {
@@ -21509,6 +21575,61 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/report-evidence-contract.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract",
+      "target": "tests_report_logo_url_contract_sanitize_key",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract",
+      "target": "tests_report_logo_url_contract_wp_http_validate_url",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract",
+      "target": "tests_report_logo_url_contract_check_logo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_report_logo_url_contract_esc_url_raw",
+      "target": "tests_report_logo_url_contract_wp_http_validate_url",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/tests/report-logo-url-contract.php",
       "source_location": "L5",
       "weight": 1.0
     },
@@ -33687,6 +33808,15 @@
       "weight": 1.0
     },
     {
+      "source": "coa_refinement_readme_original_layout_coa_refinement_september_8_2026",
+      "target": "coa_refinement_readme_follow_up_refinement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/coa-refinement/README.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
       "source": "pepselect_coa_archive_changelog",
       "target": "pepselect_coa_archive_changelog_changelog",
       "relation": "contains",
@@ -34714,8 +34844,41 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_archive_search_endpoint_search_compounds",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-archive-search-endpoint.php",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_archive_search_endpoint_search_batches",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-archive-search-endpoint.php",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_archive_search_endpoint_resolve_compound_for_test",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-archive-search-endpoint.php",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_archive_search_endpoint_resolve_compound_for_test",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -34733,6 +34896,28 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-admin-workflow.php",
       "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_admin_workflow_coa_admin_workflow_timing",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-admin-workflow.php",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_admin_coa_test_admin_render_column",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-admin.php",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -34825,17 +35010,6 @@
     },
     {
       "source": "includes_class_coa_test_admin_coa_test_admin_apply_query_controls",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-coa-test-admin.php",
-      "source_location": "L77",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_coa_test_admin_coa_test_admin_apply_query_controls",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -34868,19 +35042,19 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_coa_test_admin_coa_test_admin_apply_sort_clauses",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "source": "includes_class_coa_test_admin_coa_test_admin_prime_compound_cache",
+      "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-admin.php",
-      "source_location": "L117",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
       "source": "includes_class_coa_test_admin_coa_test_admin_prime_compound_cache",
-      "target": "coa_refinement_render_absint",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -34968,7 +35142,7 @@
     },
     {
       "source": "includes_class_coa_test_form_coa_test_form_enqueue_assets",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -35001,13 +35175,24 @@
     },
     {
       "source": "includes_class_coa_test_form_coa_test_form_preserve_legacy_status",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
       "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_form_coa_test_form_load_legacy_color",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -35045,7 +35230,7 @@
     },
     {
       "source": "includes_class_coa_test_form_coa_test_form_preserve_legacy_color_choice",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -35063,6 +35248,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
       "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_importer_coa_test_importer_compounds",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-importer.php",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -35110,6 +35306,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_repository_coa_test_repository_grouped_for_compounds",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_repository_coa_test_repository_archive_index",
       "target": "includes_class_frontend_query_frontend_query",
       "relation": "calls",
@@ -35123,6 +35330,17 @@
     {
       "source": "includes_class_coa_test_repository_coa_test_repository_archive_index",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_repository_coa_test_repository_archive_index",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -35177,6 +35395,17 @@
     },
     {
       "source": "includes_class_coa_test_repository_coa_test_repository_find_public_by_batch_slug",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_repository_coa_test_repository_find_public_by_batch_slug",
       "target": "tests_test_coa_lightbox_count",
       "relation": "calls",
       "context": "call",
@@ -35209,6 +35438,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_repository_coa_test_repository_eligible_ids",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_repository_coa_test_repository_compare_tests",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -35217,6 +35457,39 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
       "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_repository_coa_test_repository_compare_tests",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_repository_coa_test_repository_compare_previous",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_repository_coa_test_repository_compare_incoming",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -35242,6 +35515,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_repository_coa_test_repository_compare_product_carousel",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L196",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_repository_coa_test_repository_compare_product_carousel_incoming",
       "target": "includes_class_coa_workflow_coa_workflow",
       "relation": "calls",
@@ -35253,6 +35537,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_repository_coa_test_repository_future_expected_date",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-repository.php",
+      "source_location": "L224",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_service_coa_test_service_after_save",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -35261,6 +35556,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_service_coa_test_service_after_save",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -35283,6 +35589,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
       "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_service_coa_test_service_load_verification_url",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -35319,8 +35636,30 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_service_coa_test_service_render_workflow_notices",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_service_coa_test_service_synchronize_title",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_service_coa_test_service_synchronize_title",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -35338,6 +35677,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
       "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_service_coa_test_service_flag_future_date",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -35363,19 +35713,30 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_coa_test_validation_coa_test_validation_set_context",
-      "target": "coa_refinement_render_absint",
+      "source": "includes_class_coa_test_service_coa_test_service_flag_workflow_guidance",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
-      "source_location": "L35",
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_service_coa_test_service_apply_ils_verification_default",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-service.php",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
       "source": "includes_class_coa_test_validation_coa_test_validation_set_context",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -35407,6 +35768,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_validation_coa_test_validation_sanitize",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_validation_coa_test_validation_workflow_requirements",
       "target": "includes_class_coa_workflow_coa_workflow",
       "relation": "calls",
@@ -35419,13 +35791,13 @@
     },
     {
       "source": "includes_class_coa_test_validation_coa_test_validation_workflow_requirements",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
-      "source_location": "L97",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -35518,13 +35890,13 @@
     },
     {
       "source": "includes_class_coa_test_validation_coa_test_validation_validate",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_wp_http_validate_url",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
-      "source_location": "L181",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -35539,6 +35911,28 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_coa_test_validation_coa_test_validation_validate_duplicate",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_validate_duplicate",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_coa_test_validation_coa_test_validation_context_post_id",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -35547,6 +35941,28 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
       "source_location": "L242",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_preserves_legacy_status",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_preserves_legacy_color",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L256",
       "weight": 1.0
     },
     {
@@ -35561,14 +35977,14 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_coa_test_validation_coa_test_validation_posted_post_status",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "source": "includes_class_coa_test_validation_coa_test_validation_legacy_batch_photo_exempt",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
-      "source_location": "L283",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -35606,6 +36022,17 @@
     },
     {
       "source": "includes_class_coa_test_validation_coa_test_validation_requirement_is_complete",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L383",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_requirement_is_complete",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -35613,6 +36040,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
       "source_location": "L386",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_requirement_is_complete",
+      "target": "tests_report_logo_url_contract_wp_http_validate_url",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L387",
       "weight": 1.0
     },
     {
@@ -35715,36 +36153,36 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_coa_workflow_coa_workflow_normalize_stage",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
-      "source_location": "L24",
-      "weight": 1.0
-    },
-    {
       "source": "includes_class_coa_workflow_coa_workflow_stage",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
-      "source_location": "L35",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
       "source": "includes_class_coa_workflow_coa_workflow_outcome",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
       "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_admin_compound_admin_render_column",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -35771,17 +36209,6 @@
     },
     {
       "source": "includes_class_compound_admin_compound_admin_render_filters",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
-      "source_location": "L57",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_compound_admin_compound_admin_render_filters",
       "target": "includes_class_compound_validation_compound_validation",
       "relation": "calls",
       "context": "call",
@@ -35800,17 +36227,6 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
       "source_location": "L63",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_compound_admin_compound_admin_apply_query_controls",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
-      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -35844,17 +36260,6 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
       "source_location": "L99",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_compound_admin_compound_admin_add_boolean_filter",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
-      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -35925,6 +36330,17 @@
     },
     {
       "source": "includes_class_compound_repository_compound_repository_archive_page",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-repository.php",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_repository_compound_repository_archive_page",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -35943,6 +36359,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-compound-repository.php",
       "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_repository_compound_repository_compare_compounds",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-repository.php",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -36034,6 +36461,28 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_compound_validation_compound_validation_validate_duplicate",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-validation.php",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_validation_compound_validation_validate_duplicate",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-validation.php",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_compound_validation_compound_validation_populate_empty_title",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -36042,6 +36491,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-compound-validation.php",
       "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_validation_compound_validation_populate_empty_title",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-validation.php",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -36069,6 +36529,17 @@
     {
       "source": "includes_class_dashboard_workflow_dashboard_workflow_active_rows",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-dashboard-workflow.php",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_dashboard_workflow_dashboard_workflow_active_rows",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36108,6 +36579,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-dashboard-workflow.php",
       "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_dashboard_workflow_dashboard_workflow_compound_name",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-dashboard-workflow.php",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -36167,17 +36649,6 @@
     },
     {
       "source": "includes_class_design_settings_design_settings_sanitize",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L86",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_design_settings_design_settings_sanitize",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -36185,17 +36656,6 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
       "source_location": "L87",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_frontend_query_frontend_query_view",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-frontend-query.php",
-      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -36221,8 +36681,30 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_frontend_router_frontend_router_protect_legacy_routes",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-router.php",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_frontend_router_frontend_router_filter_post_type_link",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-router.php",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_router_frontend_router_filter_post_type_link",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36255,6 +36737,17 @@
     },
     {
       "source": "includes_class_frontend_router_frontend_router_build_compound",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-router.php",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_router_frontend_router_build_compound",
       "target": "tests_test_coa_lightbox_count",
       "relation": "calls",
       "context": "call",
@@ -36267,6 +36760,17 @@
     {
       "source": "includes_class_frontend_router_frontend_router_report_context",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-router.php",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_router_frontend_router_report_context",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36386,6 +36890,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_frontend_template_loader_frontend_template_loader_ensure_assets",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-template-loader.php",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_frontend_view_model_frontend_view_model_archive_compound",
       "target": "includes_class_coa_workflow_coa_workflow",
       "relation": "calls",
@@ -36430,8 +36945,30 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_frontend_view_model_frontend_view_model_archive_compound",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_frontend_view_model_frontend_view_model_compound",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_compound",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36454,6 +36991,17 @@
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_test_summary",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_test_summary",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36497,13 +37045,13 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_history_report",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L191",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -36526,6 +37074,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
       "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_product_carousel_report",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -36563,13 +37122,13 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_report",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L303",
+      "source_location": "L295",
       "weight": 1.0
     },
     {
@@ -36617,17 +37176,6 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_frontend_view_model_frontend_view_model_status",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L346",
-      "weight": 1.0
-    },
-    {
       "source": "includes_class_frontend_view_model_frontend_view_model_is_full_qc_documented",
       "target": "includes_class_coa_workflow_coa_workflow",
       "relation": "calls",
@@ -36636,6 +37184,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
       "source_location": "L358",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_is_full_qc_documented",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L359",
       "weight": 1.0
     },
     {
@@ -36716,6 +37275,28 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_frontend_view_model_frontend_view_model_batch_slug",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_has_real_results",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L389",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_frontend_view_model_frontend_view_model_history_report_type",
       "target": "tests_test_coa_lightbox_count",
       "relation": "calls",
@@ -36728,7 +37309,7 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
-      "target": "coa_refinement_render_absint",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -36739,13 +37320,13 @@
     },
     {
       "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L480",
+      "source_location": "L477",
       "weight": 1.0
     },
     {
@@ -36756,18 +37337,51 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L493",
+      "source_location": "L495",
       "weight": 1.0
     },
     {
-      "source": "includes_class_frontend_view_model_frontend_view_model_fentanyl_is_documented_success",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "source": "includes_class_frontend_view_model_frontend_view_model_reusable_laboratory_logo_id",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L507",
+      "source_location": "L498",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_http_url",
+      "target": "tests_report_logo_url_contract_wp_http_validate_url",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L524",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_http_url",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L524",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_image_alt",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -36778,7 +37392,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L541",
+      "source_location": "L543",
       "weight": 1.0
     },
     {
@@ -36789,7 +37403,29 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L549",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_compare_by_test_date",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_compare_incoming",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L559",
       "weight": 1.0
     },
     {
@@ -36800,7 +37436,29 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
-      "source_location": "L559",
+      "source_location": "L561",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_visibility_frontend_visibility_is_compound_public",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-visibility.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_visibility_frontend_visibility_is_test_public",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-visibility.php",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -36926,17 +37584,6 @@
     },
     {
       "source": "includes_class_product_coa_carousel_product_coa_carousel_shortcode",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-product-coa-carousel.php",
-      "source_location": "L29",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_product_coa_carousel_product_coa_carousel_shortcode",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -37002,6 +37649,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_admin_product_matching_admin_render_compound_box",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_admin_product_matching_admin_render_product_box",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -37035,6 +37693,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_admin_product_matching_admin_render_product_box",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_admin_product_matching_admin_save_product_box",
       "target": "includes_class_compound_validation_compound_validation",
       "relation": "calls",
@@ -37057,14 +37726,14 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_product_matching_admin_product_matching_admin_handle_action",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "source": "includes_class_product_matching_admin_product_matching_admin_save_compound_box",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
-      "source_location": "L139",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -37076,17 +37745,6 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
       "source_location": "L139",
-      "weight": 1.0
-    },
-    {
-      "source": "includes_class_product_matching_admin_product_matching_admin_handle_bulk",
-      "target": "tests_report_refinement_contract_sanitize_key",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
-      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -37103,6 +37761,17 @@
     {
       "source": "includes_class_product_matching_admin_product_matching_admin_render_orphaned_relationships",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L187",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_admin_product_matching_admin_render_orphaned_relationships",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -37145,6 +37814,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_admin_product_matching_admin_render_product_row",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_admin_product_matching_admin_render_connect_form",
       "target": "coa_refinement_render_esc_attr",
       "relation": "calls",
@@ -37158,6 +37838,17 @@
     {
       "source": "includes_class_product_matching_admin_product_matching_admin_compound_options",
       "target": "includes_helpers_pepselect_coa_format_number",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_admin_product_matching_admin_compound_options",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -37186,6 +37877,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
       "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_admin_product_matching_admin_render_product_details",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -37245,6 +37947,17 @@
     },
     {
       "source": "includes_class_product_matching_product_matching_sku",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_sku",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
       "context": "call",
@@ -37266,6 +37979,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_product_matching_product_summary",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_product_matching_search",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -37278,6 +38002,17 @@
     },
     {
       "source": "includes_class_product_matching_product_matching_strength",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_strength",
       "target": "includes_class_compound_validation_compound_validation",
       "relation": "calls",
       "context": "call",
@@ -37285,6 +38020,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
       "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_coa_name",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -37310,6 +38056,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_product_matching_connect_existing",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_product_matching_create_and_connect",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -37318,6 +38075,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
       "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_create_and_connect",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -37355,6 +38123,17 @@
     },
     {
       "source": "includes_class_product_matching_product_matching_sync",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_sync",
       "target": "tests_test_coa_lightbox_count",
       "relation": "calls",
       "context": "call",
@@ -37362,6 +38141,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
       "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_sync",
+      "target": "tests_report_logo_url_contract_esc_url_raw",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L196",
       "weight": 1.0
     },
     {
@@ -37376,6 +38166,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_product_matching_disconnect",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_product_matching_product_status",
       "target": "tests_test_coa_lightbox_count",
       "relation": "calls",
@@ -37387,8 +38188,30 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_product_matching_product_matching_product_status",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L229",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_product_matching_product_matching_backfill_existing_links",
       "target": "coa_refinement_render_absint",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_backfill_existing_links",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -37439,6 +38262,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
       "source_location": "L286",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_product_matching_update_sync_meta",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching.php",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -37541,14 +38375,14 @@
       "weight": 1.0
     },
     {
-      "source": "includes_class_rest_write_endpoint_rest_write_endpoint_write",
-      "target": "tests_report_refinement_contract_sanitize_key",
+      "source": "includes_class_rest_write_endpoint_rest_write_endpoint_merge_values",
+      "target": "tests_report_logo_url_contract_get_post_meta",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-rest-write-endpoint.php",
-      "source_location": "L143",
+      "source_location": "L175",
       "weight": 1.0
     },
     {
@@ -37571,6 +38405,17 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-rest-write-endpoint.php",
       "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_rest_write_endpoint_rest_write_endpoint_derive_title",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-rest-write-endpoint.php",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -37618,6 +38463,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_seo_sitemaps_seo_sitemaps_public_url",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-seo-sitemaps.php",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_seo_sitemaps_seo_sitemaps_archive_modified_time",
       "target": "coa_refinement_render_absint",
       "relation": "calls",
@@ -37651,6 +38507,17 @@
       "weight": 1.0
     },
     {
+      "source": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
       "source": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
       "target": "includes_class_design_settings_design_settings",
       "relation": "calls",
@@ -37670,6 +38537,160 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-coa-4e-1.php",
       "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_1_pepselect_coa_archive_coa_5b_1_test_test_inactive_featured_compound_and_its_tests_are_retained_but_not_public",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b-1.php",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_1_pepselect_coa_archive_coa_5b_1_test_test_compound_display_name_change_updates_only_linked_test_titles",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b-1.php",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_2_pepselect_coa_archive_coa_5b_2_test_test_search_preserves_status_order_and_accurate_counts_without_mutation",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b-2.php",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_pepselect_coa_5b_test_test_create_and_connect_is_draft_idempotent_and_fabricates_no_tests",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b.php",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_pepselect_coa_5b_test_test_ops_rest_endpoint_delegates_to_the_same_create_and_connect_service",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b.php",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_pepselect_coa_5b_test_test_connect_and_sync_preserve_public_identity_slug_and_all_coa_owned_data",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b.php",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_pepselect_coa_5b_test_test_product_change_warning_deletion_and_disconnect_preserve_history",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b.php",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_5b_pepselect_coa_5b_test_test_woocommerce_inactive_preserves_relationships",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-5b.php",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_form_revision_pepselect_coa_archive_coa_form_revision_test_test_archived_and_superseded_values_are_preserved_read_only",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-form-revision.php",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_form_revision_pepselect_coa_archive_coa_form_revision_test_test_partial_results_gate_controls_result_editability_without_deleting_values",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-form-revision.php",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_test_management_pepselect_coa_archive_coa_test_management_test_test_saved_ils_text_values_are_not_overwritten",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-test-management.php",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_test_management_pepselect_coa_archive_coa_test_management_test_test_hidden_legacy_metadata_is_not_deleted",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-test-management.php",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_coa_test_management_pepselect_coa_archive_coa_test_management_test_test_only_one_current_test_per_compound_and_other_compounds_untouched",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-coa-test-management.php",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_compound_management_pepselect_coa_archive_compound_management_test_test_dependency_check_does_not_delete_saved_product_id",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-compound-management.php",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -37739,6 +38760,50 @@
       "weight": 1.0
     },
     {
+      "source": "tests_test_rest_write_endpoint_pepselect_coa_archive_rest_write_endpoint_test_test_partial_patch_never_fails_a_record_against_its_own_stored_data",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-rest-write-endpoint.php",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_rest_write_endpoint_pepselect_coa_archive_rest_write_endpoint_test_test_partial_patch_still_rejects_a_genuine_violation",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-rest-write-endpoint.php",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_rest_write_endpoint_pepselect_coa_archive_rest_write_endpoint_test_test_create_applies_the_same_defaults_the_admin_form_would",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-rest-write-endpoint.php",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_rest_write_endpoint_pepselect_coa_archive_rest_write_endpoint_test_test_write_applies_the_acf_save_post_side_effects",
+      "target": "tests_report_logo_url_contract_get_post_meta",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/tests/test-rest-write-endpoint.php",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
       "source": "tests_test_rest_write_endpoint_pepselect_coa_archive_rest_write_endpoint_test_approved_test",
       "target": "tests_qr_correction_contract_home_url",
       "relation": "calls",
@@ -37769,6 +38834,292 @@
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-seo-sitemaps.php",
       "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_admin_coa_test_admin_apply_query_controls",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-admin.php",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_admin_coa_test_admin_apply_sort_clauses",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-admin.php",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_form_coa_test_form_enqueue_assets",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_form_coa_test_form_preserve_legacy_status",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_form_coa_test_form_preserve_legacy_color_choice",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-form.php",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_set_context",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_workflow_requirements",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_validate",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_test_validation_coa_test_validation_posted_post_status",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-test-validation.php",
+      "source_location": "L283",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_workflow_coa_workflow_normalize_stage",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_workflow_coa_workflow_stage",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_coa_workflow_coa_workflow_outcome",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-coa-workflow.php",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_admin_compound_admin_render_filters",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_admin_compound_admin_apply_query_controls",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_compound_admin_compound_admin_add_boolean_filter",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-compound-admin.php",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings_sanitize",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_query_frontend_query_view",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-query.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_history_report",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_report",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L303",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_status",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L346",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_laboratory_logo",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L480",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_frontend_view_model_frontend_view_model_fentanyl_is_documented_success",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
+      "source_location": "L507",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_coa_carousel_product_coa_carousel_shortcode",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-coa-carousel.php",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_admin_product_matching_admin_handle_action",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_product_matching_admin_product_matching_admin_handle_bulk",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-product-matching-admin.php",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_rest_write_endpoint_rest_write_endpoint_write",
+      "target": "tests_report_refinement_contract_sanitize_key",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-rest-write-endpoint.php",
+      "source_location": "L143",
       "weight": 1.0
     },
     {

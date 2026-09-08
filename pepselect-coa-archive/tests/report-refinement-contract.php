@@ -30,4 +30,13 @@ $report=$context['test'];$report['all_reported_successful']=false;$report['histo
 ob_start();include pepselect_coa_template_path('partials/history-qc-band.php');include pepselect_coa_template_path('partials/history-category-grid.php');$history=ob_get_clean();
 verify_refinement(!str_contains($history,'--failed') && !str_contains($history,'is-failed'),'Reported became a failed history state.');
 verify_refinement(str_contains($history,'--neutral') && str_contains($history,'is-neutral'),'Reported lacks neutral history state.');
+verify_refinement(!str_contains($html,'7 of 7') && !str_contains($html,'categories reported'),'Category count remains in report overview.');
+$test=$context['test'];$test['average_net_content_display']='10';$test['claimed_content_display']='20';
+ob_start();include pepselect_coa_template_path('partials/full-qc-status-strip.php');$strip=ob_get_clean();
+verify_refinement((bool)preg_match('/<li class="ps-coa-qc-category ps-coa-qc-category--success">(?:(?!<\/li>).)*Measured content/s',$strip),'Measured content is not green.');
+verify_refinement(str_contains($strip,'>Measured</span>'),'Content completion lacks accurate accessible label.');
+$test['average_net_content_display']='';
+ob_start();include pepselect_coa_template_path('partials/full-qc-status-strip.php');$strip=ob_get_clean();
+verify_refinement(str_contains($strip,'>Not measured</span>'),'Missing content is shown as measured.');
+verify_refinement((bool)preg_match('/<li class="ps-coa-qc-category ps-coa-qc-category--neutral">(?:(?!<\/li>).)*Measured content/s',$strip),'Missing content is not neutral.');
 echo "Report refinement contracts: OK\n";

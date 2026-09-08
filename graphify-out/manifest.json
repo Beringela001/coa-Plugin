@@ -105,18 +105,18 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-test-fields.php": {
-    "mtime": 1788880079.1109326,
-    "ast_hash": "698af49bbdbd5a6e22c867cb11af063f",
+    "mtime": 1788885754.3315191,
+    "ast_hash": "86587c7d8f8e77405fcea7ccef2c084d",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-test-form.php": {
-    "mtime": 1788880079.1109326,
-    "ast_hash": "0ca77a3b11522c7efc08156e3c88fc5d",
+    "mtime": 1788885754.333519,
+    "ast_hash": "bb516e161cc4dc37887408969786950d",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-test-importer.php": {
-    "mtime": 1788880079.1109326,
-    "ast_hash": "7fa410832c6c16c881f590cd1e660ad0",
+    "mtime": 1788885754.3325186,
+    "ast_hash": "c19e3002074f87ce4d3243395c95067a",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-test-repository.php": {
@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-test-validation.php": {
-    "mtime": 1788880175.65204,
-    "ast_hash": "e80c6d745795a9f62ec4692792216c03",
+    "mtime": 1788885754.333519,
+    "ast_hash": "36d499b1ac9aa57def97f3d62042e47c",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-coa-workflow-requirements.php": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-frontend-view-model.php": {
-    "mtime": 1788885069.6931875,
-    "ast_hash": "19bec19538886da87127f0e67be06c8b",
+    "mtime": 1788885751.95922,
+    "ast_hash": "fff7d6cb1943bac74dfc155ed339cd06",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-frontend-visibility.php": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-rest-write-endpoint.php": {
-    "mtime": 1788880079.1204877,
-    "ast_hash": "71c64be92bfb26c5e782a8bc80c83976",
+    "mtime": 1788885754.3325186,
+    "ast_hash": "07f4e80d7d3565160807fa028b534cce",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-rest-write-guard.php": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/full-qc-status-strip.php": {
-    "mtime": 1788884418.601879,
-    "ast_hash": "19a6d8d0a3a196e1f36551adb351e1f7",
+    "mtime": 1788885778.1491754,
+    "ast_hash": "69d309485f8e6c92ada6724aad75e70c",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/gallery-lightbox.php": {
@@ -395,8 +395,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/history-metrics.php": {
-    "mtime": 1788884418.5978777,
-    "ast_hash": "42db0a4aebbd1849194ecc7c7bf04d39",
+    "mtime": 1788885195.5438955,
+    "ast_hash": "489c1923614f649f559a13eaeff5b6e1",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/history-previous-card.php": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/latest-report-card.php": {
-    "mtime": 1788884418.5988789,
-    "ast_hash": "0c8362367bccbeb9ee5e213a7592ed9c",
+    "mtime": 1788885196.275917,
+    "ast_hash": "984877ee3df7e9ac3a26b62493a663d5",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/previous-report-card.php": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-metrics.php": {
-    "mtime": 1788884418.599879,
-    "ast_hash": "a2af0460fbd7d039f406bd08020d4a36",
+    "mtime": 1788885197.0101237,
+    "ast_hash": "1647da527fd086899ad8cdcf8a02aaa3",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-navigation.php": {
@@ -845,38 +845,38 @@
     "semantic_hash": ""
   },
   "docs/coa-refinement/render.php": {
-    "mtime": 1788884884.3347754,
-    "ast_hash": "ca1315146d5731262b97c74f5f5ec2f6",
+    "mtime": 1788885879.414174,
+    "ast_hash": "1d4e7237a615dd8f296bb7f534e4fbc1",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/report-refinement-contract.php": {
-    "mtime": 1788885120.5863543,
-    "ast_hash": "775adda03c5aaa2aa3eff84f4d24cd46",
+    "mtime": 1788885878.6842067,
+    "ast_hash": "a61978a9914803ecf601dda0ee021f26",
     "semantic_hash": ""
   },
   "docs/coa-refinement/README.md": {
-    "mtime": 1788884883.049333,
-    "ast_hash": "c5b461a8f98326c4e07ed17068933dd0",
+    "mtime": 1788885880.1590474,
+    "ast_hash": "d83d013f2bb59cf6f4301ea95c771f8b",
     "semantic_hash": ""
   },
   "docs/coa-refinement/current.html": {
-    "mtime": 1788884915.0078719,
-    "ast_hash": "21a147d60629cb3382829822afc32f7d",
+    "mtime": 1788885910.4118488,
+    "ast_hash": "58b717e992c7e7cbe006bbad8acd4757",
     "semantic_hash": ""
   },
   "docs/coa-refinement/note.html": {
-    "mtime": 1788884915.0078719,
-    "ast_hash": "83bbb0e359eea201c0448c1a994299cc",
+    "mtime": 1788885910.4179611,
+    "ast_hash": "717379b1fdb7d6eac2fd91de35ff666c",
     "semantic_hash": ""
   },
   "docs/coa-refinement/past.html": {
-    "mtime": 1788884915.0078719,
-    "ast_hash": "359cc2a595807c8f63d74c3fd652e8d3",
+    "mtime": 1788885910.4148483,
+    "ast_hash": "1c8e6d816083239895e095f4b4042c12",
     "semantic_hash": ""
   },
   "docs/coa-refinement/states.html": {
-    "mtime": 1788884915.0078719,
-    "ast_hash": "d1ac57ac054f7c670c1e06cbffaa363b",
+    "mtime": 1788885910.421492,
+    "ast_hash": "78b017ad95d89bd652620b1b1d25224e",
     "semantic_hash": ""
   },
   "docs/coa-refinement/certificate-current.png": {
@@ -890,28 +890,33 @@
     "semantic_hash": ""
   },
   "docs/coa-refinement/desktop-current.png": {
-    "mtime": 1788884580.7952974,
-    "ast_hash": "e3bf9bcfe52cd6844508518ddcbe4543",
+    "mtime": 1788885974.2762678,
+    "ast_hash": "2778e8d3d5672b7b06fae14e544ed648",
     "semantic_hash": ""
   },
   "docs/coa-refinement/mobile-current.png": {
-    "mtime": 1788884750.2467842,
-    "ast_hash": "2bce357444f72da8dab5ffd20f63a5ac",
+    "mtime": 1788885952.434353,
+    "ast_hash": "d5175408783f563c6724ee6e56293eee",
     "semantic_hash": ""
   },
   "docs/coa-refinement/mobile-note.png": {
-    "mtime": 1788884751.4155314,
-    "ast_hash": "69ca1a12dd377f078b862709c3c45051",
+    "mtime": 1788885952.6529381,
+    "ast_hash": "eb2e35e923e924d4bed83e4066234764",
     "semantic_hash": ""
   },
   "docs/coa-refinement/mobile-past.png": {
-    "mtime": 1788884933.0126212,
-    "ast_hash": "66acbea58dcae24a55aa912889f9f016",
+    "mtime": 1788885971.8210113,
+    "ast_hash": "c848be224596c98b387606a7c90e5625",
     "semantic_hash": ""
   },
   "docs/coa-refinement/mobile-states.png": {
-    "mtime": 1788884934.2411928,
-    "ast_hash": "f245fb86f0b781b2ad4d469695bafd67",
+    "mtime": 1788885973.0126896,
+    "ast_hash": "f0de535d8eb10e1938eb8611b68911a1",
+    "semantic_hash": ""
+  },
+  "pepselect-coa-archive/tests/report-logo-url-contract.php": {
+    "mtime": 1788885838.1534164,
+    "ast_hash": "ed3c6ae1e73ce73bec13bc615a4c2168",
     "semantic_hash": ""
   }
 }

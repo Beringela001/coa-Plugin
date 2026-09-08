@@ -36,3 +36,11 @@ Focused PHP contracts cover report rendering, report-only status, category order
 Browser checks: desktop 1440px; phone 390px; narrow phone 320px with no horizontal overflow. Certificate expansion, image loading, close control, and initial keyboard focus verified. Source-specific scientific corrections and full WordPress/theme testing remain separate.
 
 Local implementation only. No live deployment or public repository publication authorized.
+
+## Follow-up refinement
+
+Paulo requested matching white measurement cards, with a green purity percentage and Pass badge. The testing overview now marks measured content green whenever a value exists, independently of the vial label; missing content stays gray. This means measurement recorded, not quantity specification passed. The detailed Reported badges remain neutral and no saved result status changes. The overview category count is removed.
+
+The COA edit form now offers **Laboratory Logo URL**, accepting a direct HTTP/HTTPS image link with priority over the attachment. It flows through ACF fields, availability, REST metadata/write allowlist, CSV field vocabulary, validation and public logo resolution. Existing uploaded/bundled fallbacks remain when no valid URL is supplied. A supplied link renders beside the lab name in the bottom card. No real Freedom logo URL was supplied or configured by this local change.
+
+Customer-facing notices remain directly below **Testing passed**, replacing the generic paragraph inside the green card. See `mobile-note.png` for the placement. URL contracts exercise the save sanitizer and renderer using WordPress substitutes; full WordPress testing remains a staging check.
