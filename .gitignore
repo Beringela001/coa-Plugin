@@ -12,3 +12,9 @@ composer.lock
 
 # Local agent session settings
 .claude/
+
+# Local audit downloads and preview runtime output.
+tmp/
+
+# Regenerable Graphify cache (retain the graph and manifest).
+graphify-out/cache/

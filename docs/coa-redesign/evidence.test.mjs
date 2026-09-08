@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {records,product,currentDestination} from './evidence.mjs';
+assert.equal(currentDestination(records.past).report,records.current.url);
+assert.equal(currentDestination(records.current).product,product.url);
+assert.equal(currentDestination(records.past,[records.past]),null);
+assert.equal(currentDestination(records.past,[records.current,records.current]),null);
+assert.equal(currentDestination(records.past,[{...records.current,compound:'retatrutide-10mg'}]),null);
+assert.equal(currentDestination(records.past,undefined,{...product,compound:'retatrutide-20mg'}),null);
+assert.notEqual(records.past.url,records.current.url);
+assert.equal(records.past.rows.find(r=>r[0].startsWith('Endotoxin'))[1],'NMT 0.05 EU/mL');
+assert.equal(records.past.rows.find(r=>r[0].startsWith('Endotoxin'))[2],'Reported');
+assert.equal(records.current.rows.find(r=>r[0].startsWith('Endotoxin'))[1],'Two replicates: Pass');
+assert.match(records.current.rows.find(r=>r[0]==='Fentanyl')[3],/not stated in this report/);
+assert.match(records.current.rows.find(r=>r[0].startsWith('Microbial'))[0],/PCR/);
+assert.equal(records.current.rows.length,7);
+console.log('Preview evidence and navigation checks: OK');
