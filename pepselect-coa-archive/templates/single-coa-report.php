@@ -13,7 +13,7 @@ if ( ! $ps_embedded ) { get_header(); }
 		<section class="ps-coa-report-panel ps-coa-measured-values" aria-labelledby="ps-measured-values">
 			<h2 class="ps-coa-panel-kicker" id="ps-measured-values"><?php esc_html_e( 'Measured values', 'pepselect-coa-archive' ); ?></h2>
 			<?php if ( $test['has_summary_metrics'] ) { include pepselect_coa_template_path( 'partials/report-summary-metrics.php' ); } ?>
-			<p><?php esc_html_e( 'Purity and quantity are different measurements. The release decision does not turn an unreported or report-only test into a pass. Review individual results and original documentation below.', 'pepselect-coa-archive' ); ?></p>
+			<?php if ( $test['show_qc_strip'] ) { include pepselect_coa_template_path( 'partials/full-qc-status-strip.php' ); } ?>
 		</section>
 	<?php endif; ?>
 	<?php if ( $test['result_rows'] ) : ?><section class="ps-coa-report-panel ps-coa-laboratory-data" aria-labelledby="ps-qc-results"><h2 class="ps-coa-panel-kicker" id="ps-qc-results"><?php echo esc_html( 'pending' === $test['coa_status'] ? __( 'Available laboratory data', 'pepselect-coa-archive' ) : __( 'Independent laboratory data', 'pepselect-coa-archive' ) ); ?></h2><?php include pepselect_coa_template_path( 'partials/full-qc-results-table.php' ); ?><?php if ( $test['laboratory'] ) : ?><footer class="ps-coa-results-footer"><span aria-hidden="true">&#9651;</span> <?php echo esc_html( sprintf( __( 'Reported by %s', 'pepselect-coa-archive' ), $test['laboratory'] ) ); ?></footer><?php endif; ?></section><?php endif; ?>

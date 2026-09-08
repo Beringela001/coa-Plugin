@@ -200,7 +200,7 @@ final class Frontend_View_Model {
 		$model['all_reported_successful'] = $model['reported_category_count'] > 0 && $model['reported_category_count'] === $model['successful_category_count'];
 		$model['is_full_qc_documented'] = 'approved' === $model['coa_status'] && 7 === $model['reported_category_count'] && 7 === $model['successful_category_count'];
 		$model['history_report_type'] = $this->history_report_type( $model );
-		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Full-QC testing passed.', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'QC testing passed.', 'pepselect-coa-archive' ) : __( 'QC testing results.', 'pepselect-coa-archive' ) );
+		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : __( 'Testing results', 'pepselect-coa-archive' ) );
 		$model['history_qc_summary'] = sprintf( __( '%1$d of 7 laboratory categories reported. %2$s', 'pepselect-coa-archive' ), $model['reported_category_count'], 'failed' === $model['coa_status'] ? __( 'Release review did not pass.', 'pepselect-coa-archive' ) : __( 'Independent documentation on file.', 'pepselect-coa-archive' ) );
 		$model['history_status_label'] = 'failed' === $model['coa_status'] ? __( 'Did not pass release review', 'pepselect-coa-archive' ) : ( $model['is_full_qc_documented'] ? __( 'Full-QC documented', 'pepselect-coa-archive' ) : __( 'QC documented', 'pepselect-coa-archive' ) );
 		$model['history_context'] = 'failed' === $model['coa_status'] ? __( 'This batch did not pass release review and was not released for sale.', 'pepselect-coa-archive' ) : __( 'Independent testing record with published batch documentation.', 'pepselect-coa-archive' );
@@ -313,16 +313,16 @@ final class Frontend_View_Model {
 		$model['page_images'] = $complete ? $this->gallery( get_post_meta( $test->ID, 'coa_page_images', true ), $compound->post_title, 'certificate page' ) : array();
 		$model['batch_identity_photos'] = $complete ? $this->gallery( get_post_meta( $test->ID, 'batch_identity_photos', true ), $compound->post_title, 'batch identity photo' ) : array();
 		$model['result_rows'] = $results ? $this->result_rows( $test, $model ) : array();
-		$model['has_summary_metrics'] = '' !== $model['purity_percentage_display'] || '' !== $model['average_net_content_display'] || '' !== $model['claimed_content_display'] || '' !== $model['vials_tested_display'];
+		$model['has_summary_metrics'] = '' !== $model['purity_percentage_display'] || '' !== $model['average_net_content_display'] || '' !== $model['claimed_content_display'];
 		$model['qc_strip_rows'] = $this->qc_strip_rows( $model['result_rows'], $model );
 		$model['qc_category_count'] = count( $model['qc_strip_rows'] );
 		$model['reported_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ); } ) );
 		$model['qc_success_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ) && ! empty( $row['status']['success'] ); } ) );
 		$model['qc_all_reported_successful'] = $model['reported_category_count'] > 0 && $model['reported_category_count'] === $model['qc_success_category_count'];
 		$model['is_full_qc_documented'] = 'publish' === $test->post_status && 'approved' === $model['coa_status'] && 'complete' === $model['workflow_stage'] && 7 === $model['reported_category_count'] && 7 === $model['qc_success_category_count'];
-		$model['qc_strip_title'] = $model['is_full_qc_documented'] ? __( 'Full-QC Testing Passed', 'pepselect-coa-archive' ) : ( $model['qc_all_reported_successful'] ? __( 'QC Testing Passed', 'pepselect-coa-archive' ) : __( 'QC Testing Results', 'pepselect-coa-archive' ) );
+		$model['qc_strip_title'] = $model['is_full_qc_documented'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( $model['qc_all_reported_successful'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : __( 'Testing results', 'pepselect-coa-archive' ) );
 		$model['qc_strip_summary'] = $model['qc_all_reported_successful'] ? __( 'All reported tests met the laboratory specifications listed below.', 'pepselect-coa-archive' ) : __( 'Review the reported category results below.', 'pepselect-coa-archive' );
-		$model['show_qc_strip'] = 'approved' === $model['coa_status'] && $model['reported_category_count'] > 0;
+		$model['show_qc_strip'] = in_array( $model['coa_status'], array( 'approved', 'failed' ), true ) && $model['reported_category_count'] > 0;
 		$model['lab_report_host'] = $model['lab_report_url'] ? (string) wp_parse_url( $model['lab_report_url'], PHP_URL_HOST ) : '';
 		$model['outcome_points'] = array();
 		if ( 'approved' === $model['coa_status'] ) {
@@ -344,6 +344,8 @@ final class Frontend_View_Model {
 	/** Returns semantic status data with an explicit approved-report success override. @param string $stored Stored value. @param bool $success_override Green icon without relabeling. @return array */
 	public function status( $stored, $success_override = false ) {
 		$stored = sanitize_key( str_replace( '_', '-', (string) $stored ) );
+		// A report-only result never inherits the batch release status.
+		if ( 'reported' === $stored ) { $success_override = false; }
 		$labels = array( 'approved' => 'Approved', 'failed' => 'Failed', 'in-testing' => 'In Testing', 'vendor-vetting' => 'Vendor Vetting', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
 		$value = isset( $labels[ $stored ] ) ? $stored : '';
 		$class = $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty';
@@ -399,7 +401,7 @@ final class Frontend_View_Model {
 		if ( '' !== $model['average_net_content_display'] ) {
 			$range = ( '' !== $model['minimum_net_content_display'] || '' !== $model['maximum_net_content_display'] ) ? trim( $model['minimum_net_content_display'] . '–' . $model['maximum_net_content_display'] . ' ' . $unit ) : '';
 			$result = trim( $model['average_net_content_display'] . ' ' . $unit . ( $range ? ' (' . $range . ')' : '' ) );
-			$this->add_result_row( $rows, 'net-content', __( 'Average Net Content', 'pepselect-coa-archive' ), '', '', $result, $this->status( 'reported', 'approved' === $model['coa_status'] ), __( 'Net Content', 'pepselect-coa-archive' ) );
+			$this->add_result_row( $rows, 'net-content', __( 'Measured content', 'pepselect-coa-archive' ), '', '', $result, $this->status( 'reported', 'approved' === $model['coa_status'] ), __( 'Net Content', 'pepselect-coa-archive' ) );
 		}
 		$this->add_result_row( $rows, 'heavy-metals', __( 'Heavy Metals', 'pepselect-coa-archive' ), '', '', $model['heavy_metals_summary'], $model['heavy_metals_status'] );
 		$this->add_result_row( $rows, 'sterility', __( 'Sterility', 'pepselect-coa-archive' ), '', '', $model['sterility_result'], $model['sterility_status'] );
@@ -416,11 +418,11 @@ final class Frontend_View_Model {
 		$definitions = array(
 			'identity' => __( 'Identity', 'pepselect-coa-archive' ),
 			'purity' => __( 'Purity', 'pepselect-coa-archive' ),
-			'net-content' => __( 'Net Content', 'pepselect-coa-archive' ),
-			'heavy-metals' => __( 'Heavy Metals', 'pepselect-coa-archive' ),
+			'net-content' => __( 'Measured content', 'pepselect-coa-archive' ),
 			'sterility' => __( 'Sterility', 'pepselect-coa-archive' ),
+			'fentanyl' => __( 'Fentanyl screening', 'pepselect-coa-archive' ),
+			'heavy-metals' => __( 'Heavy metals', 'pepselect-coa-archive' ),
 			'endotoxins' => __( 'Endotoxins', 'pepselect-coa-archive' ),
-			'fentanyl' => __( 'Fentanyl Screen', 'pepselect-coa-archive' ),
 		);
 		$by_key = array();
 		foreach ( $result_rows as $row ) { $by_key[ $row['key'] ] = $row; }
@@ -430,6 +432,7 @@ final class Frontend_View_Model {
 			$reported = $this->qc_category_is_reported( $row );
 			if ( ! $reported ) { $row['status'] = $this->status( '' ); $row['detail'] = '--'; }
 			else { $row['detail'] = $this->qc_strip_detail( $row, $model ); }
+			$row['short_label'] = $label;
 			$row['reported'] = $reported;
 			$rows[] = $row;
 		}
