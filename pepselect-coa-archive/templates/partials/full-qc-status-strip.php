@@ -16,9 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 			// Green means a content measurement is present, not that it matches the label.
 			$is_content = 'net-content' === $row['key'];
 			$measured = $is_content && '' !== trim( (string) $test['average_net_content_display'] );
-			$success = $is_content ? $measured : 'pass' === $row['status']['value'];
-			$state = $success ? 'success' : ( ! $is_content && 'fail' === $row['status']['value'] ? 'failed' : 'neutral' );
-			$state_label = $is_content ? ( $measured ? __( 'Measured', 'pepselect-coa-archive' ) : __( 'Not measured', 'pepselect-coa-archive' ) ) : $row['status']['label'];
+			$failed = 'fail' === $row['status']['value'];
+			// Omit untested categories only here; retain every disclosure in the evidence table.
+			$completed = $is_content ? $measured : ( ! empty( $row['reported'] ) && in_array( $row['status']['value'], array( 'pass', 'reported' ), true ) );
+			if ( ! $failed && ! $completed ) { continue; }
+			$success = ! $failed;
+			$state = $failed ? 'failed' : 'success';
+			$state_label = $is_content && ! $failed ? __( 'Measured', 'pepselect-coa-archive' ) : $row['status']['label'];
 			?>
 			<li class="ps-coa-qc-category ps-coa-qc-category--<?php echo esc_attr( $state ); ?>">
 				<span class="ps-coa-qc-category__icon" aria-hidden="true">

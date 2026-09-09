@@ -1025,7 +1025,7 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-report .ps-coa-status__icon {width:20px;height:20px;stroke-width:2}
 .ps-coa-report--mockup-layout .ps-coa-qc-strip {border:1px solid #add8c2;margin-top:14px}
 .ps-coa-report--mockup-layout .ps-coa-qc-strip__header {background:#fff;padding:12px 16px;min-height:0}
-.ps-coa-report--mockup-layout .ps-coa-qc-strip__categories {grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:6px;background:#fff}
+.ps-coa-report--mockup-layout .ps-coa-qc-strip__categories {grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:4px;padding:6px;background:#fff}
 .ps-coa-report--mockup-layout .ps-coa-qc-category:nth-child(n) {border:0;border-radius:6px;padding:14px 6px;min-height:88px}
 .ps-coa-report--mockup-layout .ps-coa-qc-category--success {background:#e1f4e8;color:#07683d}
 .ps-coa-report--mockup-layout .ps-coa-qc-category--neutral {background:#edf0f3;color:#536170}

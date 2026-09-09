@@ -76,6 +76,14 @@
       "_origin": "ast"
     },
     {
+      "id": "coa_refinement_render_overview_review",
+      "label": "render-overview-review.php",
+      "file_type": "code",
+      "source_file": "docs/coa-refinement/render-overview-review.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
       "id": "coa_refinement_render",
       "label": "__()",
       "file_type": "code",
@@ -11627,6 +11635,46 @@
       "file_type": "code",
       "source_file": "pepselect-coa-archive/uninstall.php",
       "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_9_release_2026_09_08",
+      "label": "COA-0.7.9-RELEASE-2026-09-08.md",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
+      "label": "COA Archive 0.7.9 Live release",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_9_release_2026_09_08_package",
+      "label": "Package",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_9_release_2026_09_08_deployment_and_backup",
+      "label": "Deployment and backup",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L15",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_9_release_2026_09_08_live_verification",
+      "label": "Live verification",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L25",
       "_origin": "ast"
     },
     {
@@ -33580,6 +33628,42 @@
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-seo-sitemaps.php",
       "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_9_release_2026_09_08",
+      "target": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
+      "target": "docs_coa_0_7_9_release_2026_09_08_package",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
+      "target": "docs_coa_0_7_9_release_2026_09_08_deployment_and_backup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
+      "target": "docs_coa_0_7_9_release_2026_09_08_live_verification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
