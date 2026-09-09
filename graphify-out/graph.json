@@ -11678,6 +11678,46 @@
       "_origin": "ast"
     },
     {
+      "id": "docs_coa_overview_review_2026_09_08",
+      "label": "COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "file_type": "document",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
+      "label": "COA follow-up — awaiting visual/data approval",
+      "file_type": "document",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_overview_review_2026_09_08_prepared_source_change",
+      "label": "Prepared source change",
+      "file_type": "document",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_overview_review_2026_09_08_proposed_data_correction_preview_only",
+      "label": "Proposed data correction — preview only",
+      "file_type": "document",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L11",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_overview_review_2026_09_08_preview_and_validation",
+      "label": "Preview and validation",
+      "file_type": "document",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L19",
+      "_origin": "ast"
+    },
+    {
       "id": "docs_coa_redesign_audit_2026_09_08",
       "label": "COA-REDESIGN-AUDIT-2026-09-08.md",
       "file_type": "document",
@@ -33664,6 +33704,42 @@
       "confidence": "EXTRACTED",
       "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_overview_review_2026_09_08",
+      "target": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
+      "target": "docs_coa_overview_review_2026_09_08_prepared_source_change",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
+      "target": "docs_coa_overview_review_2026_09_08_proposed_data_correction_preview_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
+      "target": "docs_coa_overview_review_2026_09_08_preview_and_validation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
+      "source_location": "L19",
       "weight": 1.0
     },
     {

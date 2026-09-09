@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/pepselect-coa-archive.php": {
-    "mtime": 1788886547.9207747,
-    "ast_hash": "a2ee7908ba6a499e10d1e2d8b69842dc",
+    "mtime": 1788920017.9798484,
+    "ast_hash": "88d9d7d33a34a64bdff440a42a762250",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/admin/dashboard-workflow.php": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/readme.txt": {
-    "mtime": 1788886548.634708,
-    "ast_hash": "4245f02a6ff3052dff749cd7493c985b",
+    "mtime": 1788920017.9803622,
+    "ast_hash": "f735422f324ef67bdf027ed28da42495",
     "semantic_hash": ""
   },
   "docs/coa-redesign/current-vial.png": {
@@ -950,8 +950,28 @@
     "semantic_hash": ""
   },
   "docs/coa-refinement/overview-review-desktop.png": {
-    "mtime": 1788919298.7291734,
-    "ast_hash": "a2fd2c508a0f6337ac458a6bbc9f969c",
+    "mtime": 1788919409.5810618,
+    "ast_hash": "bc155ca59695e9c83fc35e38e2bb1e47",
+    "semantic_hash": ""
+  },
+  "docs/COA-OVERVIEW-REVIEW-2026-09-08.md": {
+    "mtime": 1788919466.6872218,
+    "ast_hash": "5b76a17d3ff29dc48502c3480ea4cebd",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/overview-review-mobile.png": {
+    "mtime": 1788919435.2183855,
+    "ast_hash": "cae52b26dea9c68d0508be3b7ab79a98",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/staging-0710-desktop.png": {
+    "mtime": 1788920567.1936035,
+    "ast_hash": "272996fd2834640bf03c36c6dfdb927e",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/staging-0710-mobile.png": {
+    "mtime": 1788920585.946261,
+    "ast_hash": "4cf4719e58053c74624db83afb743984",
     "semantic_hash": ""
   }
 }
