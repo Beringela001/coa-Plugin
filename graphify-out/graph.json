@@ -76,6 +76,14 @@
       "_origin": "ast"
     },
     {
+      "id": "coa_refinement_render_note_review",
+      "label": "render-note-review.php",
+      "file_type": "code",
+      "source_file": "docs/coa-refinement/render-note-review.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
       "id": "coa_refinement_render_overview_review",
       "label": "render-overview-review.php",
       "file_type": "code",
@@ -11638,6 +11646,54 @@
       "_origin": "ast"
     },
     {
+      "id": "docs_coa_0_7_10_release_2026_09_08",
+      "label": "COA-0.7.10-RELEASE-2026-09-08.md",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "label": "COA Archive 0.7.10 release",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_10_release_2026_09_08_package_and_rollback",
+      "label": "Package and rollback",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_10_release_2026_09_08_backups_and_deployment",
+      "label": "Backups and deployment",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L12",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_10_release_2026_09_08_approved_live_data_correction",
+      "label": "Approved Live data correction",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L28",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_0_7_10_release_2026_09_08_verification",
+      "label": "Verification",
+      "file_type": "document",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L42",
+      "_origin": "ast"
+    },
+    {
       "id": "docs_coa_0_7_9_release_2026_09_08",
       "label": "COA-0.7.9-RELEASE-2026-09-08.md",
       "file_type": "document",
@@ -11675,6 +11731,22 @@
       "file_type": "document",
       "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
       "source_location": "L25",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_note_visibility_2026_09_09",
+      "label": "COA-NOTE-VISIBILITY-2026-09-09.md",
+      "file_type": "document",
+      "source_file": "docs/COA-NOTE-VISIBILITY-2026-09-09.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_note_visibility_2026_09_09_customer_note_visibility",
+      "label": "Customer note visibility",
+      "file_type": "document",
+      "source_file": "docs/COA-NOTE-VISIBILITY-2026-09-09.md",
+      "source_location": "L1",
       "_origin": "ast"
     },
     {
@@ -33671,6 +33743,51 @@
       "weight": 1.0
     },
     {
+      "source": "docs_coa_0_7_10_release_2026_09_08",
+      "target": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "target": "docs_coa_0_7_10_release_2026_09_08_package_and_rollback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "target": "docs_coa_0_7_10_release_2026_09_08_backups_and_deployment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "target": "docs_coa_0_7_10_release_2026_09_08_approved_live_data_correction",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_0_7_10_release_2026_09_08_coa_archive_0_7_10_release",
+      "target": "docs_coa_0_7_10_release_2026_09_08_verification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-0.7.10-RELEASE-2026-09-08.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
       "source": "docs_coa_0_7_9_release_2026_09_08",
       "target": "docs_coa_0_7_9_release_2026_09_08_coa_archive_0_7_9_live_release",
       "relation": "contains",
@@ -33704,6 +33821,15 @@
       "confidence": "EXTRACTED",
       "source_file": "docs/COA-0.7.9-RELEASE-2026-09-08.md",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_note_visibility_2026_09_09",
+      "target": "docs_coa_note_visibility_2026_09_09_customer_note_visibility",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-NOTE-VISIBILITY-2026-09-09.md",
+      "source_location": "L1",
       "weight": 1.0
     },
     {

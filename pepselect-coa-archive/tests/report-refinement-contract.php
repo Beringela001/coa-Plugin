@@ -17,6 +17,11 @@ $metrics=explode('</dl>',explode('<dl class="ps-coa-report-metrics">',$html)[1])
 verify_refinement(!str_contains($metrics,'HPLC') && !str_contains($metrics,'Verified') && !str_contains($metrics,'Label value'),'Redundant method/label badge remains.');
 verify_refinement(str_contains($metrics,'ps-coa-report-metric--pass'),'Passing purity lacks whole-card state.');
 $note=render_fixture('note');
+verify_refinement(str_contains($note,'<aside class="ps-coa-outcome-notes"') && str_contains($note,'Important batch note'),'Custom customer note lacks a clearly labeled callout.');
+verify_refinement(!str_contains($html,'Important batch note'),'Standard status copy became a customer note.');
+$test=fixture('states')['test'];$test['public_notes']='Review this batch notice.';$test['report_notes']='Review this batch notice.';$compound=$context['compound'];
+ob_start();include pepselect_coa_template_path('partials/report-hero.php');$failed_note=ob_get_clean();
+verify_refinement(str_contains($failed_note,'Testing failed') && str_contains($failed_note,'Important batch note') && substr_count($failed_note,'Review this batch notice.')===1,'Failed customer note changed state or duplicated text.');
 verify_refinement(substr_count($note,'Batch RT2026205JP was shipped')===1,'Public note duplicated.');
 verify_refinement(!str_contains($note,'Review the results and original report below.'),'Generic copy was not replaced by public note.');
 verify_refinement(strpos($note,'ps-coa-outcome-notes')>strpos($note,'ps-coa-report-hero__outcome'),'Public note outside outcome card.');

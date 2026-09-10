@@ -455,8 +455,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-hero.php": {
-    "mtime": 1788884779.891243,
-    "ast_hash": "c97f62906b829eb63d8a9cef0ded1019",
+    "mtime": 1789010088.5394707,
+    "ast_hash": "151ab0cfbe4d19b6480df833c003082b",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-metrics.php": {
@@ -850,8 +850,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/report-refinement-contract.php": {
-    "mtime": 1788919149.6672826,
-    "ast_hash": "80cf86c3ea792491aaee16f45d3b6764",
+    "mtime": 1789010250.4899926,
+    "ast_hash": "e7a380a98d91f3e08e9274d41fd2ec26",
     "semantic_hash": ""
   },
   "docs/coa-refinement/README.md": {
@@ -972,6 +972,51 @@
   "docs/coa-refinement/staging-0710-mobile.png": {
     "mtime": 1788920585.946261,
     "ast_hash": "4cf4719e58053c74624db83afb743984",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/render-note-review.php": {
+    "mtime": 1789010116.6575408,
+    "ast_hash": "7338eb2bddcdfef643d8b116115daac2",
+    "semantic_hash": ""
+  },
+  "docs/COA-0.7.10-RELEASE-2026-09-08.md": {
+    "mtime": 1788922501.19503,
+    "ast_hash": "406aa61477129dd908859f986eeae1a3",
+    "semantic_hash": ""
+  },
+  "docs/COA-NOTE-VISIBILITY-2026-09-09.md": {
+    "mtime": 1789010251.39562,
+    "ast_hash": "a3ee8f64e8ea1a2fc448a10e174367b0",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/note-review.html": {
+    "mtime": 1789010124.6835382,
+    "ast_hash": "5d3cd3c0f4e52a198cc49c6eda36336a",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/live-0710-desktop.png": {
+    "mtime": 1788921323.7393415,
+    "ast_hash": "7ae0cdaa5e717a8b01c4450df8ca0bae",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/live-0710-failed.png": {
+    "mtime": 1788921305.3575413,
+    "ast_hash": "eb8216c512f55fc14866af832a627580",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/live-0710-mobile.png": {
+    "mtime": 1788921325.194275,
+    "ast_hash": "80970ce0d24173fac3a992f20af2a1ac",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/note-review-desktop.png": {
+    "mtime": 1789010165.2096398,
+    "ast_hash": "63265df390e00ab0db90405b85015cfe",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/note-review-mobile.png": {
+    "mtime": 1789010226.3398361,
+    "ast_hash": "e8f2ca9795cdbf7997c9a078d1ae478b",
     "semantic_hash": ""
   }
 }
