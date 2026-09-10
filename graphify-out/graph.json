@@ -76,6 +76,14 @@
       "_origin": "ast"
     },
     {
+      "id": "coa_refinement_render_audit_review",
+      "label": "render-audit-review.php",
+      "file_type": "code",
+      "source_file": "docs/coa-refinement/render-audit-review.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
       "id": "coa_refinement_render_note_review",
       "label": "render-note-review.php",
       "file_type": "code",
@@ -5298,6 +5306,14 @@
       "label": "report-navigation.php",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/templates/partials/report-navigation.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "partials_report_notes",
+      "label": "report-notes.php",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/templates/partials/report-notes.php",
       "source_location": "L1",
       "_origin": "ast"
     },
@@ -11787,6 +11803,46 @@
       "file_type": "document",
       "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
       "source_location": "L19",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_public_audit_2026_09_10",
+      "label": "COA-PUBLIC-AUDIT-2026-09-10.md",
+      "file_type": "document",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_public_audit_2026_09_10_public_coa_presentation_audit_and_0_7_12_candidate",
+      "label": "Public COA presentation audit and 0.7.12 candidate",
+      "file_type": "document",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_public_audit_2026_09_10_scope_and_findings",
+      "label": "Scope and findings",
+      "file_type": "document",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_public_audit_2026_09_10_implemented_alternative",
+      "label": "Implemented alternative",
+      "file_type": "document",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L15",
+      "_origin": "ast"
+    },
+    {
+      "id": "docs_coa_public_audit_2026_09_10_verification_and_release_state",
+      "label": "Verification and release state",
+      "file_type": "document",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L23",
       "_origin": "ast"
     },
     {
@@ -33866,6 +33922,42 @@
       "confidence": "EXTRACTED",
       "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
       "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_public_audit_2026_09_10",
+      "target": "docs_coa_public_audit_2026_09_10_public_coa_presentation_audit_and_0_7_12_candidate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_public_audit_2026_09_10_public_coa_presentation_audit_and_0_7_12_candidate",
+      "target": "docs_coa_public_audit_2026_09_10_scope_and_findings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_public_audit_2026_09_10_public_coa_presentation_audit_and_0_7_12_candidate",
+      "target": "docs_coa_public_audit_2026_09_10_implemented_alternative",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_coa_public_audit_2026_09_10_public_coa_presentation_audit_and_0_7_12_candidate",
+      "target": "docs_coa_public_audit_2026_09_10_verification_and_release_state",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/COA-PUBLIC-AUDIT-2026-09-10.md",
+      "source_location": "L23",
       "weight": 1.0
     },
     {

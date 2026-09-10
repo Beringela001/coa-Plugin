@@ -20,11 +20,11 @@ $note=render_fixture('note');
 verify_refinement(str_contains($note,'<aside class="ps-coa-outcome-notes"') && str_contains($note,'Important batch note'),'Custom customer note lacks a clearly labeled callout.');
 verify_refinement(!str_contains($html,'Important batch note'),'Standard status copy became a customer note.');
 $test=fixture('states')['test'];$test['public_notes']='Review this batch notice.';$test['report_notes']='Review this batch notice.';$compound=$context['compound'];
-ob_start();include pepselect_coa_template_path('partials/report-hero.php');$failed_note=ob_get_clean();
+ob_start();include pepselect_coa_template_path('partials/report-hero.php');include pepselect_coa_template_path('partials/report-notes.php');$failed_note=ob_get_clean();
 verify_refinement(str_contains($failed_note,'Testing failed') && str_contains($failed_note,'Important batch note') && substr_count($failed_note,'Review this batch notice.')===1,'Failed customer note changed state or duplicated text.');
 verify_refinement(substr_count($note,'Batch RT2026205JP was shipped')===1,'Public note duplicated.');
 verify_refinement(!str_contains($note,'Review the results and original report below.'),'Generic copy was not replaced by public note.');
-verify_refinement(strpos($note,'ps-coa-outcome-notes')>strpos($note,'ps-coa-report-hero__outcome'),'Public note outside outcome card.');
+verify_refinement(strpos($note,'ps-coa-outcome-notes')>strpos($note,'</header>'),'Public note still stretches hero.');
 verify_refinement(str_contains($note,'Testing passed') && str_contains($note,'outcome--success'),'Public note removed approval.');
 $states=render_fixture('states');
 verify_refinement(str_contains($states,'qc-category--failed') && !str_contains($states,'qc-category--neutral'),'Failure must stay visible; untested overview cards must be omitted.');
@@ -60,3 +60,13 @@ foreach ([['32.78','','','Content measured during testing.'],['0','','','Content
  if($average!==''){verify_refinement(!str_contains($history,'Not reported'),'Measured content described as absent.');}
 }
 echo "Report refinement contracts: OK\n";
+
+$test['coa_status']='failed';
+$test['release_decision_note']='Review this batch notice.';
+$test['public_notes']='<p>Review this batch notice.</p>';
+$test['report_notes']='  Review this batch notice.  ';
+ob_start();include pepselect_coa_template_path('partials/report-notes.php');$deduped=ob_get_clean();
+verify_refinement(substr_count($deduped,'Review this batch notice.')===1,'KPV release decision duplicates customer note.');
+$test['report_notes']='A separate disclosure.';
+ob_start();include pepselect_coa_template_path('partials/report-notes.php');$distinct=ob_get_clean();
+verify_refinement(str_contains($distinct,'A separate disclosure.') && str_contains($distinct,'Review this batch notice.'),'Distinct disclosure lost.');

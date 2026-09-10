@@ -9,6 +9,7 @@ if ( ! $ps_embedded ) { get_header(); }
 	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li><a href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( $compound['display_name'] ); ?></a></li><li aria-current="page"><?php echo esc_html( $test['batch_number'] ? sprintf( __( 'Batch %s', 'pepselect-coa-archive' ), $test['batch_number'] ) : $test['workflow_stage_label'] ); ?></li></ol></nav>
 	<?php include pepselect_coa_template_path( 'partials/report-current-path.php' ); ?>
 	<?php include pepselect_coa_template_path( 'partials/report-hero.php' ); ?>
+	<?php include pepselect_coa_template_path( 'partials/report-notes.php' ); ?>
 	<?php if ( in_array( $test['coa_status'], array( 'approved', 'failed' ), true ) && ( $test['has_summary_metrics'] || $test['show_qc_strip'] ) ) : ?>
 		<section class="ps-coa-report-panel ps-coa-measured-values" aria-labelledby="ps-measured-values">
 			<h2 class="ps-coa-panel-kicker" id="ps-measured-values"><?php esc_html_e( 'Measured values', 'pepselect-coa-archive' ); ?></h2>

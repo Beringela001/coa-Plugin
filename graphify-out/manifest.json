@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/pepselect-coa-archive.php": {
-    "mtime": 1789010586.1458385,
-    "ast_hash": "f4db5ef0f63a2aa15d27e08fea5261bc",
+    "mtime": 1789082488.1074035,
+    "ast_hash": "914ea3727b7ed51207afee6ffe6c47c3",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/admin/dashboard-workflow.php": {
@@ -455,8 +455,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-hero.php": {
-    "mtime": 1789010088.5394707,
-    "ast_hash": "151ab0cfbe4d19b6480df833c003082b",
+    "mtime": 1789082226.5018497,
+    "ast_hash": "3f75c8ea75df3bd8c1d1ce32daab95a2",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-metrics.php": {
@@ -505,8 +505,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/single-coa-report.php": {
-    "mtime": 1788884072.0717173,
-    "ast_hash": "031220de766485af44a44425e171f373",
+    "mtime": 1789082226.5028539,
+    "ast_hash": "1da981be72693ceeb6e4c88ff5a0b769",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/single-compound-history.php": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/readme.txt": {
-    "mtime": 1789010586.1458385,
-    "ast_hash": "0abdab1694b138e6953f4653ff4e46ef",
+    "mtime": 1789082488.1115208,
+    "ast_hash": "1b5de9e1accf8b124af6174106e49796",
     "semantic_hash": ""
   },
   "docs/coa-redesign/current-vial.png": {
@@ -850,8 +850,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/report-refinement-contract.php": {
-    "mtime": 1789010250.4899926,
-    "ast_hash": "e7a380a98d91f3e08e9274d41fd2ec26",
+    "mtime": 1789082263.985098,
+    "ast_hash": "86e4786b322776580c9ba637c295d58a",
     "semantic_hash": ""
   },
   "docs/coa-refinement/README.md": {
@@ -975,8 +975,8 @@
     "semantic_hash": ""
   },
   "docs/coa-refinement/render-note-review.php": {
-    "mtime": 1789010116.6575408,
-    "ast_hash": "7338eb2bddcdfef643d8b116115daac2",
+    "mtime": 1789082226.5038533,
+    "ast_hash": "c7a17ae93575b59df9792391435e4b77",
     "semantic_hash": ""
   },
   "docs/COA-0.7.10-RELEASE-2026-09-08.md": {
@@ -985,13 +985,13 @@
     "semantic_hash": ""
   },
   "docs/COA-NOTE-VISIBILITY-2026-09-09.md": {
-    "mtime": 1789011182.395252,
-    "ast_hash": "35a6d9d4c0b46541bdbe606ba65930c0",
+    "mtime": 1789011496.9448292,
+    "ast_hash": "b2f830c415eb456fc577a9654723d64b",
     "semantic_hash": ""
   },
   "docs/coa-refinement/note-review.html": {
-    "mtime": 1789010124.6835382,
-    "ast_hash": "5d3cd3c0f4e52a198cc49c6eda36336a",
+    "mtime": 1789082269.8699074,
+    "ast_hash": "6df1909e44d82e3d1d5ff2e2f657a6a6",
     "semantic_hash": ""
   },
   "docs/coa-refinement/live-0710-desktop.png": {
@@ -1027,6 +1027,51 @@
   "docs/coa-refinement/note-live-mobile.png": {
     "mtime": 1789011112.0972424,
     "ast_hash": "e6aac7eeea671f99bc9c0e412c4f464c",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/public-audit-2026-09-10.json": {
+    "mtime": 1789082427.5334284,
+    "ast_hash": "cc8a959f41f47991a1a926a7a7c51504",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/render-audit-review.php": {
+    "mtime": 1789082384.5198915,
+    "ast_hash": "e313d491c5beba5387c391e9aae08a1b",
+    "semantic_hash": ""
+  },
+  "pepselect-coa-archive/templates/partials/report-notes.php": {
+    "mtime": 1789082181.1141734,
+    "ast_hash": "2dc399f5cb0adc6a85205f230db81d7c",
+    "semantic_hash": ""
+  },
+  "docs/COA-PUBLIC-AUDIT-2026-09-10.md": {
+    "mtime": 1789082543.6185615,
+    "ast_hash": "614f6db6b1243f5ad550885d5fd96a68",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/audit-kpv.html": {
+    "mtime": 1789082387.8783913,
+    "ast_hash": "ae5f976f72b1c5561501290a2194ddc2",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/audit-reta.html": {
+    "mtime": 1789082387.877391,
+    "ast_hash": "760ef8eb9e3110c6736b679d34e3e969",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/audit-kpv-mobile.png": {
+    "mtime": 1789082473.0044525,
+    "ast_hash": "ca8137e32048cd0d6587f7949e464313",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/audit-reta-desktop.png": {
+    "mtime": 1789082473.2332625,
+    "ast_hash": "bd15ce031d5f56f9ea7eea21812656f2",
+    "semantic_hash": ""
+  },
+  "docs/coa-refinement/audit-reta-mobile.png": {
+    "mtime": 1789082428.6116984,
+    "ast_hash": "8ea60b3e092fec6b3fc51ecbff39e02b",
     "semantic_hash": ""
   }
 }
