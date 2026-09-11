@@ -1054,15 +1054,12 @@ body.ps-coa-lightbox-open { overflow: hidden; }
 .ps-coa-report--mockup-layout .ps-coa-report-nav a {display:inline-flex;align-items:center;min-height:44px}
 .ps-coa-report--mockup-layout summary:focus-visible,.ps-coa-report--mockup-layout a:focus-visible,.ps-coa-report--mockup-layout button:focus-visible {outline:3px solid #1786ac;outline-offset:3px}
 @media(max-width:800px){
- .ps-coa-report--mockup-layout .ps-coa-report-hero {grid-template-columns:minmax(0,1fr) 115px;gap:14px}
+ .ps-coa-report--mockup-layout .ps-coa-report-hero {grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
  .ps-coa-report--mockup-layout .ps-coa-report-hero__identity {grid-column:1 / -1;padding:0}
- .ps-coa-report--mockup-layout .ps-coa-report-hero__outcome {grid-column:1;grid-row:2;order:2;padding:14px}
- .ps-coa-report--mockup-layout .ps-coa-report-hero__vial {grid-column:2;grid-row:2;order:3;min-height:0;margin:0;align-self:stretch;padding:4px}
+ .ps-coa-report--mockup-layout .ps-coa-report-hero__outcome {grid-column:2;grid-row:2;order:3;padding:14px;align-self:stretch;min-width:0}
+ .ps-coa-report--mockup-layout .ps-coa-report-hero__vial {grid-column:1;grid-row:2;order:2;min-height:0;margin:0;align-self:stretch;padding:4px;min-width:0}
  .ps-coa-report--mockup-layout .ps-coa-report-hero__vial img {height:180px;object-fit:contain}
  .ps-coa-report--mockup-layout .ps-coa-outcome-top {flex-wrap:wrap;gap:8px}
- .ps-coa-report--mockup-layout .ps-coa-report-hero:has(.ps-coa-outcome-notes) .ps-coa-report-hero__outcome {grid-column:1 / -1;grid-row:3}
- .ps-coa-report--mockup-layout .ps-coa-report-hero:has(.ps-coa-outcome-notes) .ps-coa-report-hero__vial {grid-column:1 / -1;grid-row:2}
- .ps-coa-report--mockup-layout .ps-coa-report-hero:has(.ps-coa-outcome-notes) .ps-coa-report-hero__vial img {height:140px}
  .ps-coa-report--mockup-layout .ps-coa-outcome-icon {width:32px;height:32px}
  .ps-coa-report--mockup-layout .ps-coa-report-hero__outcome h2 {font-size:1.4rem}
  .ps-coa-report--mockup-layout .ps-coa-report-hero__outcome p {font-size:.8rem;line-height:1.5}

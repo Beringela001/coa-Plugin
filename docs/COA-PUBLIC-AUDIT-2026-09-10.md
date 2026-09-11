@@ -26,6 +26,7 @@ Production-template previews: `coa-refinement/audit-reta.html` and `coa-refineme
 - Existing JavaScript integration and certificate-lightbox suites pass.
 - Desktop1440 and phone390 visual previews inspected; phone320 KPV retains16px text and no horizontal overflow. Note link reaches the unique card anchor.
 - Screenshots: `coa-refinement/audit-reta-desktop.png`, `audit-reta-mobile.png`, `audit-kpv-mobile.png`.
-- Candidate package `dist/pepselect-coa-archive-0.7.12.zip`:114 files; SHA256 `0b10a046585ec9c28d2beaa7bc7f85966aa74446876cf4d2d8bd055c8c657f28`.
+- Mobile follow-up: equal-width columns with vial left/status right; both cards stretch to the same row height. Verified at390px (153.5px wide each,201.125px high on Reta) and320px (123.5px wide each,290.9375px high on KPV). Neither viewport overflows horizontally. Removed obsolete inside-hero note layout overrides. Desktop rules are unchanged.
+- Candidate package `dist/pepselect-coa-archive-0.7.12.zip` rebuilt after the mobile follow-up:114 files; SHA256 `7c0dc88a84608d95ffd540b7b8429da927076965f026e3e1b41eb78fa0ec4139`.
 - Not deployed. Live baseline remains0.7.11. Connected browser currently exposes only the in-app browser; WordPress redirects to sign-in and no authenticated MyKinsta/Chrome session is available. User was asked to reconnect/sign in while preparation continued. Staging verification, fresh Live backup, installation, cache purge and public post-deployment checks remain required.
 - Prior saved0.7.11 package is the code rollback candidate. Reverify its hash before deployment. No checkout, order, payment, tracking, Control or Ops behavior changes.
