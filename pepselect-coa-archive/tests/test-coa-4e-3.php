@@ -6,30 +6,33 @@ class PepSelect_COA_Archive_COA_4E_3_Test extends WP_UnitTestCase {
 
 	public function set_up() { parent::set_up(); do_action( 'init' ); $this->view = new PepSelect\COAArchive\Frontend_View_Model(); }
 
-	public function test_full_report_uses_all_seven_success_positions() {
+	public function test_full_report_keeps_measurement_distinct_from_a_passing_specification() {
 		$model = $this->report( $this->fixture() );
-		$this->assertSame( array( 'Identity', 'Purity', 'Net Content', 'Heavy Metals', 'Sterility', 'Endotoxins', 'Fentanyl Screen' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
+		$this->assertSame( array( 'Identity', 'Purity', 'Measured content', 'Sterility', 'Fentanyl screening', 'Heavy metals', 'Endotoxins' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
 		$this->assertSame( 7, $model['reported_category_count'] );
-		$this->assertSame( 7, $model['qc_success_category_count'] );
-		$this->assertSame( 'Full-QC Testing Passed', $model['qc_strip_title'] );
+		$this->assertSame( 6, $model['qc_success_category_count'] );
+		$this->assertSame( 'reported', $model['qc_strip_rows'][2]['status']['value'] );
+		$this->assertFalse( $model['is_full_qc_documented'] );
+		$this->assertSame( 'Testing results', $model['qc_strip_title'] );
 	}
 
 	public function test_partial_report_keeps_seven_positions_and_truthful_count() {
 		$model = $this->report( $this->fixture( array( 'heavy_metals_status' => 'not-tested', 'heavy_metals_summary' => '', 'sterility_status' => 'not-tested', 'sterility_result' => '', 'endotoxin_status' => 'not-tested', 'endotoxin_result' => '', 'fentanyl_status' => 'not-tested' ) ) );
 		$this->assertCount( 7, $model['qc_strip_rows'] );
 		$this->assertSame( 3, $model['reported_category_count'] );
-		$this->assertSame( 'QC Testing Passed', $model['qc_strip_title'] );
+		$this->assertSame( 'Testing results', $model['qc_strip_title'] );
 		foreach ( array_slice( $model['qc_strip_rows'], 3 ) as $row ) { $this->assertSame( '--', $row['detail'] ); $this->assertFalse( $row['reported'] ); $this->assertFalse( $row['status']['success'] ); }
-		$this->assertSame( 'Fentanyl Screen', $model['qc_strip_rows'][6]['short_label'] );
+		$this->assertSame( 'Fentanyl screening', $model['qc_strip_rows'][4]['short_label'] );
 	}
 
 	public function test_failed_saved_category_never_receives_success_claim() {
 		$model = $this->report( $this->fixture( array( 'fentanyl_status' => 'fail' ) ) );
-		$row = $model['qc_strip_rows'][6];
+		$rows = array_column( $model['qc_strip_rows'], null, 'key' );
+		$row = $rows['fentanyl'];
 		$this->assertSame( 'Detected', $row['detail'] );
 		$this->assertTrue( $row['reported'] );
 		$this->assertFalse( $row['status']['success'] );
-		$this->assertSame( 'QC Testing Results', $model['qc_strip_title'] );
+		$this->assertSame( 'Testing results', $model['qc_strip_title'] );
 	}
 
 	public function test_blank_purity_result_is_not_inferred_successful() {
@@ -39,11 +42,16 @@ class PepSelect_COA_Archive_COA_4E_3_Test extends WP_UnitTestCase {
 		$this->assertSame( 6, $model['reported_category_count'] );
 	}
 
-	public function test_qc_template_uses_dynamic_title_and_seven_denominator() {
-		$template = $this->template( 'partials/full-qc-status-strip.php' );
-		$this->assertStringContainsString( "\$test['qc_strip_title']", $template );
-		$this->assertStringContainsString( '$total_categories', $template );
-		$this->assertStringContainsString( "\$row['reported']", file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' ) );
+	public function test_strip_omits_untested_chips_without_removing_detailed_disclosures() {
+		$test = $this->report( $this->fixture( array( 'fentanyl_status' => 'not-tested' ) ) );
+		ob_start(); include dirname( __DIR__ ) . '/templates/partials/full-qc-status-strip.php'; $html = ob_get_clean();
+		$this->assertStringContainsString( 'Testing overview', $html );
+		$this->assertSame( 6, substr_count( $html, '<li ' ) );
+		$this->assertStringContainsString( 'Measured', $html );
+		$this->assertStringNotContainsString( 'Fentanyl screening', $html );
+		$this->assertCount( 7, $test['qc_strip_rows'] );
+		$rows = array_column( $test['result_rows'], null, 'key' );
+		$this->assertSame( 'not-tested', $rows['fentanyl']['status']['value'] );
 	}
 
 	public function test_hero_metadata_has_exact_two_row_source_order() {
@@ -58,7 +66,7 @@ class PepSelect_COA_Archive_COA_4E_3_Test extends WP_UnitTestCase {
 
 	public function test_certificate_section_has_exact_header_and_large_card_markup() {
 		$template = $this->template( 'partials/certificate-pages.php' );
-		foreach ( array( 'Original document', 'Certificate pages', 'Click any page for full-screen review', 'data-ps-coa-certificate-gallery', 'data-ps-coa-attachment-id', 'ps-coa-certificate__preview', 'ps-coa-certificate__meta' ) as $needle ) { $this->assertStringContainsString( $needle, $template ); }
+		foreach ( array( 'Original document', 'Certificate pages', 'Expand to view pages', 'data-ps-coa-certificate-gallery', 'data-ps-coa-attachment-id', 'ps-coa-certificate__preview', 'ps-coa-certificate__meta' ) as $needle ) { $this->assertStringContainsString( $needle, $template ); }
 	}
 
 	public function test_certificate_template_preserves_order_and_real_captions() {

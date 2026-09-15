@@ -1,7 +1,7 @@
 <?php
 /** Foundation integration tests. */
 class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
-	public function test_plugin_bootstraps() { $this->assertSame( '0.7.3', pepselect_coa_archive_version() ); }
+	public function test_plugin_bootstraps() { $header = get_file_data( dirname( __DIR__ ) . '/pepselect-coa-archive.php', array( 'version' => 'Version' ) ); $this->assertSame( $header['version'], pepselect_coa_archive_version() ); }
 	public function test_post_types_and_rest_are_registered() {
 		do_action( 'init' );
 		foreach ( array( 'ps_compound', 'ps_coa_test' ) as $name ) { $object = get_post_type_object( $name ); $this->assertNotNull( $object ); $this->assertTrue( $object->show_in_rest ); }
@@ -33,7 +33,7 @@ class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
 		wp_set_current_user( $user_id );
 		foreach ( array( 'ps_compound', 'ps_coa_test' ) as $post_type ) {
 			$object = get_post_type_object( $post_type );
-			$this->assertSame( array( 'ps_coa', 'ps_coas' ), $object->capability_type );
+			$this->assertSame( 'ps_coa', $object->capability_type );
 			$this->assertTrue( $object->map_meta_cap );
 			$this->assertSame( 'edit_ps_coa', $object->cap->edit_post );
 			$this->assertSame( 'edit_ps_coas', $object->cap->edit_posts );
@@ -56,7 +56,7 @@ class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
 	public function test_nested_rewrite_is_registered() {
 		do_action( 'init' );
 		global $wp_rewrite; $rules = $wp_rewrite->rewrite_rules();
-		$this->assertArrayHasKey( 'testing/([^/]+)/([^/]+)/?$', $rules );
+		$this->assertArrayHasKey( '^testing/([^/]+)/([^/]+)/?$', $rules );
 	}
 	public function test_runtime_does_not_flush_rewrites() {
 		$this->assertFalse( has_action( 'init', 'flush_rewrite_rules' ) );
