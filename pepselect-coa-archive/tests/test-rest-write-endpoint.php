@@ -199,13 +199,14 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/* ------------------------------------------- legacy photo allowlist */
 
-	public function test_legacy_photo_exemption_is_allowlist_only_under_context() {
+	public function test_note_only_update_does_not_require_a_legacy_photo_exemption() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-4001', 'Rejected after review.' );
 		delete_post_meta( $test, 'batch_vial_photo' );
 
 		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'public_notes' => 'x' ) );
-		$this->assertSame( 400, $response->get_status(), 'omitting fields must not buy the exemption' );
+		$this->assertSame( 200, $response->get_status(), 'wording corrections do not require unrelated historical photos' );
+		$this->assertSame( '', get_post_meta( $test, 'batch_vial_photo', true ) );
 
 		$allow = static function () use ( $test ) { return array( $test ); };
 		add_filter( 'pepselect_coa_legacy_photo_exempt_ids', $allow );
