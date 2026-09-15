@@ -3,10 +3,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // Compare visible wording across fields without discarding distinct disclosures.
 $ps_note_candidates = array();
-if ( 'failed' === $test['coa_status'] && trim( $test['release_decision_note'] ) ) {
+if ( 'failed' === $test['coa_status'] ) {
 	$ps_note_candidates[] = esc_html( $test['release_decision_note'] );
+} else {
+	$ps_note_candidates[] = $test['public_notes'];
 }
-$ps_note_candidates[] = $test['public_notes'];
 $ps_note_candidates[] = $test['report_notes'];
 $ps_notes = array();
 foreach ( $ps_note_candidates as $ps_note ) {

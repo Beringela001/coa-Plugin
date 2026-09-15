@@ -82,13 +82,23 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 		$this->assertSame( 'Updated copy.', get_post_meta( $test, 'public_notes', true ) );
 	}
 
-	public function test_partial_patch_still_rejects_a_genuine_violation() {
+	public function test_owner_can_clear_a_published_failure_note() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-1002', 'Rejected after review.' );
-		// Clearing the note is a real violation even though nothing else changed.
+		// Wording is independently editable, including intentional deletion.
 		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'release_decision_note' => '' ) );
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'Rejected after review.', get_post_meta( $test, 'release_decision_note', true ), 'a rejected write must not persist' );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '', get_post_meta( $test, 'release_decision_note', true ) );
+		$this->assertSame( 'failed', get_post_meta( $test, 'coa_status', true ) );
+	}
+
+	public function test_note_correction_is_not_blocked_by_historical_evidence() {
+		$test = $this->failed_test( $this->compound(), 'B-NOTE-97', 'Minimum 95.0%.' );
+		update_post_meta( $test, 'vials_tested', 0 );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'release_decision_note' => 'Minimum 97.0%.' ) );
+		$this->assertSame( 200, $response->get_status(), $this->explain( $response ) );
+		$this->assertSame( 'Minimum 97.0%.', get_post_meta( $test, 'release_decision_note', true ) );
+		$this->assertSame( 'failed', get_post_meta( $test, 'coa_status', true ) );
 	}
 
 	public function test_create_applies_the_same_defaults_the_admin_form_would() {

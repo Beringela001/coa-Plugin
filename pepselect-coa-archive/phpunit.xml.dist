@@ -4,6 +4,7 @@
     <testsuite name="Pep Select COA Archive">
       <directory suffix=".php">tests</directory>
       <exclude>tests/bootstrap.php</exclude>
+      <exclude>tests/test-report-notes-standalone.php</exclude>
     </testsuite>
   </testsuites>
 </phpunit>

@@ -140,6 +140,22 @@ final class REST_Write_Endpoint {
 			) );
 		}
 
+		// Editorial corrections on an existing report do not change its verdict,
+		// identity or evidence. Do not gate them on unrelated historical fields.
+		$note_names = array( 'release_decision_note', 'public_status_note', 'public_notes', 'report_notes' );
+		$notes_only = $post_id && Post_Types::COA_TEST === $post_type && $submitted
+			&& ! array_diff( array_keys( $body ), $note_names );
+		if ( $notes_only ) {
+			foreach ( $submitted as $name => $value ) {
+				if ( ! is_string( $value ) ) {
+					return $this->invalid( array( array( 'field' => $name, 'message' => __( 'Enter text for this note.', 'pepselect-coa-archive' ) ) ) );
+				}
+			}
+			$written = $this->persist( $post_type, $post_id, get_post_status( $post_id ), $submitted, $request );
+			if ( is_wp_error( $written ) ) { return $written; }
+			return new \WP_REST_Response( array( 'id' => $written, 'warnings' => array() ), 200 );
+		}
+
 		$post_status = $request->get_param( 'status' ) ? sanitize_key( (string) $request->get_param( 'status' ) ) : ( $post_id ? (string) get_post_status( $post_id ) : 'publish' );
 		$values      = $this->merge_values( $post_type, $post_id, $submitted );
 
