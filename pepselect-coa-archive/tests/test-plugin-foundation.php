@@ -55,6 +55,8 @@ class PepSelect_COA_Archive_Foundation_Test extends WP_UnitTestCase {
 	}
 	public function test_nested_rewrite_is_registered() {
 		do_action( 'init' );
+		$this->set_permalink_structure( '/%postname%/' );
+		( new PepSelect\COAArchive\Rewrites() )->register();
 		global $wp_rewrite; $rules = $wp_rewrite->rewrite_rules();
 		$this->assertArrayHasKey( '^testing/([^/]+)/([^/]+)/?$', $rules );
 	}

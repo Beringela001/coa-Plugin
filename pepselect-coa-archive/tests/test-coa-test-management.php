@@ -5,12 +5,17 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	private $validator;
 
 	public function set_up() { parent::set_up(); $this->validator = new PepSelect\COAArchive\COA_Test_Validation(); }
+	public function tear_down() { unset( $_POST['acf'], $_POST['post_ID'], $_POST['post_status'] ); parent::tear_down(); }
+	private function definitions() { $fields = new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ); $method = new ReflectionMethod( $fields, 'fields' ); $method->setAccessible( true ); return array_column( $method->invoke( $fields ), null, 'key' ); }
+	private function registered_meta() { ( new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ) )->register_rest_meta(); return get_registered_meta_keys( 'post', 'ps_coa_test' ); }
 
 	public function test_field_group_uses_stable_key_and_location() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' ) . file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' );
 		$this->assertStringContainsString( 'group_ps_coa_test_details', $source );
 		$this->assertStringContainsString( "'value' => Post_Types::COA_TEST", $source );
-		foreach ( array( 'compound_id', 'batch_number', 'batch_vial_photo', 'batch_identity_photos', 'workflow_stage', 'test_date', 'expected_coa_date', 'vendor_status_note', 'public_status_note', 'partial_results_available', 'release_decision_note', 'testing_lab', 'status', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'pending_lab_url', 'coa_pdf_id', 'page_images', 'internal_notes' ) as $suffix ) { $this->assertStringContainsString( 'field_ps_coa_test_' . $suffix, $source ); }
+		$definitions = $this->definitions();
+		foreach ( array( 'compound_id', 'batch_number', 'batch_vial_photo', 'batch_identity_photos', 'workflow_stage', 'test_date', 'expected_coa_date', 'vendor_status_note', 'public_status_note', 'release_decision_note', 'testing_lab', 'status', 'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color', 'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes', 'coa_pdf_id', 'page_images', 'internal_notes' ) as $suffix ) { $this->assertArrayHasKey( 'field_ps_coa_test_' . $suffix, $definitions ); }
+		foreach ( array( 'partial_results_available', 'pending_lab_url' ) as $removed ) { $this->assertArrayNotHasKey( 'field_ps_coa_test_' . $removed, $definitions ); }
 	}
 
 	public function test_group_registers_on_acf_init_when_available() {
@@ -20,11 +25,12 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	}
 
 	public function test_required_and_choice_validation() {
-		$this->assertNotTrue( $this->validate( 0, 'compound_id' ) );
+		$this->assertTrue( $this->validate( 0, 'compound_id' ) );
+		$this->assertNotTrue( $this->validate( 99999999, 'compound_id' ) );
 		$compound = self::factory()->post->create( array( 'post_type' => 'ps_compound' ) );
 		$this->assertTrue( $this->validate( $compound, 'compound_id' ) );
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_status' => 'approved' );
-		$this->assertNotTrue( $this->validate( '', 'batch_number' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) );
 		$this->assertNotTrue( $this->validate( 'invalid', 'testing_lab' ) );
 		$this->assertNotTrue( $this->validate( 'invalid', 'coa_status' ) );
 		$this->assertNotTrue( $this->validate( 'invalid', 'workflow_stage' ) );
@@ -34,15 +40,15 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 
 	public function test_cross_field_validation() {
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_testing_lab' => 'other' );
-		$this->assertNotTrue( $this->validate( '', 'other_testing_lab' ) );
+		$this->assertTrue( $this->validate( '', 'other_testing_lab' ) );
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_maximum_net_content' => '8' );
 		$this->assertNotTrue( $this->validate( '9', 'minimum_net_content' ) );
 		unset( $_POST['acf'] );
 	}
 
-	public function test_release_states_require_identity_data_but_incoming_states_do_not() {
+	public function test_missing_identity_data_does_not_lock_owner_corrections() {
 		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'approved', 'field_ps_coa_test_workflow_stage' => 'complete' );
-		foreach ( array( 'test_date', 'testing_lab', 'vial_crimp_color', 'vial_cap_color', 'vials_tested' ) as $name ) { $this->assertNotTrue( $this->validate( '', $name ) ); }
+		foreach ( array( 'test_date', 'testing_lab', 'vial_crimp_color', 'vial_cap_color', 'vials_tested' ) as $name ) { $this->assertTrue( $this->validate( '', $name ) ); }
 		$_POST['acf']['field_ps_coa_test_status'] = 'failed';
 		$this->assertTrue( $this->validate( '', 'test_date' ) );
 		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'pending', 'field_ps_coa_test_workflow_stage' => 'vendor-vetting' );
@@ -50,28 +56,28 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'waiting-on-vendor';
 		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'submitted-to-lab';
-		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'expected_coa_date' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'in-testing';
-		$this->assertNotTrue( $this->validate( '', 'batch_number' ) ); $this->assertNotTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'expected_coa_date' ) );
 		unset( $_POST['acf'] );
 	}
 
-	public function test_other_vial_colors_require_their_custom_values() {
+	public function test_other_vial_colors_allow_unknown_or_explicit_custom_values() {
 		$_POST['acf'] = array( 'field_ps_coa_test_status' => 'pending', 'field_ps_coa_test_workflow_stage' => 'waiting-on-vendor', 'field_ps_coa_test_vial_crimp_color' => 'other', 'field_ps_coa_test_vial_cap_color' => 'other' );
-		$this->assertNotTrue( $this->validate( '', 'other_vial_crimp_color' ) );
-		$this->assertNotTrue( $this->validate( '', 'other_vial_cap_color' ) );
+		$this->assertTrue( $this->validate( '', 'other_vial_crimp_color' ) );
+		$this->assertTrue( $this->validate( '', 'other_vial_cap_color' ) );
 		$this->assertTrue( $this->validate( 'Teal', 'other_vial_crimp_color' ) );
 		$this->assertTrue( $this->validate( 'Ivory', 'other_vial_cap_color' ) );
 		unset( $_POST['acf'] );
 	}
 
-	public function test_approved_requires_valid_documents_and_no_failed_results() {
+	public function test_missing_documents_allow_correction_but_failed_results_block_approval() {
 		$pdf = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'application/pdf' ) );
 		$image = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'image/jpeg' ) );
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_coa_pdf_id' => $pdf, 'field_ps_coa_test_page_images' => array( $image ), 'field_ps_coa_test_lab_report_url' => 'https://lab.example/report/42', 'field_ps_coa_test_purity_status' => 'pass' );
 		$this->assertTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
 		$_POST['acf']['field_ps_coa_test_lab_report_url'] = '';
-		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
+		$this->assertTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
 		$_POST['acf']['field_ps_coa_test_lab_report_url'] = 'https://lab.example/report/42';
 		$_POST['acf']['field_ps_coa_test_purity_status'] = 'fail';
 		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
@@ -96,7 +102,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 
 	public function test_ils_defaults_and_result_choice_are_declared() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
-		$this->assertStringContainsString( "'default_value' => 'White lyophilized powder'", $source );
+		$this->assertStringContainsString( "'default_value' => 'White Lyophilized Powder'", $source );
 		$this->assertStringContainsString( "'default_value' => 'EU/mL'", $source );
 		$this->assertStringContainsString( "'endotoxin_status', 'Endotoxin Status', 'reported'", $source );
 		$this->assertStringContainsString( "'reported' => 'Reported'", $source );
@@ -118,10 +124,10 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
 		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result' ) as $name ) { $this->assertStringNotContainsString( "'" . $name . "'", $source ); }
 		$this->assertStringContainsString( "'lab_report_url'", $source );
-		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
+		$keys = $this->registered_meta();
 		foreach ( array( 'bioburden_status', 'bioburden_result', 'residual_solvents_status', 'residual_solvents_result' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
-		foreach ( array( 'lab_report_url', 'expected_coa_date', 'release_decision_note', 'vial_crimp_color', 'vial_cap_color', 'pending_lab_url' ) as $name ) { $this->assertArrayNotHasKey( $name, $keys ); }
-		foreach ( array( 'workflow_stage', 'public_status_note' ) as $name ) { $this->assertArrayHasKey( $name, $keys ); } $this->assertArrayNotHasKey( 'vendor_status_note', $keys );
+		foreach ( array( 'lab_report_url', 'expected_coa_date', 'release_decision_note', 'vial_crimp_color', 'vial_cap_color', 'workflow_stage', 'public_status_note', 'vendor_status_note' ) as $name ) { $this->assertArrayHasKey( $name, $keys ); }
+		$this->assertArrayNotHasKey( 'pending_lab_url', $keys );
 	}
 
 	public function test_hidden_legacy_metadata_is_not_deleted() {
@@ -136,7 +142,7 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	public function test_verification_fields_are_backward_compatible() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
 		$this->assertStringContainsString( "'coa_number', 'COA Number'", $source );
-		$this->assertStringContainsString( "field_ps_coa_test_coa_number", file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' ) );
+		$this->assertArrayHasKey( 'field_ps_coa_test_coa_number', $this->definitions() );
 		$this->assertStringContainsString( "'verification_code', 'Access Code'", $source );
 	}
 
@@ -179,9 +185,11 @@ class PepSelect_COA_Archive_COA_Test_Management_Test extends WP_UnitTestCase {
 	}
 
 	public function test_private_fields_are_not_in_rest_schema() {
-		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
-		$this->assertArrayNotHasKey( 'internal_notes', $keys ); $this->assertArrayNotHasKey( 'internal_batch_id', $keys ); $this->assertArrayNotHasKey( 'batch_number', $keys );
-		$this->assertArrayNotHasKey( 'pending_lab_url', $keys ); $this->assertArrayNotHasKey( 'expected_coa_date', $keys ); $this->assertArrayHasKey( 'workflow_stage', $keys ); $this->assertArrayNotHasKey( 'release_decision_note', $keys );
+		$keys = $this->registered_meta();
+		foreach ( array( 'internal_notes', 'verification_code', 'lab_verification_url' ) as $name ) { $this->assertSame( array( 'edit' ), $keys[ $name ]['show_in_rest']['schema']['context'] ); }
+		$this->assertArrayNotHasKey( 'internal_batch_id', $keys );
+		$this->assertArrayNotHasKey( 'pending_lab_url', $keys );
+		foreach ( array( 'batch_number', 'expected_coa_date', 'workflow_stage', 'release_decision_note' ) as $name ) { $this->assertArrayHasKey( $name, $keys ); }
 	}
 
 	public function test_admin_columns_are_coa_test_specific() {

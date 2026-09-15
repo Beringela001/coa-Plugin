@@ -52,7 +52,12 @@ final class COA_Test_Fields {
 		);
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
-			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
+			// auth_callback protects writes, not public reads. Ops reads context=edit;
+			// private administrative fields must be absent from view/embed responses.
+			$rest = in_array( $key, array( 'internal_notes', 'verification_code', 'lab_verification_url' ), true )
+				? array( 'schema' => array( 'type' => $type, 'context' => array( 'edit' ) ) )
+				: true;
+			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => $rest, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
 		}
 
 		// Gallery metas are ARRAYS of attachment IDs, so they need an explicit array

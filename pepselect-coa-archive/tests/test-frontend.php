@@ -306,11 +306,9 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_access_codes_and_verification_urls_are_not_registered_as_public_rest_meta() {
-		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
-		preg_match( '/\$safe = array\( (.*?) \);/s', $source, $matches );
-		$this->assertNotEmpty( $matches );
-		$this->assertStringNotContainsString( 'verification_code', $matches[1] );
-		$this->assertStringNotContainsString( 'lab_verification_url', $matches[1] );
+		( new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ) )->register_rest_meta();
+		$keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
+		foreach ( array( 'verification_code', 'lab_verification_url' ) as $key ) { $this->assertSame( array( 'edit' ), $keys[ $key ]['show_in_rest']['schema']['context'] ); }
 	}
 
 	public function test_public_documentation_uses_exact_report_url_and_hides_verification_metadata() {
