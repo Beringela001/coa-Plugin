@@ -5,6 +5,12 @@
       <directory suffix=".php">tests</directory>
       <exclude>tests/bootstrap.php</exclude>
       <exclude>tests/test-report-notes-standalone.php</exclude>
+      <!-- Standalone contracts define WordPress stubs; run them separately. -->
+      <exclude>tests/qr-correction-contract.php</exclude>
+      <exclude>tests/report-evidence-contract.php</exclude>
+      <exclude>tests/report-logo-url-contract.php</exclude>
+      <exclude>tests/report-navigation-render-contract.php</exclude>
+      <exclude>tests/report-refinement-contract.php</exclude>
     </testsuite>
   </testsuites>
 </phpunit>
