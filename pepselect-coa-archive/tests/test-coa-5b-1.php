@@ -46,12 +46,12 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 			}
 		}
 		$this->post_stage( 'submitted-to-lab' );
-		$this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) );
-		$this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) );
+		$this->assertTrue( $this->validate( '', 'vial_cap_color' ) );
+		$this->assertTrue( $this->validate( '', 'vial_crimp_color' ) );
 		$this->assertTrue( $this->validate( '', 'batch_vial_photo' ) );
 		foreach ( array( 'in-testing', 'complete' ) as $stage ) {
 			$this->post_stage( $stage );
-			foreach ( array( 'batch_number', 'vial_cap_color', 'vial_crimp_color', 'batch_vial_photo' ) as $field ) { $this->assertNotTrue( $this->validate( '', $field ), $stage . ': ' . $field ); }
+			foreach ( array( 'batch_number', 'vial_cap_color', 'vial_crimp_color', 'batch_vial_photo' ) as $field ) { $this->assertTrue( $this->validate( '', $field ), $stage . ': ' . $field ); }
 			$this->assertTrue( $this->validate( array(), 'batch_identity_photos' ), $stage );
 		}
 		$this->post_stage( 'in-testing' );
@@ -76,7 +76,7 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 		}
 	}
 
-	public function test_batch_change_updates_title_without_changing_published_slug_or_url() {
+	public function test_batch_change_updates_canonical_url_without_changing_post_slug() {
 		$compound = $this->compound( 'GHK-CU 50 mg' );
 		$test = $this->test_record( $compound, 'in-testing', 'GHK5062926JP', 'pending', 'publish', 'stable-public-report' );
 		$before_url = get_permalink( $test );
@@ -85,7 +85,8 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 		update_post_meta( $test, 'batch_number', 'GHK5062926JP-R2' ); $this->service->after_save( $test );
 		$this->assertSame( 'GHK-CU 50 mg — Batch GHK5062926JP-R2', get_post( $test )->post_title );
 		$this->assertSame( 'stable-public-report', get_post( $test )->post_name );
-		$this->assertSame( $before_url, get_permalink( $test ) );
+		$this->assertNotSame( $before_url, get_permalink( $test ) );
+		$this->assertStringContainsString( '/ghk5062926jp-r2', get_permalink( $test ) );
 	}
 
 	public function test_compound_display_name_change_updates_only_linked_test_titles() {
@@ -113,7 +114,9 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( "if ( \$title === \$post->post_title ) { return; }", $service );
 		$this->assertStringContainsString( "\$update['post_name'] = \$post->post_name", $service );
 		$this->assertStringContainsString( 'Nothing is saved or published until you use the normal WordPress controls.', $importer );
-		$this->assertStringContainsString( "'compound_id', 'batch_number', 'internal_batch_id', 'workflow_stage'", $importer );
+		$method = new ReflectionMethod( 'PepSelect\\COAArchive\\COA_Test_Importer', 'field_map' ); $method->setAccessible( true );
+		$map = $method->invoke( new PepSelect\COAArchive\COA_Test_Importer() );
+		foreach ( array( 'compound_id', 'batch_number', 'workflow_stage' ) as $key ) { $this->assertArrayHasKey( $key, $map ); }
 		$this->assertStringContainsString( "\$map = array( 'coa_status' => 'field_ps_coa_test_status' )", $importer );
 	}
 

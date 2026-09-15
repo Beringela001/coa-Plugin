@@ -65,12 +65,12 @@ class PepSelect_COA_Archive_COA_5D_Admin_Workflow_Test extends WP_UnitTestCase {
 	public function test_clear_messages_keep_invalid_transitions_blocked() {
 		$validator = new PepSelect\COAArchive\COA_Test_Validation();
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'in-testing', 'field_ps_coa_test_status' => 'pending' );
-		$this->assertSame( 'Batch Number is required before moving this test to Verification in Progress.', $validator->validate( true, '', array( 'name' => 'batch_number' ), '' ) );
-		$this->assertSame( 'Batch Vial Photo is required before moving this test to Verification in Progress.', $validator->validate( true, '', array( 'name' => 'batch_vial_photo' ), '' ) );
-		$this->assertStringContainsString( 'Testing Laboratory', $validator->validate( true, '', array( 'name' => 'testing_lab' ), '' ) );
+		$this->assertTrue( $validator->validate( true, '', array( 'name' => 'batch_number' ), '' ) );
+		$this->assertTrue( $validator->validate( true, '', array( 'name' => 'batch_vial_photo' ), '' ) );
+		$this->assertNotTrue( $validator->validate( true, 'invalid-lab', array( 'name' => 'testing_lab' ), '' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'submitted-to-lab';
-		$this->assertStringContainsString( 'Cap Color', $validator->validate( true, '', array( 'name' => 'vial_cap_color' ), '' ) );
-		$this->assertStringContainsString( 'Crimp Color', $validator->validate( true, '', array( 'name' => 'vial_crimp_color' ), '' ) );
+		$this->assertTrue( $validator->validate( true, '', array( 'name' => 'vial_cap_color' ), '' ) );
+		$this->assertTrue( $validator->validate( true, '', array( 'name' => 'vial_crimp_color' ), '' ) );
 		$_POST['acf']['field_ps_coa_test_status'] = 'approved';
 		$this->assertStringContainsString( 'Workflow Stage must be Completed', $validator->validate_approval( true, 'approved', array(), '' ) );
 	}

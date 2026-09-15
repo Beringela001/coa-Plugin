@@ -37,8 +37,8 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 	/* ---------------------------------------------------------------- M1 */
 
 	public function test_set_context_replaces_post_and_clear_context_restores_it() {
-		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_status' => 'failed', 'field_ps_coa_test_release_decision_note' => '' );
-		// $_POST says the note is missing, so the failed outcome is rejected.
+		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'in-testing', 'field_ps_coa_test_status' => 'failed', 'field_ps_coa_test_release_decision_note' => '' );
+		// A final outcome before completion is invalid; injected context must replace it.
 		$this->assertNotTrue( $this->test_validation->validate_approval( true, 'failed', array(), '' ) );
 		$this->test_validation->set_context( array( 'workflow_stage' => 'complete', 'coa_status' => 'failed', 'release_decision_note' => 'Rejected after review.', 'is_current' => 0 ), 0, 'publish' );
 		$this->assertTrue( $this->test_validation->validate_approval( true, 'failed', array(), '' ) );
@@ -115,7 +115,7 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 	/* ---------------------------------------------------------------- M3 */
 
 	public function test_validation_failure_returns_400_with_field_and_plugin_message() {
-		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => 0 ) );
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => 99999999 ) );
 		$this->assertSame( 400, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertSame( 'pepselect_coa_invalid_record', $data['code'] );

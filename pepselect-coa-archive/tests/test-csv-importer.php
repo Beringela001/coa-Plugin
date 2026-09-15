@@ -4,7 +4,9 @@ class PepSelect_COA_Archive_CSV_Importer_Test extends WP_UnitTestCase {
 	public function test_direct_report_field_is_stable_and_verification_fields_remain() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
 		$this->assertStringContainsString( "'lab_report_url', 'Public Lab Report URL', 'url'", $source );
-		$this->assertStringContainsString( 'field_ps_coa_test_lab_report_url', file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-validation.php' ) );
+		$method = new ReflectionMethod( 'PepSelect\\COAArchive\\COA_Test_Fields', 'fields' ); $method->setAccessible( true );
+		$fields = $method->invoke( new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ) );
+		$this->assertContains( 'field_ps_coa_test_lab_report_url', wp_list_pluck( $fields, 'key' ) );
 		foreach ( array( 'coa_number', 'verification_code', 'lab_verification_url' ) as $name ) { $this->assertStringContainsString( "'" . $name . "'", $source ); }
 	}
 

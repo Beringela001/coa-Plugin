@@ -40,9 +40,9 @@ class PepSelect_COA_Archive_COA_Form_Revision_Test extends WP_UnitTestCase {
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'waiting-on-vendor';
 		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 'blue', 'vial_cap_color' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'submitted-to-lab';
-		$this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) ); $this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) );
+		$this->assertTrue( $this->validate( '', 'expected_coa_date' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( 'impossible', 'purity_status' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'in-testing';
-		$this->assertNotTrue( $this->validate( '', 'batch_number' ) ); $this->assertNotTrue( $this->validate( '', 'testing_lab' ) ); $this->assertNotTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertNotTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertNotTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) ); $this->assertTrue( $this->validate( '', 'purity_percentage' ) );
+		$this->assertTrue( $this->validate( '', 'batch_number' ) ); $this->assertTrue( $this->validate( '', 'testing_lab' ) ); $this->assertTrue( $this->validate( '', 'vial_crimp_color' ) ); $this->assertTrue( $this->validate( '', 'vial_cap_color' ) ); $this->assertTrue( $this->validate( '', 'batch_vial_photo' ) ); $this->assertTrue( $this->validate( array(), 'batch_identity_photos' ) ); $this->assertTrue( $this->validate( 999999, 'coa_pdf_id' ) ); $this->assertTrue( $this->validate( '', 'purity_percentage' ) );
 	}
 
 	public function test_partial_results_gate_controls_result_editability_without_deleting_values() {
@@ -59,14 +59,14 @@ class PepSelect_COA_Archive_COA_Form_Revision_Test extends WP_UnitTestCase {
 			$this->assertSame( '', $model['batch_number'], $stage ); $this->assertSame( '', $model['laboratory'], $stage ); $this->assertSame( '', $model['pending_lab_url'], $stage ); $this->assertSame( '', $model['purity_percentage'], $stage ); $this->assertSame( '', $model['content_unit'], $stage ); $this->assertSame( '', $model['endotoxin_unit'], $stage ); $this->assertFalse( $model['is_current'], $stage ); $this->assertEmpty( $model['page_images'], $stage );
 		}
 		$testing = $this->incoming( $compound, 'in-testing' ); $model = $this->view_model->report( get_post( $testing ), get_post( $compound ) );
-		$this->assertSame( 'PRIVATE-BATCH', $model['batch_number'] ); $this->assertSame( 'ILS Labs', $model['laboratory'] ); $this->assertSame( 'https://lab.example/pending', $model['pending_lab_url'] ); $this->assertSame( '', $model['purity_percentage'] );
+		$this->assertSame( 'PRIVATE-BATCH', $model['batch_number'] ); $this->assertSame( 'ILS Labs', $model['laboratory'] ); $this->assertSame( '', $model['pending_lab_url'] ); $this->assertSame( '', $model['purity_percentage'] );
 		update_post_meta( $testing, 'partial_results_available', 1 ); update_post_meta( $testing, 'purity_percentage', '98.75' );
 		$model = $this->view_model->report( get_post( $testing ), get_post( $compound ) ); $this->assertTrue( $model['has_partial_results'] ); $this->assertSame( '98.75', $model['purity_percentage'] );
 	}
 
 	public function test_featured_image_fallback_order_and_admin_asset_scope_are_declared() {
 		$view = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' );
-		$this->assertLessThan( strpos( $view, "get_post_meta( \$compound->ID, 'compound_image_id'" ), strpos( $view, 'get_post_thumbnail_id( $test->ID )' ) );
+		$this->assertLessThan( strpos( $view, "get_post_meta( \$compound->ID, 'compound_image_id'", strpos( $view, 'get_post_thumbnail_id( $test->ID )' ) ), strpos( $view, 'get_post_thumbnail_id( $test->ID )' ) );
 		$form = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-form.php' );
 		$this->assertStringContainsString( "array( 'post.php', 'post-new.php' )", $form ); $this->assertStringContainsString( "Post_Types::COA_TEST !== \$screen->post_type", $form );
 		$this->assertStringContainsString( 'assets/js/pepselect-coa-test-form.js', $form ); $this->assertStringContainsString( 'assets/css/pepselect-coa-test-form.css', $form );

@@ -8,6 +8,7 @@ class PepSelect_COA_Archive_SEO_Sitemaps_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		$this->set_permalink_structure( '/%postname%/' );
 		$this->visibility = new PepSelect\COAArchive\Frontend_Visibility();
 		$this->tests      = new PepSelect\COAArchive\COA_Test_Repository( $this->visibility );
 		$this->view_model = new PepSelect\COAArchive\Frontend_View_Model();
