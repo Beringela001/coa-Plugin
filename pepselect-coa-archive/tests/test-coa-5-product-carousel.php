@@ -8,6 +8,7 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up(); do_action( 'init' );
+		$this->set_permalink_structure( '/%postname%/' );
 		if ( ! post_type_exists( 'product' ) ) { register_post_type( 'product', array( 'public' => true, 'supports' => array( 'title', 'thumbnail' ) ) ); }
 		$visibility = new PepSelect\COAArchive\Frontend_Visibility();
 		$this->matching = new PepSelect\COAArchive\Product_Matching( new PepSelect\COAArchive\Dependencies(), true );
@@ -163,10 +164,10 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 	}
 
 	public function test_shortcode_output_is_accessible_escaped_deduplicated_and_loads_assets_only_after_output() {
-		$product = $this->product( 'Retatrutide', 'RETA30' ); $compound = $this->compound( 'Retatrutide 30 mg', $product ); $this->record( $compound, '<Batch & One>', '2026-07-10' );
+		$product = $this->product( 'Retatrutide', 'RETA30' ); $compound = $this->compound( 'Retatrutide 30 mg', $product ); $this->record( $compound, 'Batch & "One"', '2026-07-10' );
 		$this->go_to( get_permalink( $product ) ); $carousel = $this->carousel(); $html = $carousel->shortcode();
 		foreach ( array( 'Independent Testing History', 'role="region"', 'aria-roledescription="carousel"', 'aria-label=', '<button', 'ps-coa-product-carousel__card', 'Latest Report', 'View full batch report' ) as $needle ) { $this->assertStringContainsString( $needle, $html ); }
-		$this->assertStringContainsString( '&lt;Batch &amp; One&gt;', $html ); $this->assertSame( 1, substr_count( $html, '>Latest Report<' ) );
+		$this->assertStringContainsString( 'Batch &amp; &quot;One&quot;', $html ); $this->assertSame( 1, substr_count( $html, '>Latest Report<' ) );
 		$this->assertStringNotContainsString( 'lab_report_url', $html ); $this->assertStringNotContainsString( '.pdf', strtolower( $html ) ); $this->assertStringNotContainsString( 'qr', strtolower( $html ) );
 		$this->assertTrue( wp_style_is( 'pepselect-coa-product-carousel', 'enqueued' ) ); $this->assertTrue( wp_script_is( 'pepselect-coa-product-carousel', 'enqueued' ) );
 		$this->assertSame( '', $carousel->shortcode() );

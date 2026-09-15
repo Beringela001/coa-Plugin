@@ -5,13 +5,16 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 
 	public function set_up() { parent::set_up(); do_action( 'init' ); $this->view = new PepSelect\COAArchive\Frontend_View_Model(); }
 
-	public function test_history_hero_uses_current_exact_batch_image_and_never_unrelated_media() {
+	public function test_history_hero_uses_compound_image_and_keeps_batch_photo_on_report() {
 		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20260710', true );
 		$image = $this->image( 'current.jpg' ); $unrelated_compound = $this->compound( 'Other Compound' ); $unrelated = $this->complete_test( $unrelated_compound, 'OTHER', '20260712', true ); $other_image = $this->image( 'other.jpg' );
 		update_post_meta( $current, 'batch_vial_photo', $image ); update_post_meta( $unrelated, 'batch_vial_photo', $other_image );
 		$downsize = $this->image_downsize_filter( array( $image => 'https://example.org/current.jpg', $other_image => 'https://example.org/other.jpg' ) ); add_filter( 'image_downsize', $downsize, 10, 2 );
 		$context = $this->router()->build_compound( '', $compound );
-		$this->assertSame( $image, $context['hero_image']['id'] ); $this->assertSame( 'batch-vial-photo', $context['hero_image']['source'] ); $this->assertStringNotContainsString( 'other.jpg', wp_json_encode( $context ) );
+		$this->assertSame( 0, $context['hero_image']['id'] ); $this->assertSame( 'local-placeholder', $context['hero_image']['source'] ); $this->assertStringNotContainsString( 'other.jpg', wp_json_encode( $context ) );
+		$this->assertSame( $image, $this->view->report( get_post( $current ), get_post( $compound ) )['vial_image_id'] );
+		update_post_meta( $compound, 'compound_image_id', $image );
+		$this->assertSame( $image, $this->router()->build_compound( '', $compound )['hero_image']['id'] );
 		remove_filter( 'image_downsize', $downsize, 10 );
 	}
 
@@ -29,15 +32,15 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 	public function test_latest_history_report_has_fixed_truthful_seven_category_model() {
 		$compound = $this->compound(); $test = $this->complete_test( $compound, 'FULL', '20260710', true ); $this->full_results( $test );
 		$model = $this->view->history_report( get_post( $test ), get_post( $compound ) );
-		$this->assertSame( array( 'Identity', 'Purity', 'Net Content', 'Heavy Metals', 'Sterility', 'Endotoxins', 'Fentanyl Screen' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
-		$this->assertSame( 7, $model['reported_category_count'] ); $this->assertSame( 'Full-QC', $model['history_report_type'] ); $this->assertSame( 'Full-QC testing passed.', $model['history_qc_title'] );
+		$this->assertSame( array( 'Identity', 'Purity', 'Measured content', 'Sterility', 'Fentanyl screening', 'Heavy metals', 'Endotoxins' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
+		$this->assertSame( 7, $model['reported_category_count'] ); $this->assertFalse( $model['is_full_qc_documented'] ); $this->assertSame( 'Testing results', $model['history_qc_title'] );
 		update_post_meta( $test, 'fentanyl_status', 'not-tested' ); $partial = $this->view->history_report( get_post( $test ), get_post( $compound ) );
-		$this->assertSame( '--', $partial['qc_strip_rows'][6]['detail'] ); $this->assertFalse( $partial['qc_strip_rows'][6]['status']['success'] ); $this->assertSame( 'Partial QC', $partial['history_report_type'] );
+		$this->assertSame( '--', $partial['qc_strip_rows'][4]['detail'] ); $this->assertFalse( $partial['qc_strip_rows'][4]['status']['success'] ); $this->assertSame( 'Partial QC', $partial['history_report_type'] );
 	}
 
 	public function test_previous_carousel_is_sorted_capped_and_non_destructive() {
-		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20261231', true ); $ids = array();
-		for ( $number = 1; $number <= 12; $number++ ) { $ids[] = $this->complete_test( $compound, 'PREVIOUS-' . $number, sprintf( '2026%02d01', $number ), false, 12 === $number ? 'failed' : 'approved' ); }
+		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20251231', true ); $ids = array();
+		for ( $number = 1; $number <= 12; $number++ ) { $ids[] = $this->complete_test( $compound, 'PREVIOUS-' . $number, sprintf( '2025%02d01', $number ), false, 12 === $number ? 'failed' : 'approved' ); }
 		$context = $this->router()->build_compound( '', $compound );
 		$this->assertSame( $current, $context['latest_report']['test_id'] ); $this->assertCount( 10, $context['previous_reports'] ); $this->assertSame( 12, $context['previous_report_total'] );
 		$this->assertSame( array( 'PREVIOUS-12', 'PREVIOUS-11' ), array_slice( wp_list_pluck( $context['previous_reports'], 'batch_number' ), 0, 2 ) );
@@ -71,6 +74,7 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( "'laboratory_logo', 'Laboratory Logo', 'image'", $fields ); $this->assertStringContainsString( 'valid_laboratory_logo', $validation );
 		$field_service = new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ); $method = new ReflectionMethod( $field_service, 'fields' ); $method->setAccessible( true ); $definitions = $method->invoke( $field_service ); $logo_field = current( array_filter( $definitions, static function ( $field ) { return 'laboratory_logo' === $field['name']; } ) );
 		$this->assertSame( 'field_ps_coa_test_laboratory_logo', $logo_field['key'] ); $this->assertSame( 'id', $logo_field['return_format'] ); $this->assertSame( 0, $logo_field['required'] );
+		PepSelect\COAArchive\Capabilities::grant_to_administrators();
 		$admin = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $admin ); $_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete';
 		$safe = $this->image( 'safe.png', 'image/png' ); $unsafe = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'application/x-php', 'guid' => 'https://example.org/unsafe.php' ) );
 		$validator = new PepSelect\COAArchive\COA_Test_Validation(); $this->assertTrue( $validator->validate( true, $safe, $logo_field, '' ) ); $this->assertIsString( $validator->validate( true, $unsafe, $logo_field, '' ) ); unset( $_POST['acf'] );

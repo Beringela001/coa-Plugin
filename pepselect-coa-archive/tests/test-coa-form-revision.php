@@ -61,7 +61,8 @@ class PepSelect_COA_Archive_COA_Form_Revision_Test extends WP_UnitTestCase {
 		$testing = $this->incoming( $compound, 'in-testing' ); $model = $this->view_model->report( get_post( $testing ), get_post( $compound ) );
 		$this->assertSame( 'PRIVATE-BATCH', $model['batch_number'] ); $this->assertSame( 'ILS Labs', $model['laboratory'] ); $this->assertSame( '', $model['pending_lab_url'] ); $this->assertSame( '', $model['purity_percentage'] );
 		update_post_meta( $testing, 'partial_results_available', 1 ); update_post_meta( $testing, 'purity_percentage', '98.75' );
-		$model = $this->view_model->report( get_post( $testing ), get_post( $compound ) ); $this->assertTrue( $model['has_partial_results'] ); $this->assertSame( '98.75', $model['purity_percentage'] );
+		$model = $this->view_model->report( get_post( $testing ), get_post( $compound ) ); $this->assertFalse( $model['has_partial_results'] ); $this->assertSame( '', $model['purity_percentage'] );
+		$this->assertSame( '98.75', get_post_meta( $testing, 'purity_percentage', true ) );
 	}
 
 	public function test_featured_image_fallback_order_and_admin_asset_scope_are_declared() {

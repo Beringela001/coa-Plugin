@@ -35,12 +35,12 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 		update_post_meta( $test, 'endotoxin_status', 'pass' ); $this->assertFalse( $this->view_model->is_full_qc_documented( $test ) ); update_post_meta( $test, 'endotoxin_result', '<0.05' ); $this->assertTrue( $this->view_model->is_full_qc_documented( $test ) );
 	}
 
-	public function test_approved_reported_endotoxin_uses_success_icon_but_keeps_reported_label() {
+	public function test_reported_endotoxin_remains_neutral_even_for_an_approved_report() {
 		$test = $this->test_record(); update_post_meta( $test, 'endotoxin_status', 'reported' ); update_post_meta( $test, 'endotoxin_result', '<0.05' );
 		$model = $this->view_model->test_summary( get_post( $test ) );
 		$this->assertSame( 'Reported', $model['endotoxin_status']['label'] );
-		$this->assertSame( 'pass', $model['endotoxin_status']['icon'] );
-		$this->assertTrue( $model['endotoxin_status']['success'] );
+		$this->assertSame( 'reported', $model['endotoxin_status']['icon'] );
+		$this->assertFalse( $model['endotoxin_status']['success'] );
 		wp_update_post( array( 'ID' => $test, 'post_status' => 'pending' ) );
 		$model = $this->view_model->test_summary( get_post( $test ) );
 		$this->assertSame( 'reported', $model['endotoxin_status']['icon'] );
@@ -94,7 +94,7 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 	public function test_reset_assets_search_and_lightbox_are_scoped_and_safe() {
 		$admin = file_get_contents( dirname( __DIR__ ) . '/includes/class-design-settings-admin.php' );
 		$loader = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
-		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/archive-testing.php' );
+		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/partials/archive-hero.php' );
 		$css = file_get_contents( dirname( __DIR__ ) . '/assets/css/pepselect-coa-frontend.css' );
 		$this->assertStringContainsString( "check_admin_referer( 'pepselect_coa_reset_design' )", $admin );
 		$this->assertStringContainsString( "current_user_can( 'manage_ps_coas' )", $admin );
