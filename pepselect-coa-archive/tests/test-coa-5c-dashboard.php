@@ -9,6 +9,7 @@ class PepSelect_COA_Archive_COA_5C_Dashboard_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		require_once ABSPATH . 'wp-admin/includes/dashboard.php';
 		set_current_screen( 'dashboard' );
 		do_action( 'init' );
 		PepSelect\COAArchive\Capabilities::grant_to_administrators();

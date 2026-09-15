@@ -37,12 +37,13 @@ if [ ! -d "$EXTRACTED" ]; then
 	tar --strip-components=1 -zxf "$ARCHIVE" -C "$EXTRACTED"
 fi
 
-# Core source becomes ABSPATH.
+# Use the built WordPress distribution for ABSPATH. The develop src tree
+# omits generated script-loader assets, so enqueue tests otherwise fatal
+# before they reach any plugin assertions.
 if [ ! -d "$WP_CORE_DIR" ]; then
 	mkdir -p "$WP_CORE_DIR"
-	cp -r "${EXTRACTED}/src/." "$WP_CORE_DIR/"
-	# wp-settings.php lives at the develop root, not inside src/.
-	cp "${EXTRACTED}/wp-settings.php" "$WP_CORE_DIR/wp-settings.php" 2>/dev/null || true
+	curl -fsSL -o "${TMPDIR}/wordpress-release-${WP_VERSION}.tar.gz" "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz"
+	tar --strip-components=1 -zxf "${TMPDIR}/wordpress-release-${WP_VERSION}.tar.gz" -C "$WP_CORE_DIR"
 fi
 
 # The PHPUnit harness becomes WP_TESTS_DIR.
