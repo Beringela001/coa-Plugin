@@ -346,6 +346,9 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
 		$this->assertStringContainsString( 'Testing failed', $html );
 		$this->assertStringContainsString( 'This batch was not released for sale.', $html );
+		$this->assertStringNotContainsString( 'Measured values', $html );
+		update_post_meta( $test, 'purity_percentage', '70.10' );
+		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
 		$this->assertStringContainsString( 'Measured values', $html );
 	}
 

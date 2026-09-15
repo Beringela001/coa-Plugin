@@ -357,7 +357,10 @@ final class COA_Test_Validation {
 	private function valid_image( $id, $check_permission = false ) { return $id > 0 && 'attachment' === get_post_type( $id ) && wp_attachment_is_image( $id ) && ( ! $check_permission || current_user_can( 'edit_post', $id ) ); }
 	/** Restricts public laboratory logos to images accepted by WordPress's current upload policy. @param int $id Attachment ID. @return bool */
 	private function valid_laboratory_logo( $id ) {
-		if ( $id < 1 || 'attachment' !== get_post_type( $id ) || 'inherit' !== get_post_status( $id ) || ! current_user_can( 'edit_post', $id ) ) { return false; }
+		$attachment = $id > 0 ? get_post( $id ) : null;
+		// get_post_status() resolves inherit to the parent status (or publish).
+		// Validate the actual attachment record so normal uploads are not rejected.
+		if ( ! $attachment || 'attachment' !== $attachment->post_type || 'inherit' !== $attachment->post_status || ! current_user_can( 'edit_post', $id ) ) { return false; }
 		$mime = get_post_mime_type( $id );
 		if ( in_array( $mime, array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ), true ) ) { return wp_attachment_is_image( $id ); }
 		return 'image/svg+xml' === $mime && in_array( 'image/svg+xml', array_values( get_allowed_mime_types() ), true );

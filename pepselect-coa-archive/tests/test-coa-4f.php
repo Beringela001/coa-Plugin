@@ -78,6 +78,13 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 		$admin = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $admin ); $_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete';
 		$safe = $this->image( 'safe.png', 'image/png' ); $unsafe = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'application/x-php', 'guid' => 'https://example.org/unsafe.php' ) );
 		$validator = new PepSelect\COAArchive\COA_Test_Validation(); $this->assertTrue( $validator->validate( true, $safe, $logo_field, '' ) ); $this->assertIsString( $validator->validate( true, $unsafe, $logo_field, '' ) ); unset( $_POST['acf'] );
+		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete';
+		wp_update_post( array( 'ID' => $safe, 'post_status' => 'trash' ) );
+		$this->assertIsString( $validator->validate( true, $safe, $logo_field, '' ) );
+		wp_update_post( array( 'ID' => $safe, 'post_status' => 'inherit' ) );
+		wp_set_current_user( 0 );
+		$this->assertIsString( $validator->validate( true, $safe, $logo_field, '' ) );
+		wp_set_current_user( $admin ); unset( $_POST['acf'] );
 		$compound = $this->compound(); $test = $this->complete_test( $compound, 'LOGO', '20260710', true ); $model = $this->view->report( get_post( $test ), get_post( $compound ) );
 		$this->assertSame( 'bundled-ils', $model['laboratory_logo_source'] ); $this->assertStringContainsString( 'assets/images/ils-labs-logo.png', $model['laboratory_logo_url'] );
 		$this->assertArrayNotHasKey( 'laboratory_logo_url', $this->view->test_summary( get_post( $test ), get_post( $compound ) ) );

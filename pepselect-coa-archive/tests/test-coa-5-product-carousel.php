@@ -8,8 +8,8 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up(); do_action( 'init' );
-		$this->set_permalink_structure( '/%postname%/' );
 		if ( ! post_type_exists( 'product' ) ) { register_post_type( 'product', array( 'public' => true, 'supports' => array( 'title', 'thumbnail' ) ) ); }
+		$this->set_permalink_structure( '/%postname%/' );
 		$visibility = new PepSelect\COAArchive\Frontend_Visibility();
 		$this->matching = new PepSelect\COAArchive\Product_Matching( new PepSelect\COAArchive\Dependencies(), true );
 		$this->compounds = new PepSelect\COAArchive\Compound_Repository( $visibility );
