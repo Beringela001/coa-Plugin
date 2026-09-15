@@ -58,6 +58,8 @@ final class COA_Test_Validation {
 	/** Sanitizes a REST meta value. @param mixed $value Value. @param string $key Meta key. @return mixed */
 	public static function sanitize( $value, $key = '' ) {
 		if ( 'workflow_stage' === $key ) { return COA_Workflow::normalize_stage( $value ); }
+		// An unrecorded count is not zero tested vials. Preserve the optional blank.
+		if ( 'vials_tested' === $key && ( null === $value || '' === trim( (string) $value ) ) ) { return ''; }
 		if ( in_array( $key, self::integer_fields(), true ) ) { return absint( $value ); }
 		if ( in_array( $key, self::number_fields(), true ) ) { return '' === $value ? '' : ( is_numeric( $value ) ? (float) $value : $value ); }
 		if ( in_array( $key, array( 'is_current' ), true ) ) { return empty( $value ) ? 0 : 1; }

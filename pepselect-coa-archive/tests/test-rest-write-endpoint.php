@@ -72,6 +72,27 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/* ---------------------------------------------------------------- M2 */
 
+	public function test_pending_create_preserves_missing_vial_count_on_later_refresh() {
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => $this->compound(), 'batch_number' => 'PENDING-NO-COUNT', 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 201, $response->get_status(), $this->explain( $response ) );
+		$id = $response->get_data()['id'];
+		$this->assertSame( '', get_post_meta( $id, 'vials_tested', true ) );
+		$refresh = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 200, $refresh->get_status(), $this->explain( $refresh ) );
+	}
+
+	public function test_legacy_pending_zero_count_is_repaired_but_explicit_zero_is_rejected() {
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => $this->compound(), 'batch_number' => 'PENDING-LEGACY-COUNT', 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 201, $response->get_status(), $this->explain( $response ) );
+		$id = $response->get_data()['id'];
+		update_post_meta( $id, 'vials_tested', 0 );
+		$refresh = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 200, $refresh->get_status(), $this->explain( $refresh ) );
+		$this->assertSame( '', get_post_meta( $id, 'vials_tested', true ) );
+		$invalid = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'vials_tested' => 0 ) );
+		$this->assertSame( 400, $invalid->get_status(), $this->explain( $invalid ) );
+	}
+
 	public function test_partial_patch_never_fails_a_record_against_its_own_stored_data() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-1001', 'Rejected after review.' );

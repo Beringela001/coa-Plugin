@@ -158,6 +158,17 @@ final class REST_Write_Endpoint {
 
 		$post_status = $request->get_param( 'status' ) ? sanitize_key( (string) $request->get_param( 'status' ) ) : ( $post_id ? (string) get_post_status( $post_id ) : 'publish' );
 		$values      = $this->merge_values( $post_type, $post_id, $submitted );
+		// Older creates coerced an omitted optional count to zero, then rejected
+		// their own stored value on the next update. Repair only that pre-lab
+		// pending sentinel when the caller did not supply a count. Explicit zero
+		// and completed/testing records still receive ordinary validation.
+		if ( $post_id && Post_Types::COA_TEST === $post_type
+			&& ! array_key_exists( 'vials_tested', $submitted )
+			&& '0' === (string) $values['vials_tested'] && 'pending' === $values['coa_status']
+			&& in_array( COA_Workflow::normalize_stage( $values['workflow_stage'] ), array( 'vendor-vetting', 'waiting-on-vendor' ), true ) ) {
+			$values['vials_tested'] = '';
+			$submitted['vials_tested'] = '';
+		}
 
 		$errors = Post_Types::COA_TEST === $post_type
 			? $this->validate_test( $values, $post_id, $post_status )
