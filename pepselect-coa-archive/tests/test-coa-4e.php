@@ -83,7 +83,7 @@ class PepSelect_COA_Archive_COA_4E_Test extends WP_UnitTestCase {
 		update_post_meta( $ids['test'], 'endotoxin_result', '< 0.05' );
 		$model = $this->view->report( get_post( $ids['test'] ), get_post( $ids['compound'] ) );
 		$this->assertSame( array( 'heavy-metals', 'endotoxins' ), wp_list_pluck( $model['result_rows'], 'key' ) );
-		$this->assertSame( '< 0.05 EU/mL', $model['result_rows'][1]['result'] );
+		$this->assertSame( '&lt; 0.05 EU/mL', $model['result_rows'][1]['result'] );
 	}
 
 	private function validate( $value, $name ) { return $this->validator->validate( true, $value, array( 'name' => $name ), '' ); }

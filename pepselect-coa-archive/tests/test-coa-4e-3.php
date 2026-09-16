@@ -42,7 +42,7 @@ class PepSelect_COA_Archive_COA_4E_3_Test extends WP_UnitTestCase {
 		$this->assertSame( 6, $model['reported_category_count'] );
 	}
 
-	public function test_strip_omits_untested_chips_without_removing_detailed_disclosures() {
+	public function test_strip_and_detail_both_omit_untested_categories() {
 		$test = $this->report( $this->fixture( array( 'fentanyl_status' => 'not-tested' ) ) );
 		ob_start(); include dirname( __DIR__ ) . '/templates/partials/full-qc-status-strip.php'; $html = ob_get_clean();
 		$this->assertStringContainsString( 'Testing overview', $html );
@@ -51,7 +51,7 @@ class PepSelect_COA_Archive_COA_4E_3_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Fentanyl screening', $html );
 		$this->assertCount( 7, $test['qc_strip_rows'] );
 		$rows = array_column( $test['result_rows'], null, 'key' );
-		$this->assertSame( 'not-tested', $rows['fentanyl']['status']['value'] );
+		$this->assertArrayNotHasKey( 'fentanyl', $rows );
 	}
 
 	public function test_hero_metadata_has_exact_two_row_source_order() {
