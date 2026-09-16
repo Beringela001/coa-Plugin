@@ -9,11 +9,12 @@ final class Report_Evidence {
 	public static function product_url( $compound_id, $resolved_url, $public_compound_ids ) {
 		return 1 === count( $public_compound_ids ) && (int) $compound_id === (int) $public_compound_ids[0] ? $resolved_url : '';
 	}
-	public static function fentanyl( $status ) {
+	public static function fentanyl( $status, $method = '', $specification = '', $result = '' ) {
+		$performed = in_array( $status, array( 'pass', 'fail' ), true );
 		return array(
-			'result' => 'pass' === $status ? 'Not detected' : ( 'fail' === $status ? 'Detected' : '' ),
-			'method' => '',
-			'specification' => '',
+			'result' => $performed && '' !== trim( (string) $result ) ? trim( (string) $result ) : ( 'pass' === $status ? 'Not detected' : ( 'fail' === $status ? 'Detected' : '' ) ),
+			'method' => $performed ? trim( (string) $method ) : '',
+			'specification' => $performed ? trim( (string) $specification ) : '',
 		);
 	}
 

@@ -58,6 +58,34 @@ class PepSelect_COA_Archive_COA_4E_Test extends WP_UnitTestCase {
 	public function test_41_no_woocommerce_product_page_hooks_were_added() { $source = $this->all_php(); foreach ( array( 'woocommerce_before_single_product', 'woocommerce_single_product_summary', 'woocommerce_after_single_product' ) as $hook ) { $this->assertStringNotContainsString( $hook, $source ); } }
 	public function test_42_no_qr_code_functionality_was_added() { $source = strtolower( $this->all_php() . $this->public_templates() ); $this->assertStringNotContainsString( 'qrcode', $source ); $this->assertStringNotContainsString( 'qr_code', $source ); }
 
+	public function test_imported_fentanyl_evidence_reaches_public_report() {
+		$ids = $this->fallback_fixture();
+		foreach ( array( 'fentanyl_status' => 'pass', 'fentanyl_result' => 'No Fentanyl Detected', 'fentanyl_method' => 'Immunoassay', 'fentanyl_specification' => '50 ng/mL cutoff' ) as $key => $value ) { update_post_meta( $ids['test'], $key, $value ); }
+		$test = $this->view->report( get_post( $ids['test'] ), get_post( $ids['compound'] ) );
+		$row = array_values( array_filter( $test['result_rows'], static function ( $item ) { return 'fentanyl' === $item['key']; } ) )[0];
+		$this->assertSame( 'Immunoassay', $row['method'] );
+		$this->assertSame( '50 ng/mL cutoff', $row['specification'] );
+		$this->assertSame( 'No Fentanyl Detected', $row['result'] );
+		ob_start(); include dirname( __DIR__ ) . '/templates/partials/full-qc-results-table.php'; $html = ob_get_clean();
+		$this->assertStringNotContainsString( 'Not separately recorded here', $html );
+		$this->assertSame( 2, substr_count( $html, '50 ng/mL cutoff' ) );
+		$this->assertSame( 2, substr_count( $html, 'No Fentanyl Detected' ) );
+	}
+
+	public function test_not_tested_categories_are_omitted_even_with_stale_values() {
+		$ids = $this->fallback_fixture();
+		foreach ( array( 'identity', 'purity', 'heavy_metals', 'sterility', 'endotoxin', 'fentanyl' ) as $key ) { update_post_meta( $ids['test'], $key . '_status', 'not-tested' ); }
+		foreach ( array( 'identity_method' => 'LC-MS', 'purity_method' => 'HPLC', 'heavy_metals_summary' => 'Old result', 'sterility_result' => 'Old result', 'endotoxin_unit' => 'EU/mL', 'fentanyl_method' => 'Immunoassay' ) as $key => $value ) { update_post_meta( $ids['test'], $key, $value ); }
+		$model = $this->view->report( get_post( $ids['test'] ), get_post( $ids['compound'] ) );
+		$this->assertEmpty( $model['result_rows'] );
+		update_post_meta( $ids['test'], 'heavy_metals_status', 'fail' );
+		update_post_meta( $ids['test'], 'endotoxin_status', 'pass' );
+		update_post_meta( $ids['test'], 'endotoxin_result', '< 0.05' );
+		$model = $this->view->report( get_post( $ids['test'] ), get_post( $ids['compound'] ) );
+		$this->assertSame( array( 'heavy-metals', 'endotoxins' ), wp_list_pluck( $model['result_rows'], 'key' ) );
+		$this->assertSame( '< 0.05 EU/mL', $model['result_rows'][1]['result'] );
+	}
+
 	private function validate( $value, $name ) { return $this->validator->validate( true, $value, array( 'name' => $name ), '' ); }
 	private function stage( $stage ) { return array( 'field_ps_coa_test_workflow_stage' => $stage, 'field_ps_coa_test_status' => 'pending' ); }
 	private function attachment( $mime ) { $ext = array( 'image/jpeg' => 'jpg', 'image/png' => 'png', 'application/pdf' => 'pdf', 'text/plain' => 'txt' ); $name = wp_generate_uuid4() . '.' . ( $ext[ $mime ] ?? 'bin' ); $id = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => $mime, 'guid' => 'https://example.org/media/' . $name ) ); update_post_meta( $id, '_wp_attached_file', '2026/09/' . $name ); return $id; }

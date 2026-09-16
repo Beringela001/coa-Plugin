@@ -301,7 +301,12 @@ final class Frontend_View_Model {
 		$model['heavy_metals_summary'] = $results ? (string) get_post_meta( $test->ID, 'heavy_metals_summary', true ) : '';
 		$model['sterility_result'] = $results ? (string) get_post_meta( $test->ID, 'sterility_result', true ) : '';
 		$fentanyl_status = $results ? sanitize_key( (string) get_post_meta( $test->ID, 'fentanyl_status', true ) ) : '';
-		$fentanyl_evidence = Report_Evidence::fentanyl( $fentanyl_status );
+		$fentanyl_evidence = Report_Evidence::fentanyl(
+			$fentanyl_status,
+			get_post_meta( $test->ID, 'fentanyl_method', true ),
+			get_post_meta( $test->ID, 'fentanyl_specification', true ),
+			get_post_meta( $test->ID, 'fentanyl_result', true )
+		);
 		$model['fentanyl_result'] = $fentanyl_evidence['result'];
 		$model['fentanyl_method'] = $fentanyl_evidence['method'];
 		$model['fentanyl_specification'] = $fentanyl_evidence['specification'];
@@ -407,7 +412,7 @@ final class Frontend_View_Model {
 		$this->add_result_row( $rows, 'sterility', __( 'Sterility', 'pepselect-coa-archive' ), '', '', $model['sterility_result'], $model['sterility_status'] );
 		$endotoxin_result = trim( (string) $model['endotoxin_result'] );
 		$endotoxin_unit = trim( (string) $model['endotoxin_unit'] );
-		if ( $endotoxin_unit && false === stripos( $endotoxin_result, $endotoxin_unit ) ) { $endotoxin_result = trim( $endotoxin_result . ' ' . $endotoxin_unit ); }
+		if ( '' !== $endotoxin_result && $endotoxin_unit && false === stripos( $endotoxin_result, $endotoxin_unit ) ) { $endotoxin_result = trim( $endotoxin_result . ' ' . $endotoxin_unit ); }
 		$this->add_result_row( $rows, 'endotoxins', __( 'Endotoxins', 'pepselect-coa-archive' ), '', '', $endotoxin_result, $model['endotoxin_status'] );
 		$this->add_result_row( $rows, 'fentanyl', __( 'Fentanyl Screen', 'pepselect-coa-archive' ), $model['fentanyl_method'], $model['fentanyl_specification'], $model['fentanyl_result'], $model['fentanyl_status'] );
 		return $rows;
@@ -510,6 +515,7 @@ final class Frontend_View_Model {
 
 	/** Adds a row only when at least one stored field is public. @param array $rows Rows. @return void */
 	private function add_result_row( &$rows, $key, $label, $method, $specification, $result, $status, $short_label = '' ) {
+		if ( 'not-tested' === ( $status['value'] ?? '' ) ) { return; }
 		if ( '' === trim( (string) $method ) && '' === trim( (string) $specification ) && '' === trim( (string) $result ) && empty( $status['value'] ) ) { return; }
 		$rows[] = array( 'key' => $key, 'label' => $label, 'short_label' => $short_label ?: $label, 'method' => trim( (string) $method ), 'specification' => trim( (string) $specification ), 'result' => trim( (string) $result ), 'status' => $status );
 	}

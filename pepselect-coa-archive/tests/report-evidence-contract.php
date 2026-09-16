@@ -11,6 +11,11 @@ foreach ( array( 'pass', 'fail', 'not-tested', 'pending', '', 'unknown' ) as $st
 check( 'Not detected' === Report_Evidence::fentanyl( 'pass' )['result'], 'Saved passing outcome lost.' );
 check( 'Detected' === Report_Evidence::fentanyl( 'fail' )['result'], 'Saved failure lost.' );
 $report = array( 'compound_id' => 20, 'is_current' => true, 'coa_status' => 'approved', 'workflow_stage' => 'complete', 'detail_url' => '/testing/exact/current/', 'result_rows' => array() );
+$saved = Report_Evidence::fentanyl( 'pass', 'Immunoassay', '50 ng/mL cutoff', 'No Fentanyl Detected' );
+check( 'Immunoassay' === $saved['method'] && '50 ng/mL cutoff' === $saved['specification'] && 'No Fentanyl Detected' === $saved['result'], 'Saved laboratory evidence was discarded.' );
+foreach ( array( 'not-tested', 'pending', '', 'unknown' ) as $status ) {
+	check( array( 'result' => '', 'method' => '', 'specification' => '' ) === Report_Evidence::fentanyl( $status, 'Immunoassay', '50 ng/mL cutoff', 'No Fentanyl Detected' ), 'An unperformed test exposed stale evidence.' );
+}
 check( $report === Report_Evidence::current_report( 20, array( $report ) ), 'Unique current mapping failed.' );
 check( null === Report_Evidence::current_report( 21, array( $report ) ), 'Cross-compound link leaked.' );
 check( null === Report_Evidence::current_report( 20, array( $report, $report ) ), 'Ambiguous current mapping selected a record.' );
