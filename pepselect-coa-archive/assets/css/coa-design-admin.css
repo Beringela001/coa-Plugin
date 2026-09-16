@@ -1,15 +1,23 @@
-.ps-coa-settings .form-table { max-width: 980px; }
-.ps-coa-settings .form-table th { width: 240px; }
-.ps-coa-settings hr { margin-block: 2rem; }
-.ps-coa-setting-previews { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 28px; max-width: 980px; }
-.ps-coa-setting-previews > div { background: #fff; border: 1px solid #dcdcde; border-radius: 8px; scroll-margin-top: 42px; padding: 16px; }
-.ps-coa-setting-previews h2 { font-size: 14px; margin-top: 0; }
-.ps-coa-preview-card { border-left: 4px solid #28734d; display: grid; gap: 4px; padding: 12px; }
-.ps-coa-preview-card span { color: #60706d; }
-.ps-coa-preview-heading { font-size: 22px; font-weight: 700; }
-.ps-coa-preview-shapes, .ps-coa-preview-controls { display: flex; gap: 10px; }
-.ps-coa-preview-shapes span { border: 1px solid #d8e0de; border-radius: 12px; padding: 12px 24px; }
-.ps-coa-preview-controls input { min-width: 220px; }
-.ps-coa-preview-lightbox { align-items: center; background: #101616; color: #fff; display: flex; justify-content: space-between; padding: 20px; }
-@media (max-width: 782px) { .ps-coa-settings .form-table th { width: auto; } }
-@media (max-width: 782px) { .ps-coa-setting-previews { grid-template-columns: 1fr; } .ps-coa-preview-controls { align-items: stretch; flex-direction: column; } }
+.ps-coa-settings { max-width:1800px; }
+.ps-coa-editor-toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:16px 0; position:sticky; top:32px; background:#f0f0f1; z-index:10; }
+.ps-coa-editor-layout { display:grid; grid-template-columns:minmax(280px,360px) minmax(0,1fr); gap:20px; align-items:start; }
+.ps-coa-editor-layout form { margin:0; }
+#ps-coa-setting-search { display:block; width:100%; margin:8px 0 14px; }
+.ps-coa-editor-layout details { background:#fff; border:1px solid #c3c4c7; border-radius:8px; margin-bottom:12px; }
+.ps-coa-editor-layout summary { cursor:pointer; padding:16px; font-size:15px; font-weight:600; }
+.ps-coa-editor-field { padding:12px 16px; border-top:1px solid #eee; }
+.ps-coa-editor-field label { display:block; font-weight:600; margin-bottom:8px; }
+.ps-coa-editor-field input:not([type=checkbox]), .ps-coa-editor-field select, .ps-coa-editor-field textarea { width:100%; max-width:100%; }
+.ps-coa-editor-field textarea { resize:vertical; }
+.ps-coa-editor-field input[type=color] { height:38px; padding:3px; cursor:pointer; }
+.ps-coa-editor-field fieldset { margin:0; padding:0; border:0; }
+.ps-coa-editor-field fieldset:disabled { opacity:.65; }
+.ps-coa-editor-preview { position:sticky; top:105px; min-width:0; background:#fff; border:1px solid #c3c4c7; border-radius:8px; padding:16px; }
+.ps-coa-preview-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.ps-coa-preview-toolbar select { max-width:100%; flex:1; min-width:180px; }
+.ps-coa-device-controls { display:flex; gap:6px; }
+.ps-coa-device-controls [aria-pressed=true] { background:#135e96; color:#fff; border-color:#135e96; }
+.ps-coa-preview-scroll { position:relative; overflow:hidden; background:#e5e7eb; border:1px solid #c3c4c7; }
+#ps-coa-design-preview { position:absolute; top:0; transform-origin:top left; display:block; border:0; max-width:none; margin:0; background:#fff; }
+@media(max-width:1000px) { .ps-coa-editor-layout { grid-template-columns:1fr; } .ps-coa-editor-preview { position:static; grid-row:1; } .ps-coa-preview-scroll { max-height:600px; } }
+@media(max-width:782px) { .ps-coa-editor-toolbar { top:46px; } }

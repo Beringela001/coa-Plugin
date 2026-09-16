@@ -86,9 +86,10 @@ class PepSelect_COA_Archive_Design_Settings_Test extends WP_UnitTestCase {
 
 	public function test_settings_screen_has_helper_copy_and_linked_previews() {
 		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-design-settings-admin.php' );
-		$this->assertStringContainsString( 'Preview example', $source );
-		$this->assertStringContainsString( 'What this changes', $source );
-		foreach ( array( 'colors', 'typography', 'corners', 'buttons', 'lightbox', 'copy', 'behavior' ) as $section ) { $this->assertStringContainsString( 'id="ps-coa-preview-' . $section . '"', $source ); }
+		$this->assertStringContainsString( 'Live COA preview', $source );
+		$this->assertStringContainsString( 'Design_Editor::schema()', $source );
+		$this->assertStringContainsString( 'id="ps-coa-design-preview"', $source );
+		$this->assertStringContainsString( 'sandbox="allow-scripts"', $source );
 	}
 
 	public function test_reset_assets_search_and_lightbox_are_scoped_and_safe() {

@@ -1,6 +1,11 @@
 <?php
 // Local visual fixture: render the production templates without a WordPress database.
 define('ABSPATH', __DIR__);
+if (!function_exists('get_option')) { function get_option($key,$default=[]){return $default;} }
+if (!function_exists('sanitize_hex_color')) { function sanitize_hex_color($value){return preg_match('/^#[a-f0-9]{6}$/i',(string)$value)?$value:null;} }
+if (!function_exists('sanitize_key')) { function sanitize_key($value){return preg_replace('/[^a-z0-9_\-]/','',strtolower($value));} }
+if (!function_exists('sanitize_text_field')) { function sanitize_text_field($value){return trim(strip_tags((string)$value));} }
+require_once dirname(__DIR__,2).'/pepselect-coa-archive/includes/class-design-settings.php';
 function __($s,$d=''){return $s;}
 function _n($one,$many,$n,$d=''){return $n===1?$one:$many;}
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}

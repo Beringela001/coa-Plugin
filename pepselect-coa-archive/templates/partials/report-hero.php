@@ -12,12 +12,12 @@
 	</div>
 	<?php include pepselect_coa_template_path( 'partials/batch-vial-image.php' ); ?>
 	<div class="ps-coa-report-hero__outcome ps-coa-report-hero__outcome--<?php echo esc_attr( $test['public_status_tone'] ); ?>">
-		<div class="ps-coa-outcome-top"><span class="ps-coa-outcome-icon" aria-hidden="true"><?php if ( 'approved' === $test['coa_status'] ) : ?><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg><?php else : ?><?php echo 'failed' === $test['coa_status'] ? '!' : '&hellip;'; ?><?php endif; ?></span><span class="ps-coa-state-pill ps-coa-state-pill--<?php echo esc_attr( $test['public_status_tone'] ); ?>"><?php echo esc_html( 'approved' === $test['coa_status'] ? __( 'Approved', 'pepselect-coa-archive' ) : $test['public_status_label'] ); ?></span></div>
-		<h2><?php echo esc_html( 'approved' === $test['coa_status'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( 'failed' === $test['coa_status'] ? __( 'Testing failed', 'pepselect-coa-archive' ) : $test['workflow_stage_label'] ) ); ?></h2>
+		<div class="ps-coa-outcome-top"><span class="ps-coa-outcome-icon" aria-hidden="true"><?php if ( 'approved' === $test['coa_status'] ) : ?><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg><?php else : ?><?php echo 'failed' === $test['coa_status'] ? '!' : '&hellip;'; ?><?php endif; ?></span></div>
+		<h2><?php echo esc_html( 'approved' === $test['coa_status'] ? \PepSelect\COAArchive\Design_Settings::copy( 'report_passed_heading' ) : ( 'failed' === $test['coa_status'] ? \PepSelect\COAArchive\Design_Settings::copy( 'report_failed_heading' ) : $test['public_status_label'] ) ); ?></h2>
 		<?php if ( trim( $test['public_notes'] ) || trim( $test['report_notes'] ) || ( 'failed' === $test['coa_status'] && trim( $test['release_decision_note'] ) ) ) : ?>
 		<p><a class="ps-coa-note-link" href="#ps-coa-batch-note"><?php esc_html_e( 'See important batch note below', 'pepselect-coa-archive' ); ?> <span aria-hidden="true">↓</span></a></p>
 		<?php else : ?>
-		<p><?php echo esc_html( 'approved' === $test['coa_status'] ? __( 'Review the results and original report below. Match the batch number, cap and crimp with your vial.', 'pepselect-coa-archive' ) : ( 'failed' === $test['coa_status'] ? __( 'This batch was not released for sale.', 'pepselect-coa-archive' ) : $test['public_status_copy'] ) ); ?></p>
+		<p><?php echo esc_html( 'approved' === $test['coa_status'] ? \PepSelect\COAArchive\Design_Settings::copy( 'report_passed_copy' ) : ( 'failed' === $test['coa_status'] ? \PepSelect\COAArchive\Design_Settings::copy( 'failed_report_copy' ) : $test['public_status_copy'] ) ); ?></p>
 		<?php endif; ?>
 		<?php if ( 'pending' === $test['coa_status'] && $test['pending_lab_url'] ) : ?><a class="ps-coa-button ps-coa-button--secondary" href="<?php echo esc_url( $test['pending_lab_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'view_pending_lab' ) ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new tab)', 'pepselect-coa-archive' ); ?></span></a><?php endif; ?>
 	</div>

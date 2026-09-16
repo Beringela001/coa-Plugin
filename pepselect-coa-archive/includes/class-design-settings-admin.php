@@ -49,30 +49,39 @@ final class Design_Settings_Admin {
 		} elseif ( 'integer' === $field['type'] || 'decimal' === $field['type'] ) {
 			printf( '<input id="%1$s" name="%2$s" type="number" value="%3$s" min="%4$s" max="%5$s" step="%6$s" class="small-text">', esc_attr( $args['label_for'] ), esc_attr( $name ), esc_attr( $value ), esc_attr( $field['min'] ), esc_attr( $field['max'] ), esc_attr( isset( $field['step'] ) ? $field['step'] : 1 ) );
 			if ( ! empty( $field['suffix'] ) ) { echo ' <span>' . esc_html( $field['suffix'] ) . '</span>'; }
+		} elseif ( 'text' === $field['type'] && ( strlen( $field['default'] ) > 70 || str_ends_with( $key, '_copy' ) ) ) {
+			printf( '<textarea id="%1$s" name="%2$s" rows="3">%3$s</textarea>', esc_attr( $args['label_for'] ), esc_attr( $name ), esc_textarea( $value ) );
 		} else {
 			$class = 'color' === $field['type'] ? 'ps-coa-color-field' : 'regular-text';
-			printf( '<input id="%1$s" name="%2$s" type="text" value="%3$s" class="%4$s"%5$s>', esc_attr( $args['label_for'] ), esc_attr( $name ), esc_attr( $value ), esc_attr( $class ), 'color' === $field['type'] ? ' data-default-color="' . esc_attr( $field['default'] ) . '"' : '' );
+			printf( '<input id="%1$s" name="%2$s" type="%5$s" value="%3$s" class="%4$s">', esc_attr( $args['label_for'] ), esc_attr( $name ), esc_attr( $value ), esc_attr( $class ), 'color' === $field['type'] ? 'color' : 'text' );
 		}
-		printf( '<p class="description">%1$s <a href="#ps-coa-preview-%2$s">%3$s</a></p>', esc_html( sprintf( __( 'Changes the frontend %s.', 'pepselect-coa-archive' ), strtolower( $field['label'] ) ) ), esc_attr( $field['section'] ), esc_html__( 'What this changes', 'pepselect-coa-archive' ) );
+
 	}
 
 	public function render_page() {
 		if ( ! current_user_can( 'manage_ps_coas' ) ) { wp_die( esc_html__( 'You do not have permission to access this page.', 'pepselect-coa-archive' ) ); }
 		?>
-		<div class="wrap ps-coa-settings"><h1><?php esc_html_e( 'COA Archive Design & Copy', 'pepselect-coa-archive' ); ?></h1>
-		<?php if ( isset( $_GET['ps_coa_reset'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?><div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'COA design and copy settings were reset to defaults.', 'pepselect-coa-archive' ); ?></p></div><?php endif; ?>
-		<form action="options.php" method="post"><?php settings_fields( self::GROUP ); do_settings_sections( self::PAGE ); submit_button( __( 'Save Design & Copy', 'pepselect-coa-archive' ) ); ?></form>
-		<section class="ps-coa-setting-previews" aria-label="<?php esc_attr_e( 'Frontend setting examples', 'pepselect-coa-archive' ); ?>">
-			<div id="ps-coa-preview-colors"><h2><?php esc_html_e( 'Colors example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-card"><strong><?php esc_html_e( 'Full-QC Documented', 'pepselect-coa-archive' ); ?></strong><span><?php esc_html_e( 'Card, text, border, accent, and status colors', 'pepselect-coa-archive' ); ?></span></div></div>
-			<div id="ps-coa-preview-typography"><h2><?php esc_html_e( 'Typography example', 'pepselect-coa-archive' ); ?></h2><p class="ps-coa-preview-heading"><?php esc_html_e( 'Retatrutide Vetting History', 'pepselect-coa-archive' ); ?></p></div>
-			<div id="ps-coa-preview-corners"><h2><?php esc_html_e( 'Corners example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-shapes"><span><?php esc_html_e( 'Card', 'pepselect-coa-archive' ); ?></span><span><?php esc_html_e( 'Search', 'pepselect-coa-archive' ); ?></span></div></div>
-			<div id="ps-coa-preview-buttons"><h2><?php esc_html_e( 'Buttons & Search example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-controls"><input type="text" value="<?php esc_attr_e( 'Search compounds...', 'pepselect-coa-archive' ); ?>" readonly><button type="button" class="button button-primary"><?php esc_html_e( 'Search', 'pepselect-coa-archive' ); ?></button></div></div>
-			<div id="ps-coa-preview-lightbox"><h2><?php esc_html_e( 'Lightbox example', 'pepselect-coa-archive' ); ?></h2><div class="ps-coa-preview-lightbox"><span>&larr;</span><strong><?php esc_html_e( 'Certificate page', 'pepselect-coa-archive' ); ?></strong><span>&rarr;</span></div></div>
-			<div id="ps-coa-preview-copy"><h2><?php esc_html_e( 'Public copy example', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Labels update the archive, history cards, actions, and search without changing URLs or scientific data.', 'pepselect-coa-archive' ); ?></p></div>
-			<div id="ps-coa-preview-behavior"><h2><?php esc_html_e( 'Archive behavior example', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Failed-only compounds stay out of the main archive unless explicitly enabled.', 'pepselect-coa-archive' ); ?></p></div>
-		</section>
-		<hr><h2><?php esc_html_e( 'Reset Defaults', 'pepselect-coa-archive' ); ?></h2><p><?php esc_html_e( 'Reset only COA design and public-copy settings. Compounds, reports, routes, and media are not changed.', 'pepselect-coa-archive' ); ?></p>
-		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" onsubmit="return confirm('<?php echo esc_js( __( 'Reset all COA design and copy settings to their defaults?', 'pepselect-coa-archive' ) ); ?>');"><input type="hidden" name="action" value="pepselect_coa_reset_design"><?php wp_nonce_field( 'pepselect_coa_reset_design' ); ?><?php submit_button( __( 'Reset to Defaults', 'pepselect-coa-archive' ), 'secondary', 'submit', false ); ?></form></div>
+		<div class="wrap ps-coa-settings"><h1>COA Design &amp; Copy</h1>
+		<p>Edit the public COA wording and appearance. Preview changes here, then save when ready. This does not change test results, batch notes, inventory or product stock pills.</p>
+		<div class="ps-coa-editor-toolbar"><button type="button" class="button button-primary" id="ps-coa-design-save" disabled>Save Design &amp; Copy</button> <button type="button" class="button" id="ps-coa-design-discard" disabled>Discard changes</button><span id="ps-coa-design-status" role="status" aria-live="polite">Loading saved settings…</span></div>
+		<div class="ps-coa-editor-layout"><form id="ps-coa-design-form"><h2>Controls</h2><label for="ps-coa-setting-search">Find a setting</label><input type="search" id="ps-coa-setting-search" placeholder="Heading, waiting, color…">
+		<?php
+		$sections = array( 'copy' => 'Public wording', 'report_style' => 'Report status panel', 'colors' => 'Shared colors', 'typography' => 'Typography', 'corners' => 'Corners & borders', 'buttons' => 'Buttons & search', 'lightbox' => 'Certificate viewer', 'behavior' => 'Archive rules' );
+		foreach ( $sections as $section => $label ) {
+			echo '<details' . ( 'copy' === $section ? ' open' : '' ) . '><summary>' . esc_html( $label ) . '</summary>';
+			foreach ( Design_Editor::schema() as $key => $field ) {
+				if ( $field['section'] !== $section ) { continue; }
+				echo '<div class="ps-coa-editor-field"><label for="ps-coa-' . esc_attr( $key ) . '">' . esc_html( $field['label'] ) . '</label><fieldset' . ( $field['readonly'] ? ' disabled' : '' ) . '>';
+				$this->render_field( array( 'key' => $key, 'field' => $field, 'label_for' => 'ps-coa-' . $key ) );
+				echo '</fieldset><p class="description">' . esc_html( $field['help'] ) . '</p></div>';
+			}
+			echo '</details>';
+		}
+		?>
+		</form><section class="ps-coa-editor-preview" aria-label="Live COA preview"><div class="ps-coa-preview-toolbar"><label for="ps-coa-preview-page">Preview page</label> <select id="ps-coa-preview-page" disabled><option>Loading public pages…</option></select><div class="ps-coa-device-controls"><button type="button" class="button" data-width="1280" aria-pressed="true">Desktop</button><button type="button" class="button" data-width="390" aria-pressed="false">Mobile</button></div></div>
+		<p class="description">Real COA templates and public records. Site navigation is omitted. Inherited fonts use the preview’s system font; choose an explicit font to preview it exactly. Important batch notes override standard descriptions.</p>
+		<div class="ps-coa-preview-scroll"><iframe id="ps-coa-design-preview" title="Unsaved COA page preview" sandbox="allow-scripts" width="1280" height="760"></iframe></div>
+		</section></div></div>
 		<?php
 	}
 
@@ -81,6 +90,7 @@ final class Design_Settings_Admin {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style( 'pepselect-coa-design-admin', plugins_url( 'assets/css/coa-design-admin.css', PEPSELECT_COA_ARCHIVE_FILE ), array( 'wp-color-picker' ), PEPSELECT_COA_ARCHIVE_VERSION );
 		wp_enqueue_script( 'pepselect-coa-design-admin', plugins_url( 'assets/js/coa-design-admin.js', PEPSELECT_COA_ARCHIVE_FILE ), array( 'jquery', 'wp-color-picker' ), PEPSELECT_COA_ARCHIVE_VERSION, true );
+		wp_localize_script( 'pepselect-coa-design-admin', 'PepSelectCoaDesign', array( 'endpoint' => rest_url( 'pepselect-coa/v1/design' ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
 	}
 
 	public function reset_defaults() {

@@ -112,6 +112,7 @@ final class Plugin {
 		$this->rest_write           = new REST_Write_Endpoint( $this->coa_test_validation, $this->compound_validation, $this->coa_test_service );
 		$this->rest_write->register();
 		REST_Write_Guard::register_hooks();
+		( new Design_Editor_Endpoint() )->register();
 		$this->product_carousel     = new Product_COA_Carousel( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->product_coa_button   = new Product_COA_Button( $this->product_matching, $compound_repository, $coa_test_repository, $frontend_view_model );
 		Archive_Cache::register_hooks();
