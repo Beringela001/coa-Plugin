@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-coa-4e.php": {
-    "mtime": 1789520217.1466453,
-    "ast_hash": "7b7ed9d6d04def6c39f57d56e3c700c6",
+    "mtime": 1789521920.9406765,
+    "ast_hash": "81fa3f5dbdfb3802d8babb28b14cbe19",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-coa-4f.php": {
@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-design-editor.php": {
-    "mtime": 1789521230.0481367,
-    "ast_hash": "be995c9a724043eb8180cf8c3c3511e8",
+    "mtime": 1789521919.1079621,
+    "ast_hash": "9ca32312b6b6bb9d9e7ad9c835bd9cb2",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-report-notes-standalone.php": {

@@ -10866,7 +10866,7 @@
       "label": ".tear_down()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast"
     },
     {
@@ -10874,7 +10874,7 @@
       "label": ".authorize()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast"
     },
     {
@@ -10882,7 +10882,7 @@
       "label": ".request()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast"
     },
     {
@@ -10890,7 +10890,7 @@
       "label": ".report()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast"
     },
     {
@@ -10898,7 +10898,7 @@
       "label": ".test_routes_require_permission_for_all_operations()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast"
     },
     {
@@ -10906,7 +10906,7 @@
       "label": ".test_read_and_preview_do_not_save_settings_or_business_records()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L36",
+      "source_location": "L37",
       "_origin": "ast"
     },
     {
@@ -10914,7 +10914,7 @@
       "label": ".test_save_merges_preserves_saved_copy_and_rejects_stale_revision()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L51",
+      "source_location": "L52",
       "_origin": "ast"
     },
     {
@@ -10922,7 +10922,7 @@
       "label": ".test_preview_restores_cache_when_render_throws()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L63",
+      "source_location": "L64",
       "_origin": "ast"
     },
     {
@@ -10930,7 +10930,7 @@
       "label": ".test_invalid_and_inactive_fields_are_rejected()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L67",
+      "source_location": "L68",
       "_origin": "ast"
     },
     {
@@ -10938,7 +10938,7 @@
       "label": ".test_preview_matches_production_hero_and_preserves_notes()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L72",
+      "source_location": "L73",
       "_origin": "ast"
     },
     {
@@ -10946,7 +10946,7 @@
       "label": ".test_report_copy_does_not_change_product_carousel_workflow_text()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L83",
+      "source_location": "L84",
       "_origin": "ast"
     },
     {
@@ -32524,7 +32524,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -32533,7 +32533,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -32542,7 +32542,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -32551,7 +32551,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -32560,7 +32560,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -32569,7 +32569,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -32578,7 +32578,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -32587,7 +32587,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -32596,7 +32596,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L67",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -32605,7 +32605,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -32614,7 +32614,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L83",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -32624,7 +32624,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -32634,7 +32634,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -32644,7 +32644,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -32654,7 +32654,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -32664,7 +32664,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -32674,7 +32674,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -32684,7 +32684,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L73",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -32694,7 +32694,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -41082,7 +41082,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -41093,7 +41093,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -41104,7 +41104,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -41115,7 +41115,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -41126,7 +41126,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -41137,7 +41137,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L53",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -41148,7 +41148,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -41159,7 +41159,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -41170,7 +41170,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -41181,7 +41181,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -41192,7 +41192,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -41203,7 +41203,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -41214,7 +41214,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
