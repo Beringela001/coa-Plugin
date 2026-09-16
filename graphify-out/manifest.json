@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/pepselect-coa-archive.php": {
-    "mtime": 1789521232.9432645,
-    "ast_hash": "9b98695552d799f64cd61e087c7c1f76",
+    "mtime": 1789524307.6039507,
+    "ast_hash": "e78ea848342990d18bfc2d2eb4c68144",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/admin/dashboard-workflow.php": {
@@ -350,8 +350,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/compound-card.php": {
-    "mtime": 1788880175.65204,
-    "ast_hash": "b844522d824580dae58d6f5403e8c70e",
+    "mtime": 1789524307.6005368,
+    "ast_hash": "619493897ab2e87f9bf47c9c1810b5e1",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/full-qc-results-table.php": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/history-incoming-report.php": {
-    "mtime": 1788884418.5978777,
-    "ast_hash": "e43480a2bf3e5b61e58c23accdbe4fb6",
+    "mtime": 1789524307.6005368,
+    "ast_hash": "b8435f78e8cf3545d131c0d436e36f9f",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/history-latest-report.php": {
@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/incoming-report-card.php": {
-    "mtime": 1788880079.1305907,
-    "ast_hash": "a344a0377f09b49825afd6b1e87d04f6",
+    "mtime": 1789524307.6005368,
+    "ast_hash": "6ed703dd2ca7c5d15cba68d915bfb86c",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/laboratory-logo.php": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-navigation.php": {
-    "mtime": 1788884072.196092,
-    "ast_hash": "5aa8794edbe7944224fd9483967f7f6b",
+    "mtime": 1789524307.6039507,
+    "ast_hash": "56bea87b7da6ac833e0158f4436dac99",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/partials/report-results.php": {
@@ -505,8 +505,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/single-coa-report.php": {
-    "mtime": 1789082226.5028539,
-    "ast_hash": "1da981be72693ceeb6e4c88ff5a0b769",
+    "mtime": 1789524307.6039507,
+    "ast_hash": "197f89f8090b9668918c635ea962cd11",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/single-compound-history.php": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/readme.txt": {
-    "mtime": 1789521232.9432645,
-    "ast_hash": "9e020d43a005ab531f1334dc8260f544",
+    "mtime": 1789524307.6089754,
+    "ast_hash": "d534d48336bdca343190965d3a9ae22d",
     "semantic_hash": ""
   },
   "docs/coa-redesign/current-vial.png": {
@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-design-editor.php": {
-    "mtime": 1789521919.1079621,
-    "ast_hash": "9ca32312b6b6bb9d9e7ad9c835bd9cb2",
+    "mtime": 1789524338.4068983,
+    "ast_hash": "72fed462e237477156ebf174494f9111",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-report-notes-standalone.php": {
@@ -1105,8 +1105,8 @@
     "semantic_hash": ""
   },
   "docs/COA-DESIGN-EDITOR-2026-09-15.md": {
-    "mtime": 1789521386.3240085,
-    "ast_hash": "f6dfead0e6aedd9744033358491d36f7",
+    "mtime": 1789523777.52844,
+    "ast_hash": "9bc25d9c73ad1380b7f9c7e0300d2210",
     "semantic_hash": ""
   },
   "docs/COA_0715_EVIDENCE_RELEASE.md": {
