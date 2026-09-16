@@ -52,11 +52,14 @@ class PepSelect_COA_Design_Editor_Test extends WP_UnitTestCase {
 	public function test_pending_headings_and_archive_pills_share_custom_copy() {
 		foreach ( array( 'vendor-vetting' => 'vendor_vetting_label', 'waiting-on-vendor' => 'waiting_vendor_label', 'submitted-to-lab' => 'submitted_lab_label', 'in-testing' => 'in_testing_label' ) as $stage => $field ) {
 			$id = $this->report( $stage );
-			update_post_meta( $id, 'batch_number', '' );
+			if ( 'in-testing' !== $stage ) { update_post_meta( $id, 'batch_number', '' ); }
+			update_post_meta( $id, 'expected_coa_date', '20260930' );
+			update_post_meta( $id, 'testing_lab', 'freedom-labs' );
 			$compound_id = (int) get_post_meta( $id, 'compound_id', true );
 			$title = 'Custom public heading for ' . $stage;
 			$settings = array( $field => $title );
 			$history = Design_Editor::preview( $settings, 'compound', $compound_id );
+			$this->assertNotWPError( $history );
 			$this->assertStringContainsString( '<h3>' . $title . '</h3>', $history['html'] );
 			$this->assertStringNotContainsString( 'class="ps-coa-state-pill ', $history['html'] );
 			$archive = Design_Editor::preview( $settings, 'archive', 0 );
