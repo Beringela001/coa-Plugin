@@ -5,12 +5,13 @@ use PepSelect\COAArchive\Design_Editor_Endpoint;
 
 class PepSelect_COA_Design_Editor_Test extends WP_UnitTestCase {
 	public function set_up() {
-		parent::set_up(); do_action( 'init' );
+		parent::set_up(); wp_set_current_user( 0 ); do_action( 'init' );
+		( new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ) )->register_rest_meta();
 		delete_option( Design_Settings::OPTION ); Design_Settings::clear_cache();
 		global $wp_rest_server; $wp_rest_server = new WP_REST_Server(); do_action( 'rest_api_init' );
 		( new Design_Editor_Endpoint() )->routes();
 	}
-	public function tear_down() { wp_set_current_user( 0 ); Design_Settings::clear_cache(); parent::tear_down(); }
+	public function tear_down() { global $wp_rest_server; $wp_rest_server = null; wp_set_current_user( 0 ); Design_Settings::clear_cache(); parent::tear_down(); }
 	private function authorize() {
 		$id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		get_user_by( 'id', $id )->add_cap( 'manage_ps_coas' ); wp_set_current_user( $id );
@@ -70,7 +71,7 @@ class PepSelect_COA_Design_Editor_Test extends WP_UnitTestCase {
 		$this->assertWPError( Design_Editor::preview( array(), 'report', 99999999 ) );
 	}
 	public function test_preview_matches_production_hero_and_preserves_notes() {
-		$id = $this->report( 'complete', 'failed' ); update_post_meta( $id, 'public_notes', 'Important customer disclosure.' );
+		$id = $this->report( 'complete', 'failed' ); update_post_meta( $id, 'release_decision_note', 'Important customer disclosure.' );
 		$preview = Design_Editor::preview( array(), 'report', $id );
 		$this->assertStringContainsString( 'Important customer disclosure.', $preview['html'] );
 		$this->assertStringContainsString( 'See important batch note below', $preview['html'] );
