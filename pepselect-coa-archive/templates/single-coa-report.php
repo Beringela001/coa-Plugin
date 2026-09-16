@@ -6,7 +6,7 @@ $compound = $ps_context['compound']; $test = $ps_context['test'];
 if ( ! $ps_embedded ) { get_header(); }
 ?>
 <main class="ps-coa ps-coa-app ps-coa-report ps-coa-report--mockup-layout ps-coa-report--<?php echo esc_attr( $test['coa_status'] ); ?>" id="ps-coa-main">
-	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li><a href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( $compound['display_name'] ); ?></a></li><li aria-current="page"><?php echo esc_html( $test['batch_number'] ? sprintf( __( 'Batch %s', 'pepselect-coa-archive' ), $test['batch_number'] ) : $test['workflow_stage_label'] ); ?></li></ol></nav>
+	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li><a href="<?php echo esc_url( $compound['url'] ); ?>"><?php echo esc_html( $compound['display_name'] ); ?></a></li><li aria-current="page"><?php echo esc_html( $test['batch_number'] ? sprintf( __( 'Batch %s', 'pepselect-coa-archive' ), $test['batch_number'] ) : $test['public_status_label'] ); ?></li></ol></nav>
 	<?php include pepselect_coa_template_path( 'partials/report-current-path.php' ); ?>
 	<?php include pepselect_coa_template_path( 'partials/report-hero.php' ); ?>
 	<?php include pepselect_coa_template_path( 'partials/report-notes.php' ); ?>
