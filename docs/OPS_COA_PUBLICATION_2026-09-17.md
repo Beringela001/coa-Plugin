@@ -6,6 +6,8 @@ Selank SL1026246JP (WordPress 1909) and Semax SM1026246JP (1911) contained in-te
 
 Control master bce92aa was deployed successfully to Sevalla; the live version banner reports bce92aa, built 2026-09-18T01:24:05.874Z. All 1,218 tests across 41 files, TypeScript, and focused ESLint passed. A complete Control backup and isolated recovery were verified before release.
 
+GitHub Actions build #176 succeeded in 19m10s, including all 84 browser-route checks: https://github.com/Beringela001/pepselect-control-app/actions/runs/35294997287. The actual configured registry target is ghcr.io/beringela001/pepselect-control-private:bce92aa (not the older control-app image name in AGENTS.md). Published manifest digest: sha256:5992e7f8e6e0a2609e20bc9934641f13296f701805eaf077dbcdbc8befcfd99b. Sevalla builds/deploys the same source directly; this registry image is the separate fallback.
+
 Both existing WordPress posts were published without changing results or releasing inventory. New Ops Selank Save dates returned Website SUCCESS for in-testing/pending and stored the canonical public link. Semax Edit lab dates / Save lab timeline likewise saved the link. Both kept September 16 sent and September 17 delivered/admitted dates.
 
 Reconciliation a7053d3f-ba3c-481b-9823-fd5d04b25549 finished September 17 at 9:35:53 PM Eastern: four checked, four succeeded, zero skipped, zero needing attention. It covered RT1026258JP, TZ2026258JP, SL1026246JP, and SM1026246JP. It reused existing records and did not change inventory or final test outcomes.
