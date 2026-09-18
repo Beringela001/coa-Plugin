@@ -19,6 +19,26 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function tear_down() { unset( $_GET['coa_search'] ); parent::tear_down(); }
 
+	public function test_public_calendar_dates_match_admin_in_site_timezone() {
+		$original_zone = get_option( 'timezone_string' );
+		$original_format = get_option( 'date_format' );
+		$method = new ReflectionMethod( $this->view_model, 'date_label' );
+		$method->setAccessible( true );
+		try {
+			update_option( 'date_format', 'F j, Y' );
+			foreach ( array( 'America/New_York', 'America/Los_Angeles', 'UTC', 'Asia/Tokyo' ) as $zone ) {
+				update_option( 'timezone_string', $zone );
+				foreach ( array( '20260925', '2026-09-25' ) as $date ) {
+					$this->assertSame( 'September 25, 2026', $method->invoke( $this->view_model, $date ), $zone );
+				}
+				$this->assertSame( '', $method->invoke( $this->view_model, '20260230' ) );
+			}
+		} finally {
+			update_option( 'timezone_string', $original_zone );
+			update_option( 'date_format', $original_format );
+		}
+	}
+
 	public function test_archive_search_request_normalization_treats_absent_empty_whitespace_and_invalid_values_as_no_search() {
 		$query = new PepSelect\COAArchive\Frontend_Query();
 		$this->assertSame( '', $query->search() );

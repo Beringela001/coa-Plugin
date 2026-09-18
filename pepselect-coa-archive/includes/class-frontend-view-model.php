@@ -521,10 +521,10 @@ final class Frontend_View_Model {
 	}
 
 	private function date_label( $value ) {
-		$digits = preg_replace( '/\D/', '', (string) $value );
-		if ( 8 !== strlen( $digits ) ) { return ''; }
-		$time = strtotime( substr( $digits, 0, 4 ) . '-' . substr( $digits, 4, 2 ) . '-' . substr( $digits, 6, 2 ) . ' 00:00:00' );
-		return $time ? wp_date( get_option( 'date_format' ), $time ) : '';
+		// These are calendar dates, not UTC instants. Use the same site-local
+		// parser as the admin list so a US timezone cannot move them back a day.
+		$date = COA_Admin_Workflow::parse_date( $value );
+		return $date ? wp_date( get_option( 'date_format' ), $date->getTimestamp(), wp_timezone() ) : '';
 	}
 
 	private function http_url( $url ) { $url = trim( (string) $url ); return $url && wp_http_validate_url( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : ''; }
