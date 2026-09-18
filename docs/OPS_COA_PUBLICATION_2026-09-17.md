@@ -20,7 +20,7 @@ Signed-in pages initially differed from logged-out Selank, which retained Restoc
 
 Ordinary COA REST metadata-only changes did not call WordPress post-update hooks. The plugin fix now calls wp_update_post after changed metadata has landed, letting the existing cache integration see the finished record. Unchanged metadata avoids unnecessary invalidation. A regression test verifies both cases on a published pending record advancing to in-testing.
 
-## Plugin 0.7.18 — tested, deployment pending
+## Plugin 0.7.18 — deployed to staging and Live
 
 - Date-only labels now use the existing admin date parser and explicit site timezone, avoiding September 25 displaying as September 24.
 - REST metadata-only updates notify WordPress page-cache integrations.
@@ -32,4 +32,6 @@ Ordinary COA REST metadata-only changes did not call WordPress post-update hooks
 
 Staging installation completed after the owner signed in. WordPress confirmed replacement of 0.7.17 with 0.7.18. Package SHA-256 was verified immediately before upload. All 18 archive time labels match their stored calendar dates, including compact Ymd and ISO formats. The Retatrutide RT2026205JP report renders its batch note, measured values, and laboratory data; its vial image and expanded certificate image both load. REST metadata cache notifications and unchanged-write behavior are covered by the passing PHP regression jobs. No live REST mutation test has been claimed. A requested viewport override did not change the Chrome page width; this turn therefore verifies desktop rendering only.
 
-Live Kinsta manual backup slots remain full (verified again after staging installation); action-time confirmation is pending to replace only the oldest September 15 8:20 PM backup, "Before COA 0.7.15 saved evidence and untested rows", with a fresh named backup. No backup has been deleted. Plugin 0.7.17 remains live; the date-label bug and automatic metadata cache notification remain pending Live deployment. Do not represent the staging package as deployed to Live.
+Owner explicitly confirmed deletion of only the oldest September 15 8:20 PM backup, "Before COA 0.7.15 saved evidence and untested rows". That backup was removed; the other four remained. Fresh Live manual backup completed September 17 at 9:53 PM: "Before COA 0.7.18 dates and Ops cache refresh LIVE Sep17". Only after it appeared as restorable was the identical SHA-256-verified package uploaded and WordPress confirmed 0.7.17 → 0.7.18 replacement successfully. Site cache was cleared; dependent group purge paths /product/, /testing/, and /shop/ remain configured.
+
+Logged-out Live HTML now serves COA assets version 0.7.18. Selank and Semax product pages show In testing. Both archive expected dates display September 25, 2026 against stored 2026-09-25 values. Selank's exact public report also shows Testing in progress and September 25. Final Control-to-updated-plugin reconciliation 345f2d20-6109-4201-85ad-c8ec4affe85d completed at 9:55:39 PM Eastern: four checked, four succeeded, zero skips, zero warnings. Source run cmu6b4055000jyo3608ldtu0v. This exercised the existing active-record REST upserts after deployment without inventing dates, altering lab results, or releasing stock.
