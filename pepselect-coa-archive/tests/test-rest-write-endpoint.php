@@ -72,6 +72,27 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/* ---------------------------------------------------------------- M2 */
 
+	public function test_metadata_only_stage_update_notifies_page_cache_after_values_land() {
+		$id = $this->stored_test( $this->compound(), 'CACHE-STAGE', array( 'workflow_stage' => 'waiting-on-vendor', 'coa_status' => 'pending', 'testing_lab' => 'janoshik', 'expected_coa_date' => '2026-09-25' ) );
+		$observed = array();
+		$observer = function ( $post_id ) use ( $id, &$observed ) {
+			if ( $id === $post_id ) { $observed[] = get_post_meta( $id, 'workflow_stage', true ); }
+		};
+		add_action( 'wp_insert_post', $observer );
+		try {
+			$updated = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'in-testing' ) );
+			$this->assertSame( 200, $updated->get_status(), $this->explain( $updated ) );
+			$this->assertContains( 'in-testing', $observed, 'Page cache must observe the completed metadata update.' );
+			$this->assertSame( 'publish', get_post_status( $id ) );
+			$observed = array();
+			$repeat = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'in-testing' ) );
+			$this->assertSame( 200, $repeat->get_status(), $this->explain( $repeat ) );
+			$this->assertSame( array(), $observed, 'Unchanged metadata must not invalidate the page cache again.' );
+		} finally {
+			remove_action( 'wp_insert_post', $observer );
+		}
+	}
+
 	public function test_pending_create_preserves_missing_vial_count_on_later_refresh() {
 		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => $this->compound(), 'batch_number' => 'PENDING-NO-COUNT', 'workflow_stage' => 'waiting-on-vendor' ) );
 		$this->assertSame( 201, $response->get_status(), $this->explain( $response ) );

@@ -292,11 +292,19 @@ final class REST_Write_Endpoint {
 			}
 		}
 		$galleries = array( 'coa_page_images', 'batch_identity_photos' );
+		$meta_changed = false;
 		foreach ( $persist as $name => $value ) {
 			$clean = in_array( $name, $galleries, true )
 				? COA_Test_Validation::sanitize_gallery( $value )
 				: ( Post_Types::COA_TEST === $post_type ? COA_Test_Validation::sanitize( $value, $name ) : Compound_Validation::sanitize( $name, $value ) );
-			update_post_meta( $post_id, $name, $clean );
+			if ( update_post_meta( $post_id, $name, $clean ) ) { $meta_changed = true; }
+		}
+		// REST stage/date edits can change only metadata. Publish a normal post
+		// update after those values land so page-cache integrations observe the
+		// finished record, just as they do for a WordPress editor save.
+		if ( $meta_changed ) {
+			$result = wp_update_post( array( 'ID' => $post_id ), true );
+			if ( is_wp_error( $result ) ) { return $result; }
 		}
 		return $post_id;
 	}
