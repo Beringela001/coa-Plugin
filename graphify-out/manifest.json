@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-frontend-view-model.php": {
-    "mtime": 1789520217.1412892,
-    "ast_hash": "35f726513dc06b3d5782ce485682d126",
+    "mtime": 1789694265.3655367,
+    "ast_hash": "23203014df9f37d3afec172db8931347",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-frontend-visibility.php": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-rest-write-endpoint.php": {
-    "mtime": 1789520217.1430364,
-    "ast_hash": "c10361cac7c10e45f5ec6edcf0795286",
+    "mtime": 1789694878.5420692,
+    "ast_hash": "f651bff085b970728e4f7b1dce058263",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/includes/class-rest-write-guard.php": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/pepselect-coa-archive.php": {
-    "mtime": 1789524307.6039507,
-    "ast_hash": "e78ea848342990d18bfc2d2eb4c68144",
+    "mtime": 1789694280.6314862,
+    "ast_hash": "e4a8a32dd67df9db16c2d97981a30955",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/templates/admin/dashboard-workflow.php": {
@@ -690,8 +690,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-frontend.php": {
-    "mtime": 1789520217.1519227,
-    "ast_hash": "1099d7c05ae3e30691da1f2b1a105eae",
+    "mtime": 1789694266.4257717,
+    "ast_hash": "f7091703e0e399b0521b2bde2bf8162a",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-plugin-foundation.php": {
@@ -705,8 +705,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-rest-write-endpoint.php": {
-    "mtime": 1789520217.1519227,
-    "ast_hash": "4cbf4457653fef0a57ab1dca7eaf9c24",
+    "mtime": 1789695123.6408408,
+    "ast_hash": "3b7a0548c965a886234ff2dcb12acd6a",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-seo-guide-callout.js": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/readme.txt": {
-    "mtime": 1789524307.6089754,
-    "ast_hash": "d534d48336bdca343190965d3a9ae22d",
+    "mtime": 1789694281.6613803,
+    "ast_hash": "d563952ac54517975bd8add20cd08b3f",
     "semantic_hash": ""
   },
   "docs/coa-redesign/current-vial.png": {
@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-design-editor.php": {
-    "mtime": 1789524338.4068983,
-    "ast_hash": "72fed462e237477156ebf174494f9111",
+    "mtime": 1789524597.9465532,
+    "ast_hash": "e2cacd09bc91c1f536862ea1223bd456",
     "semantic_hash": ""
   },
   "pepselect-coa-archive/tests/test-report-notes-standalone.php": {
@@ -1122,6 +1122,86 @@
   "docs/coa-refinement/live-0712-mobile.png": {
     "mtime": 1789096639.6968668,
     "ast_hash": "0c8dce6a8df59788630fb2af81c9af44",
+    "semantic_hash": ""
+  },
+  "outputs/coaLifecyclePublication.test.ts": {
+    "mtime": 1789693805.3731983,
+    "ast_hash": "7f53f19e65865052537ee9252a7183ec",
+    "semantic_hash": ""
+  },
+  "outputs/coaPublication.test.ts": {
+    "mtime": 1789693938.5963416,
+    "ast_hash": "9de1e0ebba495e86bfee6fd86af4fd51",
+    "semantic_hash": ""
+  },
+  "outputs/coaTimelineAction.test.ts": {
+    "mtime": 1789693835.225936,
+    "ast_hash": "643816422fb06941597c8bd3256a2c0b",
+    "semantic_hash": ""
+  },
+  "outputs/fix-coa-publication.py": {
+    "mtime": 1789693674.5799494,
+    "ast_hash": "d0c1de14082df301d5437c45144b6cc2",
+    "semantic_hash": ""
+  },
+  "outputs/update-coa-fixtures.py": {
+    "mtime": 1789694148.6209908,
+    "ast_hash": "d0170933c049b70d9bbf35c86b9f6e6a",
+    "semantic_hash": ""
+  },
+  "docs/COA-PENDING-COPY-2026-09-15.md": {
+    "mtime": 1789524977.767665,
+    "ast_hash": "8594ea98b30145b2b532531129eaeef1",
+    "semantic_hash": ""
+  },
+  "outputs/build-coa-0718.py": {
+    "mtime": 1789694587.41238,
+    "ast_hash": "914a0e6d14fe8652c81ffebabe009641",
+    "semantic_hash": ""
+  },
+  "outputs/coa-cache-ci.json": {
+    "mtime": 1789695229.8578115,
+    "ast_hash": "9298641ccc590f3634ab90d74d33d062",
+    "semantic_hash": ""
+  },
+  "outputs/coa-cache-jobs.json": {
+    "mtime": 1789695275.9175792,
+    "ast_hash": "258cfa27bcb78e65af38b5704f7f054b",
+    "semantic_hash": ""
+  },
+  "outputs/coa-date-ci.json": {
+    "mtime": 1789694453.5091486,
+    "ast_hash": "c21a330834c6f1b3673ed5f1dd8d7822",
+    "semantic_hash": ""
+  },
+  "outputs/COA_PUBLICATION_REPAIR_2026-09-17.md": {
+    "mtime": 1789694454.5645328,
+    "ast_hash": "7d9a0c418a1a7a811a14b82b4736b9bc",
+    "semantic_hash": ""
+  },
+  "outputs/public-archive.html": {
+    "mtime": 1789694719.082833,
+    "ast_hash": "34225461c73fba246ed3ca27a8de20e0",
+    "semantic_hash": ""
+  },
+  "outputs/public-selank.html": {
+    "mtime": 1789694710.4411685,
+    "ast_hash": "23477a4811060375e1f4131f05dccacd",
+    "semantic_hash": ""
+  },
+  "outputs/public-semax.html": {
+    "mtime": 1789694714.575416,
+    "ast_hash": "986a4faa5bb55d1395c52fbe0a832372",
+    "semantic_hash": ""
+  },
+  "outputs/selank-after-cache.html": {
+    "mtime": 1789695201.5057251,
+    "ast_hash": "50c3efdbd5ad69ca7a8c914ce0db5d64",
+    "semantic_hash": ""
+  },
+  "outputs/selank-cache-headers.txt": {
+    "mtime": 1789695201.49781,
+    "ast_hash": "64b127645a16cb4f9dcde03cedb4263c",
     "semantic_hash": ""
   }
 }
