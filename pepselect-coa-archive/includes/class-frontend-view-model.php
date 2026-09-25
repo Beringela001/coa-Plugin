@@ -18,8 +18,8 @@ final class Frontend_View_Model {
 		$preview = array(); if ( $latest ) { $preview[] = $latest; } foreach ( array_merge( $incoming, array_slice( $approved, 1 ), $failed ) as $candidate ) { if ( count( $preview ) >= 3 ) { break; } $preview[] = $candidate; }
 		$compound_model = $this->compound( $compound );
 		// The archive card represents the whole compound across every batch, so it
-		// must show the compound's own stock image (compound_image_id -> Woo product
-		// image -> placeholder), never a single lot's batch_vial_photo. (Fixes the
+		// must show the linked product image (then legacy compound image), never
+		// a single lot's batch_vial_photo. (Fixes the
 		// vial-photo leak into the archive grid; the batch photo stays on the
 		// individual COA/report page only.)
 		$compound_model['archive_image_source'] = $compound_model['compound_image_url'] ? $compound_model['base_image_source'] : 'local-placeholder';
@@ -59,7 +59,7 @@ final class Frontend_View_Model {
 	public function compound( $compound ) {
 		$compound_image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) );
 		$product_id = absint( get_post_meta( $compound->ID, 'woocommerce_product_id', true ) );
-		$product_image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) );
+		$product_image_id = $this->product_image_id( $compound->ID );
 		$image_id = $this->valid_image_id( $product_image_id ) ? $product_image_id : $compound_image_id;
 		$base_image_source = $this->valid_image_id( $product_image_id ) ? 'woocommerce-product-image' : ( $this->valid_image_id( $compound_image_id ) ? 'compound-image' : '' );
 		$display_name = get_post_meta( $compound->ID, 'display_name', true ) ?: $compound->post_title;
@@ -126,7 +126,7 @@ final class Frontend_View_Model {
 			$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
 			$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
 			if ( ! $image_source && $this->valid_image_id( $image_id ) ) { $image_source = 'featured-image'; }
-			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
+			if ( ! $image_source && $compound ) { $image_id = $this->product_image_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
 			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) ) ?: get_post_thumbnail_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'compound-image'; } }
 			if ( ! $image_source ) { $image_id = 0; $image_source = 'local-placeholder'; }
 			$image_url = $image_id ? $this->image_url( $image_id, 'large' ) : plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE );
@@ -529,6 +529,19 @@ final class Frontend_View_Model {
 
 	private function http_url( $url ) { $url = trim( (string) $url ); return $url && wp_http_validate_url( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : ''; }
 	private function product_url( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'product' === $post->post_type && 'publish' === $post->post_status ? get_permalink( $post ) : ''; }
+	/** Read the current product image, not a snapshot taken before its photo was uploaded. */
+	private function product_image_id( $compound_id ) {
+		$product_id = absint( get_post_meta( $compound_id, Product_Matching::PRODUCT_ID_META, true ) );
+		$product = $product_id ? get_post( $product_id ) : null;
+		if ( $product && 'product' === $product->post_type && 'trash' !== $product->post_status ) {
+			$image_id = absint( get_post_thumbnail_id( $product_id ) );
+			return $this->valid_image_id( $image_id ) ? $image_id : 0;
+		}
+		// Preserve older archives whose original product is no longer available.
+		$image_id = absint( get_post_meta( $compound_id, Product_Matching::PRODUCT_IMAGE_META, true ) );
+		return $this->valid_image_id( $image_id ) ? $image_id : 0;
+	}
+
 	private function valid_image_id( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && wp_attachment_is_image( $id ); }
 	private function valid_laboratory_logo_id( $id ) {
 		$post = $id ? get_post( $id ) : null; if ( ! $post || 'attachment' !== $post->post_type || 'inherit' !== $post->post_status ) { return false; }

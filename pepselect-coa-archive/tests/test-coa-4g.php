@@ -48,6 +48,39 @@ class PepSelect_COA_Archive_COA_4G_Test extends WP_UnitTestCase {
 		remove_filter( 'image_downsize', $downsize, 10 );
 	}
 
+	public function test_live_product_image_replaces_empty_or_stale_snapshot_without_leaking_batch_photos() {
+		$compound = $this->compound( 'CJC IPA 10 mg', 'CJC IPA', 'CI', 10 );
+		$test = $this->incoming_test( $compound );
+		$product = self::factory()->post->create( array( 'post_type' => 'product', 'post_status' => 'publish' ) );
+		update_post_meta( $compound, 'woocommerce_product_id', $product );
+		$first = $this->image( 'product-first.jpg' ); $next = $this->image( 'product-next.jpg' ); $vial = $this->image( 'actual-vial.jpg' );
+		$downsize = static function ( $value, $id ) use ( $first, $next, $vial ) { return in_array( $id, array( $first, $next, $vial ), true ) ? array( 'https://example.org/image-' . $id . '.jpg', 600, 800, true ) : $value; };
+		add_filter( 'image_downsize', $downsize, 10, 2 );
+		try {
+			// Ops can connect the compound before the product photo is uploaded.
+			update_post_meta( $compound, 'woocommerce_product_image_id', 0 );
+			update_post_meta( $product, '_thumbnail_id', $first );
+			$this->assertSame( $first, $this->view->compound( get_post( $compound ) )['compound_image_id'] );
+			$this->assertSame( $first, $this->view->test_summary( get_post( $test ) )['vial_image_id'] );
+			// A later product-image change must win over the old saved snapshot.
+			update_post_meta( $compound, 'woocommerce_product_image_id', $first );
+			update_post_meta( $product, '_thumbnail_id', $next );
+			$this->assertSame( $next, $this->view->compound( get_post( $compound ) )['compound_image_id'] );
+			$this->assertSame( $next, $this->view->test_summary( get_post( $test ) )['vial_image_id'] );
+			update_post_meta( $test, 'batch_vial_photo', $vial );
+			$archive = $this->view->archive_compound( get_post( $compound ), array( get_post( $test ) ) );
+			$this->assertSame( $next, $archive['compound_image_id'] );
+			$this->assertSame( 'woocommerce-product-image', $archive['archive_image_source'] );
+			$this->assertSame( $vial, $this->view->test_summary( get_post( $test ) )['vial_image_id'] );
+			$this->assertSame( 'batch-vial-photo', $this->view->test_summary( get_post( $test ) )['vial_image_source'] );
+			delete_post_meta( $test, 'batch_vial_photo' );
+			$this->assertSame( $next, $this->view->test_summary( get_post( $test ) )['vial_image_id'] );
+			// Deliberately removing a product image must not resurrect a stale snapshot.
+			delete_post_meta( $product, '_thumbnail_id' );
+			$this->assertSame( 0, $this->view->compound( get_post( $compound ) )['compound_image_id'] );
+		} finally { remove_filter( 'image_downsize', $downsize, 10 ); }
+	}
+
 	public function test_catalog_grid_and_carousel_controls_are_responsive_scoped_and_nonshrinking() {
 		$root = dirname( __DIR__ ); $css = file_get_contents( $root . '/assets/css/pepselect-coa-frontend.css' ); $carousel = file_get_contents( $root . '/templates/partials/history-previous-carousel.php' ); $script = file_get_contents( $root . '/assets/js/pepselect-coa-history-carousel.js' );
 		$this->assertStringContainsString( '.ps-coa-archive--catalog-layout .ps-coa-compound-grid', $css );
