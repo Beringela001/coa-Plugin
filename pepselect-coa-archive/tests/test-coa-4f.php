@@ -5,13 +5,16 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 
 	public function set_up() { parent::set_up(); do_action( 'init' ); $this->view = new PepSelect\COAArchive\Frontend_View_Model(); }
 
-	public function test_history_hero_uses_current_exact_batch_image_and_never_unrelated_media() {
+	public function test_history_hero_uses_compound_image_and_keeps_batch_photo_on_report() {
 		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20260710', true );
 		$image = $this->image( 'current.jpg' ); $unrelated_compound = $this->compound( 'Other Compound' ); $unrelated = $this->complete_test( $unrelated_compound, 'OTHER', '20260712', true ); $other_image = $this->image( 'other.jpg' );
 		update_post_meta( $current, 'batch_vial_photo', $image ); update_post_meta( $unrelated, 'batch_vial_photo', $other_image );
 		$downsize = $this->image_downsize_filter( array( $image => 'https://example.org/current.jpg', $other_image => 'https://example.org/other.jpg' ) ); add_filter( 'image_downsize', $downsize, 10, 2 );
 		$context = $this->router()->build_compound( '', $compound );
-		$this->assertSame( $image, $context['hero_image']['id'] ); $this->assertSame( 'batch-vial-photo', $context['hero_image']['source'] ); $this->assertStringNotContainsString( 'other.jpg', wp_json_encode( $context ) );
+		$this->assertSame( 0, $context['hero_image']['id'] ); $this->assertSame( 'local-placeholder', $context['hero_image']['source'] ); $this->assertStringNotContainsString( 'other.jpg', wp_json_encode( $context ) );
+		$this->assertSame( $image, $this->view->report( get_post( $current ), get_post( $compound ) )['vial_image_id'] );
+		update_post_meta( $compound, 'compound_image_id', $image );
+		$this->assertSame( $image, $this->router()->build_compound( '', $compound )['hero_image']['id'] );
 		remove_filter( 'image_downsize', $downsize, 10 );
 	}
 
@@ -29,15 +32,15 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 	public function test_latest_history_report_has_fixed_truthful_seven_category_model() {
 		$compound = $this->compound(); $test = $this->complete_test( $compound, 'FULL', '20260710', true ); $this->full_results( $test );
 		$model = $this->view->history_report( get_post( $test ), get_post( $compound ) );
-		$this->assertSame( array( 'Identity', 'Purity', 'Net Content', 'Heavy Metals', 'Sterility', 'Endotoxins', 'Fentanyl Screen' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
-		$this->assertSame( 7, $model['reported_category_count'] ); $this->assertSame( 'Full-QC', $model['history_report_type'] ); $this->assertSame( 'Full-QC testing passed.', $model['history_qc_title'] );
+		$this->assertSame( array( 'Identity', 'Purity', 'Measured content', 'Sterility', 'Fentanyl screening', 'Heavy metals', 'Endotoxins' ), wp_list_pluck( $model['qc_strip_rows'], 'short_label' ) );
+		$this->assertSame( 7, $model['reported_category_count'] ); $this->assertFalse( $model['is_full_qc_documented'] ); $this->assertSame( 'Testing results', $model['history_qc_title'] );
 		update_post_meta( $test, 'fentanyl_status', 'not-tested' ); $partial = $this->view->history_report( get_post( $test ), get_post( $compound ) );
-		$this->assertSame( '--', $partial['qc_strip_rows'][6]['detail'] ); $this->assertFalse( $partial['qc_strip_rows'][6]['status']['success'] ); $this->assertSame( 'Partial QC', $partial['history_report_type'] );
+		$this->assertSame( '--', $partial['qc_strip_rows'][4]['detail'] ); $this->assertFalse( $partial['qc_strip_rows'][4]['status']['success'] ); $this->assertSame( 'Partial QC', $partial['history_report_type'] );
 	}
 
 	public function test_previous_carousel_is_sorted_capped_and_non_destructive() {
-		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20261231', true ); $ids = array();
-		for ( $number = 1; $number <= 12; $number++ ) { $ids[] = $this->complete_test( $compound, 'PREVIOUS-' . $number, sprintf( '2026%02d01', $number ), false, 12 === $number ? 'failed' : 'approved' ); }
+		$compound = $this->compound(); $current = $this->complete_test( $compound, 'CURRENT', '20251231', true ); $ids = array();
+		for ( $number = 1; $number <= 12; $number++ ) { $ids[] = $this->complete_test( $compound, 'PREVIOUS-' . $number, sprintf( '2025%02d01', $number ), false, 12 === $number ? 'failed' : 'approved' ); }
 		$context = $this->router()->build_compound( '', $compound );
 		$this->assertSame( $current, $context['latest_report']['test_id'] ); $this->assertCount( 10, $context['previous_reports'] ); $this->assertSame( 12, $context['previous_report_total'] );
 		$this->assertSame( array( 'PREVIOUS-12', 'PREVIOUS-11' ), array_slice( wp_list_pluck( $context['previous_reports'], 'batch_number' ), 0, 2 ) );
@@ -71,9 +74,17 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( "'laboratory_logo', 'Laboratory Logo', 'image'", $fields ); $this->assertStringContainsString( 'valid_laboratory_logo', $validation );
 		$field_service = new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ); $method = new ReflectionMethod( $field_service, 'fields' ); $method->setAccessible( true ); $definitions = $method->invoke( $field_service ); $logo_field = current( array_filter( $definitions, static function ( $field ) { return 'laboratory_logo' === $field['name']; } ) );
 		$this->assertSame( 'field_ps_coa_test_laboratory_logo', $logo_field['key'] ); $this->assertSame( 'id', $logo_field['return_format'] ); $this->assertSame( 0, $logo_field['required'] );
+		PepSelect\COAArchive\Capabilities::grant_to_administrators();
 		$admin = self::factory()->user->create( array( 'role' => 'administrator' ) ); wp_set_current_user( $admin ); $_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete';
 		$safe = $this->image( 'safe.png', 'image/png' ); $unsafe = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'application/x-php', 'guid' => 'https://example.org/unsafe.php' ) );
 		$validator = new PepSelect\COAArchive\COA_Test_Validation(); $this->assertTrue( $validator->validate( true, $safe, $logo_field, '' ) ); $this->assertIsString( $validator->validate( true, $unsafe, $logo_field, '' ) ); unset( $_POST['acf'] );
+		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete';
+		wp_update_post( array( 'ID' => $safe, 'post_status' => 'trash' ) );
+		$this->assertIsString( $validator->validate( true, $safe, $logo_field, '' ) );
+		wp_update_post( array( 'ID' => $safe, 'post_status' => 'inherit' ) );
+		wp_set_current_user( 0 );
+		$this->assertIsString( $validator->validate( true, $safe, $logo_field, '' ) );
+		wp_set_current_user( $admin ); unset( $_POST['acf'] );
 		$compound = $this->compound(); $test = $this->complete_test( $compound, 'LOGO', '20260710', true ); $model = $this->view->report( get_post( $test ), get_post( $compound ) );
 		$this->assertSame( 'bundled-ils', $model['laboratory_logo_source'] ); $this->assertStringContainsString( 'assets/images/ils-labs-logo.png', $model['laboratory_logo_url'] );
 		$this->assertArrayNotHasKey( 'laboratory_logo_url', $this->view->test_summary( get_post( $test ), get_post( $compound ) ) );
@@ -96,6 +107,6 @@ class PepSelect_COA_Archive_COA_4F_Test extends WP_UnitTestCase {
 	private function complete_test( $compound, $batch, $date, $current = false, $status = 'approved' ) { $post_date = substr( $date, 0, 4 ) . '-' . substr( $date, 4, 2 ) . '-' . substr( $date, 6, 2 ) . ' 12:00:00'; $id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_status' => 'publish', 'post_title' => $batch, 'post_date_gmt' => $post_date ) ); foreach ( array( 'compound_id' => $compound, 'workflow_stage' => 'complete', 'coa_status' => $status, 'batch_number' => $batch, 'test_date' => $date, 'is_current' => $current ? 1 : 0, 'testing_lab' => 'ils-labs', 'vials_tested' => 3, 'content_unit' => 'mg', 'release_decision_note' => 'Did not pass release review.' ) as $key => $value ) { update_post_meta( $id, $key, $value ); } return $id; }
 	private function incoming_test( $compound ) { $id = self::factory()->post->create( array( 'post_type' => 'ps_coa_test', 'post_status' => 'publish', 'post_title' => 'Incoming' ) ); foreach ( array( 'compound_id' => $compound, 'workflow_stage' => 'in-testing', 'coa_status' => 'pending', 'batch_number' => 'INCOMING', 'expected_coa_date' => '20260730', 'testing_lab' => 'ils-labs' ) as $key => $value ) { update_post_meta( $id, $key, $value ); } return $id; }
 	private function full_results( $test ) { foreach ( array( 'claimed_content' => '30', 'average_net_content' => '30.84', 'minimum_net_content' => '30.71', 'maximum_net_content' => '30.99', 'purity_percentage' => '99.99', 'purity_status' => 'pass', 'purity_method' => 'HPLC', 'identity_status' => 'pass', 'identity_method' => 'LC-MS', 'heavy_metals_status' => 'pass', 'heavy_metals_summary' => 'Below limits', 'sterility_status' => 'pass', 'sterility_result' => 'No growth', 'endotoxin_status' => 'pass', 'endotoxin_result' => '< 0.05', 'endotoxin_unit' => 'EU/mL', 'fentanyl_status' => 'pass' ) as $key => $value ) { update_post_meta( $test, $key, $value ); } }
-	private function image( $name, $mime = 'image/jpeg' ) { return self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => $mime, 'guid' => 'https://example.org/' . $name ) ); }
+	private function image( $name, $mime = 'image/jpeg' ) { $id = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => $mime, 'guid' => 'https://example.org/' . $name ) ); update_post_meta( $id, '_wp_attached_file', '2026/09/' . $name ); return $id; }
 	private function image_downsize_filter( $urls ) { return static function ( $value, $id ) use ( $urls ) { return isset( $urls[ $id ] ) ? array( $urls[ $id ], 600, 800, true ) : $value; }; }
 }

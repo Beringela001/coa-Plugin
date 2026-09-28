@@ -37,8 +37,8 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 	/* ---------------------------------------------------------------- M1 */
 
 	public function test_set_context_replaces_post_and_clear_context_restores_it() {
-		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_status' => 'failed', 'field_ps_coa_test_release_decision_note' => '' );
-		// $_POST says the note is missing, so the failed outcome is rejected.
+		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'in-testing', 'field_ps_coa_test_status' => 'failed', 'field_ps_coa_test_release_decision_note' => '' );
+		// A final outcome before completion is invalid; injected context must replace it.
 		$this->assertNotTrue( $this->test_validation->validate_approval( true, 'failed', array(), '' ) );
 		$this->test_validation->set_context( array( 'workflow_stage' => 'complete', 'coa_status' => 'failed', 'release_decision_note' => 'Rejected after review.', 'is_current' => 0 ), 0, 'publish' );
 		$this->assertTrue( $this->test_validation->validate_approval( true, 'failed', array(), '' ) );
@@ -72,6 +72,48 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/* ---------------------------------------------------------------- M2 */
 
+	public function test_metadata_only_stage_update_notifies_page_cache_after_values_land() {
+		$id = $this->stored_test( $this->compound(), 'CACHE-STAGE', array( 'workflow_stage' => 'waiting-on-vendor', 'coa_status' => 'pending', 'testing_lab' => 'janoshik', 'expected_coa_date' => '2026-09-25' ) );
+		$observed = array();
+		$observer = function ( $post_id ) use ( $id, &$observed ) {
+			if ( $id === $post_id ) { $observed[] = get_post_meta( $id, 'workflow_stage', true ); }
+		};
+		add_action( 'wp_insert_post', $observer );
+		try {
+			$updated = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'in-testing' ) );
+			$this->assertSame( 200, $updated->get_status(), $this->explain( $updated ) );
+			$this->assertContains( 'in-testing', $observed, 'Page cache must observe the completed metadata update.' );
+			$this->assertSame( 'publish', get_post_status( $id ) );
+			$observed = array();
+			$repeat = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'in-testing' ) );
+			$this->assertSame( 200, $repeat->get_status(), $this->explain( $repeat ) );
+			$this->assertSame( array(), $observed, 'Unchanged metadata must not invalidate the page cache again.' );
+		} finally {
+			remove_action( 'wp_insert_post', $observer );
+		}
+	}
+
+	public function test_pending_create_preserves_missing_vial_count_on_later_refresh() {
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => $this->compound(), 'batch_number' => 'PENDING-NO-COUNT', 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 201, $response->get_status(), $this->explain( $response ) );
+		$id = $response->get_data()['id'];
+		$this->assertSame( '', get_post_meta( $id, 'vials_tested', true ) );
+		$refresh = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 200, $refresh->get_status(), $this->explain( $refresh ) );
+	}
+
+	public function test_legacy_pending_zero_count_is_repaired_but_explicit_zero_is_rejected() {
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => $this->compound(), 'batch_number' => 'PENDING-LEGACY-COUNT', 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 201, $response->get_status(), $this->explain( $response ) );
+		$id = $response->get_data()['id'];
+		update_post_meta( $id, 'vials_tested', 0 );
+		$refresh = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'workflow_stage' => 'waiting-on-vendor' ) );
+		$this->assertSame( 200, $refresh->get_status(), $this->explain( $refresh ) );
+		$this->assertSame( '', get_post_meta( $id, 'vials_tested', true ) );
+		$invalid = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'vials_tested' => 0 ) );
+		$this->assertSame( 400, $invalid->get_status(), $this->explain( $invalid ) );
+	}
+
 	public function test_partial_patch_never_fails_a_record_against_its_own_stored_data() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-1001', 'Rejected after review.' );
@@ -82,13 +124,23 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 		$this->assertSame( 'Updated copy.', get_post_meta( $test, 'public_notes', true ) );
 	}
 
-	public function test_partial_patch_still_rejects_a_genuine_violation() {
+	public function test_owner_can_clear_a_published_failure_note() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-1002', 'Rejected after review.' );
-		// Clearing the note is a real violation even though nothing else changed.
+		// Wording is independently editable, including intentional deletion.
 		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'release_decision_note' => '' ) );
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'Rejected after review.', get_post_meta( $test, 'release_decision_note', true ), 'a rejected write must not persist' );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '', get_post_meta( $test, 'release_decision_note', true ) );
+		$this->assertSame( 'failed', get_post_meta( $test, 'coa_status', true ) );
+	}
+
+	public function test_note_correction_is_not_blocked_by_historical_evidence() {
+		$test = $this->failed_test( $this->compound(), 'B-NOTE-97', 'Minimum 95.0%.' );
+		update_post_meta( $test, 'vials_tested', 0 );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'release_decision_note' => 'Minimum 97.0%.' ) );
+		$this->assertSame( 200, $response->get_status(), $this->explain( $response ) );
+		$this->assertSame( 'Minimum 97.0%.', get_post_meta( $test, 'release_decision_note', true ) );
+		$this->assertSame( 'failed', get_post_meta( $test, 'coa_status', true ) );
 	}
 
 	public function test_create_applies_the_same_defaults_the_admin_form_would() {
@@ -105,7 +157,7 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 	/* ---------------------------------------------------------------- M3 */
 
 	public function test_validation_failure_returns_400_with_field_and_plugin_message() {
-		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => 0 ) );
+		$response = $this->dispatch( 'POST', '/pepselect-coa/v1/coa-test', array( 'compound_id' => 99999999 ) );
 		$this->assertSame( 400, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertSame( 'pepselect_coa_invalid_record', $data['code'] );
@@ -189,13 +241,14 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 
 	/* ------------------------------------------- legacy photo allowlist */
 
-	public function test_legacy_photo_exemption_is_allowlist_only_under_context() {
+	public function test_note_only_update_does_not_require_a_legacy_photo_exemption() {
 		$compound = $this->compound();
 		$test     = $this->failed_test( $compound, 'B-4001', 'Rejected after review.' );
 		delete_post_meta( $test, 'batch_vial_photo' );
 
 		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $test, array( 'public_notes' => 'x' ) );
-		$this->assertSame( 400, $response->get_status(), 'omitting fields must not buy the exemption' );
+		$this->assertSame( 200, $response->get_status(), 'wording corrections do not require unrelated historical photos' );
+		$this->assertSame( '', get_post_meta( $test, 'batch_vial_photo', true ) );
 
 		$allow = static function () use ( $test ) { return array( $test ); };
 		add_filter( 'pepselect_coa_legacy_photo_exempt_ids', $allow );

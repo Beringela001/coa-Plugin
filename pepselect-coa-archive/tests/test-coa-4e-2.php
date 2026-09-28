@@ -4,8 +4,9 @@ class PepSelect_COA_Archive_COA_4E_2_Test extends WP_UnitTestCase {
 	public function test_01_full_qc_bar_has_exact_copy_and_two_tiers() {
 		$partial = file_get_contents( dirname( __DIR__ ) . '/templates/partials/full-qc-status-strip.php' );
 		$model = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-view-model.php' );
-		$this->assertStringContainsString( 'Full-QC Testing Passed', $model );
-		$this->assertStringContainsString( 'All reported tests met the laboratory specifications listed below.', $model );
+		$this->assertStringContainsString( 'Testing overview', $partial );
+		$this->assertStringContainsString( 'Testing results', $model );
+		$this->assertStringContainsString( "\$row['reported']", $partial );
 		$this->assertStringContainsString( 'ps-coa-qc-strip__header', $partial );
 		$this->assertStringContainsString( 'ps-coa-qc-strip__categories', $partial );
 	}

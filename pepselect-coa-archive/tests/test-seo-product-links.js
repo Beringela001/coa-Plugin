@@ -22,7 +22,9 @@ assert.match(viewModel, /'product' === \$post->post_type && 'publish' === \$post
 assert.match(css, /\.ps-coa-compound-card__footer \{[^}]*display: flex;[^}]*flex-wrap: wrap;[^}]*justify-content: space-between;/s);
 assert.ok(historyHero.includes('ps-coa-history-hero__description'));
 assert.match(css, /\.ps-coa-history-hero__product-link \{[^}]*margin-top: \.75rem;/s);
-assert.match(plugin, /Version:\s+0\.7\.3(?:\s|$)/);
-assert.match(plugin, /PEPSELECT_COA_ARCHIVE_VERSION', '0\.7\.3'/);
+const headerVersion = plugin.match(/Version:\s+(\d+\.\d+\.\d+)(?:\s|$)/);
+const runtimeVersion = plugin.match(/PEPSELECT_COA_ARCHIVE_VERSION', '([^']+)'/);
+assert.ok(headerVersion && runtimeVersion, 'Plugin version declarations missing');
+assert.strictEqual(headerVersion[1], runtimeVersion[1], 'Plugin version declarations disagree');
 
 console.log('SEO_PRODUCT_LINK_TESTS=PASS');

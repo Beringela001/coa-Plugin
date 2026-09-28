@@ -9,6 +9,7 @@ class PepSelect_COA_Archive_COA_5C_Dashboard_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		require_once ABSPATH . 'wp-admin/includes/dashboard.php';
 		set_current_screen( 'dashboard' );
 		do_action( 'init' );
 		PepSelect\COAArchive\Capabilities::grant_to_administrators();
@@ -104,13 +105,14 @@ class PepSelect_COA_Archive_COA_5C_Dashboard_Test extends WP_UnitTestCase {
 		$dated = $this->record( $compound, 'in-testing', 'pending', '20260717', 'BATCH-17' );
 		$this->record( $compound, 'vendor-vetting', 'pending', '', '' );
 		$output = $this->render();
-		$this->assertStringContainsString( 'Unsafe &lt;script&gt;alert(1)&lt;/script&gt;', $output );
+		$this->assertStringContainsString( '<strong>Unsafe</strong>', $output );
+		$this->assertStringNotContainsString( 'alert(1)', $output );
 		$this->assertStringNotContainsString( '<script>', $output );
 		$this->assertStringContainsString( 'Verification in Progress', $output );
 		$this->assertStringContainsString( 'Jul 17, 2026', $output );
 		$this->assertStringContainsString( 'BATCH-17', $output );
 		$this->assertStringContainsString( '&mdash;', $output );
-		$this->assertStringContainsString( 'post=' . $dated . '&amp;action=edit', $output );
+		$this->assertStringContainsString( 'post=' . $dated . '&action=edit', html_entity_decode( $output, ENT_QUOTES, 'UTF-8' ) );
 		foreach ( array( 'vendor-vetting', 'waiting-on-vendor', 'submitted-to-lab', 'in-testing' ) as $raw_stage ) { $this->assertStringNotContainsString( $raw_stage, $output ); }
 	}
 

@@ -8,6 +8,9 @@ $ps_coa_evidence = static function ( $row ) {
 		$value = isset( $row[ $key ] ) ? trim( (string) $row[ $key ] ) : '';
 		if ( '' !== $value ) { $items[] = array( 'label' => $label, 'value' => $value ); }
 	}
+	if ( 'fentanyl' === ( $row['key'] ?? '' ) && empty( $row['method'] ) && empty( $row['specification'] ) ) {
+		$items[] = array( 'label' => __( 'Method and cutoff', 'pepselect-coa-archive' ), 'value' => __( 'Not separately recorded here; check the original laboratory report.', 'pepselect-coa-archive' ) );
+	}
 	return $items;
 };
 ?>

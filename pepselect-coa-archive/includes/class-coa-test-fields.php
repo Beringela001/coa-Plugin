@@ -46,13 +46,18 @@ final class COA_Test_Fields {
 			'endotoxin_status', 'endotoxin_result', 'endotoxin_unit',
 			'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result',
 			'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes',
-			'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version',
+			'coa_number', 'lab_report_url', 'laboratory_logo_url', 'verification_code', 'lab_verification_url', 'certificate_version',
 			'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes',
 			'coa_pdf_id', 'batch_vial_photo',
 		);
 		foreach ( $safe as $key ) {
 			$type = in_array( $key, $integer, true ) ? 'integer' : ( in_array( $key, $number, true ) ? 'number' : ( in_array( $key, $boolean, true ) ? 'boolean' : 'string' ) );
-			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => true, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
+			// auth_callback protects writes, not public reads. Ops reads context=edit;
+			// private administrative fields must be absent from view/embed responses.
+			$rest = in_array( $key, array( 'internal_notes', 'verification_code', 'lab_verification_url' ), true )
+				? array( 'schema' => array( 'type' => $type, 'context' => array( 'edit' ) ) )
+				: true;
+			register_post_meta( Post_Types::COA_TEST, $key, array( 'single' => true, 'type' => $type, 'show_in_rest' => $rest, 'sanitize_callback' => array( 'PepSelect\\COAArchive\\COA_Test_Validation', 'sanitize' ), 'auth_callback' => array( $this, 'authorize_meta_edit' ) ) );
 		}
 
 		// Gallery metas are ARRAYS of attachment IDs, so they need an explicit array
@@ -106,6 +111,7 @@ final class COA_Test_Fields {
 			$this->number( 'vials_tested', 'Vials', 1, 1, false ),
 			$this->f( 'testing_lab', 'Testing Laboratory', 'select', array( 'choices' => self::labs(), 'allow_null' => 1, 'return_format' => 'value', 'instructions' => __( 'Required during verification and for approved reports.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'laboratory_logo', 'Laboratory Logo', 'image', array( 'return_format' => 'id', 'preview_size' => 'thumbnail', 'library' => 'all', 'mime_types' => 'jpg,jpeg,png,webp,gif,svg', 'instructions' => __( 'Optional logo for the testing laboratory shown on the public report. Upload a transparent PNG, SVG supported safely by WordPress policy, or another appropriately sized image.', 'pepselect-coa-archive' ) ) ),
+			$this->f( 'laboratory_logo_url', 'Laboratory Logo URL', 'url', array( 'instructions' => __( 'Paste a direct HTTP or HTTPS link to the laboratory logo image. This optional link takes priority over the uploaded logo.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'other_testing_lab', 'Other Laboratory Name', 'text', array( 'maxlength' => 120, 'conditional_logic' => array( array( array( 'field' => 'field_ps_coa_test_testing_lab', 'operator' => '==', 'value' => 'other' ) ) ) ) ),
 			$this->f( 'lab_accession_number', 'Lab Accession Number', 'text', array( 'maxlength' => 120 ) ),
 			$this->tab( 'sample', __( 'Sample Information', 'pepselect-coa-archive' ) ),

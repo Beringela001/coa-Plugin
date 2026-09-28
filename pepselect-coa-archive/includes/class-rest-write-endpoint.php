@@ -140,8 +140,35 @@ final class REST_Write_Endpoint {
 			) );
 		}
 
+		// Editorial corrections on an existing report do not change its verdict,
+		// identity or evidence. Do not gate them on unrelated historical fields.
+		$note_names = array( 'release_decision_note', 'public_status_note', 'public_notes', 'report_notes' );
+		$notes_only = $post_id && Post_Types::COA_TEST === $post_type && $submitted
+			&& ! array_diff( array_keys( $body ), $note_names );
+		if ( $notes_only ) {
+			foreach ( $submitted as $name => $value ) {
+				if ( ! is_string( $value ) ) {
+					return $this->invalid( array( array( 'field' => $name, 'message' => __( 'Enter text for this note.', 'pepselect-coa-archive' ) ) ) );
+				}
+			}
+			$written = $this->persist( $post_type, $post_id, get_post_status( $post_id ), $submitted, $request );
+			if ( is_wp_error( $written ) ) { return $written; }
+			return new \WP_REST_Response( array( 'id' => $written, 'warnings' => array() ), 200 );
+		}
+
 		$post_status = $request->get_param( 'status' ) ? sanitize_key( (string) $request->get_param( 'status' ) ) : ( $post_id ? (string) get_post_status( $post_id ) : 'publish' );
 		$values      = $this->merge_values( $post_type, $post_id, $submitted );
+		// Older creates coerced an omitted optional count to zero, then rejected
+		// their own stored value on the next update. Repair only that pre-lab
+		// pending sentinel when the caller did not supply a count. Explicit zero
+		// and completed/testing records still receive ordinary validation.
+		if ( $post_id && Post_Types::COA_TEST === $post_type
+			&& ! array_key_exists( 'vials_tested', $submitted )
+			&& '0' === (string) $values['vials_tested'] && 'pending' === $values['coa_status']
+			&& in_array( COA_Workflow::normalize_stage( $values['workflow_stage'] ), array( 'vendor-vetting', 'waiting-on-vendor' ), true ) ) {
+			$values['vials_tested'] = '';
+			$submitted['vials_tested'] = '';
+		}
 
 		$errors = Post_Types::COA_TEST === $post_type
 			? $this->validate_test( $values, $post_id, $post_status )
@@ -265,11 +292,19 @@ final class REST_Write_Endpoint {
 			}
 		}
 		$galleries = array( 'coa_page_images', 'batch_identity_photos' );
+		$meta_changed = false;
 		foreach ( $persist as $name => $value ) {
 			$clean = in_array( $name, $galleries, true )
 				? COA_Test_Validation::sanitize_gallery( $value )
 				: ( Post_Types::COA_TEST === $post_type ? COA_Test_Validation::sanitize( $value, $name ) : Compound_Validation::sanitize( $name, $value ) );
-			update_post_meta( $post_id, $name, $clean );
+			if ( update_post_meta( $post_id, $name, $clean ) ) { $meta_changed = true; }
+		}
+		// REST stage/date edits can change only metadata. Publish a normal post
+		// update after those values land so page-cache integrations observe the
+		// finished record, just as they do for a WordPress editor save.
+		if ( $meta_changed ) {
+			$result = wp_update_post( array( 'ID' => $post_id ), true );
+			if ( is_wp_error( $result ) ) { return $result; }
 		}
 		return $post_id;
 	}
@@ -378,7 +413,7 @@ final class REST_Write_Endpoint {
 			'endotoxin_status', 'endotoxin_result', 'endotoxin_unit',
 			'heavy_metals_status', 'heavy_metals_summary', 'sterility_status', 'sterility_result',
 			'fentanyl_status', 'fentanyl_result', 'fentanyl_method', 'fentanyl_specification', 'fentanyl_notes',
-			'coa_number', 'lab_report_url', 'verification_code', 'lab_verification_url', 'certificate_version',
+			'coa_number', 'lab_report_url', 'laboratory_logo_url', 'verification_code', 'lab_verification_url', 'certificate_version',
 			'vendor_status_note', 'public_status_note', 'release_decision_note', 'public_notes', 'report_notes', 'internal_notes',
 			'coa_pdf_id', 'batch_vial_photo', 'laboratory_logo', 'batch_identity_photos', 'coa_page_images',
 		);

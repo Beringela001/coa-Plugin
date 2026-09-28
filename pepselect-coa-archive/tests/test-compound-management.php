@@ -36,7 +36,7 @@ class PepSelect_COA_Archive_Compound_Management_Test extends WP_UnitTestCase {
 	}
 
 	public function test_internal_notes_are_not_registered_for_rest() {
-		do_action( 'init' ); $keys = get_registered_meta_keys( 'post', 'ps_compound' );
+		( new PepSelect\COAArchive\Compound_Fields( new PepSelect\COAArchive\Dependencies() ) )->register_rest_meta(); $keys = get_registered_meta_keys( 'post', 'ps_compound' );
 		$this->assertArrayNotHasKey( 'internal_notes', $keys );
 		$this->assertArrayNotHasKey( 'woocommerce_product_id', $keys );
 		$this->assertArrayHasKey( 'display_name', $keys );

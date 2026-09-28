@@ -19,6 +19,9 @@ final class Design_Settings {
 		);
 		$fields = array();
 		foreach ( $colors as $key => $data ) { $fields[ $key ] = array( 'section' => 'colors', 'label' => $data[0], 'type' => 'color', 'default' => $data[1] ); }
+		foreach ( array( 'report_title_color' => array( 'Report outcome heading', '#102143' ), 'report_description_color' => array( 'Report outcome description', '#3f5068' ), 'report_passed_color' => array( 'Report passed icon', '#078866' ), 'report_passed_bg' => array( 'Report passed panel background', '#f1faf6' ), 'report_passed_border' => array( 'Report passed panel border', '#bfded0' ) ) as $key => $data ) {
+			$fields[ $key ] = array( 'section' => 'report_style', 'label' => $data[0], 'type' => 'color', 'default' => $data[1] );
+		}
 		$font_options = array( 'inherit' => 'Inherit site typography', 'system' => 'System Sans', 'arial' => 'Arial / Helvetica', 'georgia' => 'Georgia', 'times' => 'Times New Roman' );
 		$weight_options = array( 'inherit' => 'Inherit', '400' => 'Regular (400)', '500' => 'Medium (500)', '600' => 'Semibold (600)', '700' => 'Bold (700)', '800' => 'Extra Bold (800)' );
 		$fields['heading_font'] = array( 'section' => 'typography', 'label' => 'Heading font', 'type' => 'select', 'default' => 'inherit', 'options' => $font_options );
@@ -42,6 +45,9 @@ final class Design_Settings {
 		$fields['lightbox_opacity'] = array( 'section' => 'lightbox', 'label' => 'Overlay opacity', 'type' => 'decimal', 'default' => .94, 'min' => .5, 'max' => 1, 'step' => .01 );
 		$fields['lightbox_control_radius'] = array( 'section' => 'lightbox', 'label' => 'Control border radius', 'type' => 'integer', 'default' => 24, 'min' => 0, 'max' => 40, 'suffix' => 'px' );
 		$copy = array(
+			'report_passed_heading' => array( 'Passed report heading', 'Testing passed' ),
+			'report_passed_copy' => array( 'Passed report description', 'Review the results and original report below. Match the batch number, cap and crimp with your vial.' ),
+			'report_failed_heading' => array( 'Failed report heading', 'Testing failed' ),
 			'report_hero_copy' => array( 'Full-report introduction', 'This certificate documents the independent laboratory analysis for the exact vial shown here. Match the batch number, cap, and crimp with your vial before use in laboratory research.' ),
 			'legacy_report_hero_copy' => array( 'Legacy full-report introduction', 'This legacy certificate documents the independent laboratory analysis for the published batch. A representative vial image is shown because an exact batch photo was not stored.' ),
 			'archive_eyebrow' => array( 'Archive eyebrow', 'Pep Select Quality Archive' ), 'archive_title' => array( 'Archive title', 'Every batch has a permanent address.' ), 'archive_intro' => array( 'Archive introduction', 'Every compound we’ve released keeps its full record here: the raw third-party certificate, the batch it came from, and the date it was tested. We publish these exactly as the lab returns them, and we keep them up after a batch sells out. Search a compound, or enter the batch code from your vial, to read the same report our team reads.' ),
@@ -89,8 +95,14 @@ final class Design_Settings {
 			elseif ( 'boolean' === $field['type'] ) { $output[ $key ] = empty( $value ) ? 0 : 1; }
 			else { $clean = sanitize_text_field( $value ); $output[ $key ] = '' === trim( $clean ) ? $field['default'] : $clean; }
 		}
-		self::$cache = $output;
 		return $output;
+	}
+
+	/** Temporarily applies an unsaved draft, restoring the request state even on error. */
+	public static function with_preview( array $draft, callable $render ) {
+		$previous = self::$cache;
+		self::$cache = self::sanitize( array_replace( self::get(), $draft ) );
+		try { return $render(); } finally { self::$cache = $previous; }
 	}
 
 	/** Clears only the in-request cache. @return void */
@@ -101,6 +113,7 @@ final class Design_Settings {
 		$s = self::get();
 		$font = array( 'inherit' => 'inherit', 'system' => 'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif', 'arial' => 'Arial,Helvetica,sans-serif', 'georgia' => 'Georgia,serif', 'times' => '"Times New Roman",Times,serif' );
 		$vars = array(
+			'report-title-color' => $s['report_title_color'], 'report-description-color' => $s['report_description_color'], 'report-passed-color' => $s['report_passed_color'], 'report-passed-bg' => $s['report_passed_bg'], 'report-passed-border' => $s['report_passed_border'],
 			'page-bg' => $s['page_bg'], 'surface' => $s['surface'], 'surface-muted' => $s['surface_muted'], 'text' => $s['text'], 'text-muted' => $s['text_muted'], 'border' => $s['border'], 'accent' => $s['accent'], 'accent-word' => $s['accent_word'], 'success' => $s['success'], 'info' => $s['info'], 'vendor' => $s['vendor'], 'warning' => $s['warning'], 'danger' => $s['danger'], 'neutral-status' => $s['neutral_status'], 'document-bg' => $s['document_bg'], 'document-surface' => $s['document_surface'], 'document-text' => $s['document_text'], 'document-muted' => $s['document_muted'], 'document-border' => $s['document_border'],
 			'heading-font' => $font[ $s['heading_font'] ], 'body-font' => $font[ $s['body_font'] ], 'heading-weight' => 'inherit' === $s['heading_weight'] ? 'inherit' : $s['heading_weight'], 'body-weight' => 'inherit' === $s['body_weight'] ? 'inherit' : $s['body_weight'], 'accent-style' => $s['accent_style'],
 			'card-radius' => $s['card_radius'] . 'px', 'panel-radius' => $s['panel_radius'] . 'px', 'image-radius' => $s['image_radius'] . 'px', 'search-radius' => $s['search_radius'] . 'px', 'search-button-radius' => $s['search_button_radius'] . 'px', 'primary-button-radius' => $s['primary_button_radius'] . 'px', 'secondary-button-radius' => $s['secondary_button_radius'] . 'px', 'card-border-width' => $s['card_border_width'] . 'px', 'input-border-width' => $s['input_border_width'] . 'px',
@@ -110,6 +123,8 @@ final class Design_Settings {
 			'lightbox-bg' => self::hex_to_rgba( $s['lightbox_overlay'], $s['lightbox_opacity'] ), 'lightbox-control-bg' => $s['lightbox_control_bg'], 'lightbox-control-text' => $s['lightbox_control_text'], 'lightbox-control-border' => $s['lightbox_control_border'], 'lightbox-control-radius' => $s['lightbox_control_radius'] . 'px',
 		);
 		$declarations = array(); foreach ( $vars as $name => $value ) { $declarations[] = '--ps-coa-' . $name . ':' . $value; }
+		if ( 'inherit' !== $s['heading_font'] ) { $declarations[] = '--ps-coa-report-heading-font:' . $font[ $s['heading_font'] ]; }
+		if ( 'inherit' !== $s['heading_weight'] ) { $declarations[] = '--ps-coa-report-heading-weight:' . $s['heading_weight']; }
 		return '.ps-coa-app{' . implode( ';', $declarations ) . '}';
 	}
 

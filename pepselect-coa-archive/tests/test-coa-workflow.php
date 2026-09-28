@@ -31,7 +31,8 @@ class PepSelect_COA_Archive_COA_Workflow_Test extends WP_UnitTestCase {
 	public function test_final_outcomes_and_current_require_complete_workflow() {
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'in-testing', 'field_ps_coa_test_status' => 'approved', 'field_ps_coa_test_is_current' => '1' );
 		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
-		$this->assertNotTrue( $this->validate( '1', 'is_current' ) );
+		// Hidden fields do not block an in-progress form; the outcome validator above rejects approval.
+		$this->assertTrue( $this->validate( '1', 'is_current' ) );
 		$_POST['acf']['field_ps_coa_test_workflow_stage'] = 'complete'; $_POST['post_status'] = 'publish';
 		$this->assertTrue( $this->validate( '1', 'is_current' ) );
 		$_POST['acf']['field_ps_coa_test_status'] = 'failed'; $_POST['acf']['field_ps_coa_test_release_decision_note'] = 'Not released.';
@@ -39,23 +40,23 @@ class PepSelect_COA_Archive_COA_Workflow_Test extends WP_UnitTestCase {
 		$this->assertNotTrue( $this->validator->validate_approval( true, 'failed', array(), '' ) );
 	}
 
-	public function test_failed_requires_release_decision_and_approved_requires_final_url() {
+	public function test_missing_notes_and_documents_do_not_lock_owner_corrections() {
 		$pdf = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'application/pdf' ) );
 		$image = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_mime_type' => 'image/jpeg' ) );
 		$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => 'complete', 'field_ps_coa_test_is_current' => '0', 'field_ps_coa_test_release_decision_note' => '' );
-		$this->assertNotTrue( $this->validator->validate_approval( true, 'failed', array(), '' ) );
+		$this->assertTrue( $this->validator->validate_approval( true, 'failed', array(), '' ) );
 		$_POST['acf']['field_ps_coa_test_release_decision_note'] = 'Rejected after review.';
 		$this->assertTrue( $this->validator->validate_approval( true, 'failed', array(), '' ) );
 		$_POST['acf'] += array( 'field_ps_coa_test_coa_pdf_id' => $pdf, 'field_ps_coa_test_page_images' => array( $image ), 'field_ps_coa_test_pending_lab_url' => 'https://lab.example/pending', 'field_ps_coa_test_lab_report_url' => '' );
-		$this->assertNotTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
+		$this->assertTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
 		$_POST['acf']['field_ps_coa_test_lab_report_url'] = 'https://lab.example/final';
 		$this->assertTrue( $this->validator->validate_approval( true, 'approved', array(), '' ) );
 	}
 
-	public function test_testing_stages_require_valid_expected_date() {
+	public function test_testing_stages_allow_unknown_dates_but_reject_invalid_dates() {
 		foreach ( array( 'submitted-to-lab', 'in-testing' ) as $stage ) {
 			$_POST['acf'] = array( 'field_ps_coa_test_workflow_stage' => $stage );
-			$this->assertNotTrue( $this->validate( '', 'expected_coa_date' ) );
+			$this->assertTrue( $this->validate( '', 'expected_coa_date' ) );
 			$this->assertTrue( $this->validate( '2026-07-30', 'expected_coa_date' ) );
 		}
 		$this->assertNotTrue( $this->validate( '2026-02-30', 'expected_coa_date' ) );

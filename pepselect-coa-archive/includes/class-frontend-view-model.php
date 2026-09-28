@@ -18,8 +18,8 @@ final class Frontend_View_Model {
 		$preview = array(); if ( $latest ) { $preview[] = $latest; } foreach ( array_merge( $incoming, array_slice( $approved, 1 ), $failed ) as $candidate ) { if ( count( $preview ) >= 3 ) { break; } $preview[] = $candidate; }
 		$compound_model = $this->compound( $compound );
 		// The archive card represents the whole compound across every batch, so it
-		// must show the compound's own stock image (compound_image_id -> Woo product
-		// image -> placeholder), never a single lot's batch_vial_photo. (Fixes the
+		// must show the linked product image (then legacy compound image), never
+		// a single lot's batch_vial_photo. (Fixes the
 		// vial-photo leak into the archive grid; the batch photo stays on the
 		// individual COA/report page only.)
 		$compound_model['archive_image_source'] = $compound_model['compound_image_url'] ? $compound_model['base_image_source'] : 'local-placeholder';
@@ -59,7 +59,7 @@ final class Frontend_View_Model {
 	public function compound( $compound ) {
 		$compound_image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) );
 		$product_id = absint( get_post_meta( $compound->ID, 'woocommerce_product_id', true ) );
-		$product_image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) );
+		$product_image_id = $this->product_image_id( $compound->ID );
 		$image_id = $this->valid_image_id( $product_image_id ) ? $product_image_id : $compound_image_id;
 		$base_image_source = $this->valid_image_id( $product_image_id ) ? 'woocommerce-product-image' : ( $this->valid_image_id( $compound_image_id ) ? 'compound-image' : '' );
 		$display_name = get_post_meta( $compound->ID, 'display_name', true ) ?: $compound->post_title;
@@ -126,7 +126,7 @@ final class Frontend_View_Model {
 			$image_source = $this->valid_image_id( $batch_image_id ) ? 'batch-vial-photo' : '';
 			$image_id = $image_source ? $batch_image_id : get_post_thumbnail_id( $test->ID );
 			if ( ! $image_source && $this->valid_image_id( $image_id ) ) { $image_source = 'featured-image'; }
-			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, Product_Matching::PRODUCT_IMAGE_META, true ) ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
+			if ( ! $image_source && $compound ) { $image_id = $this->product_image_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'woocommerce-product-image'; } }
 			if ( ! $image_source && $compound ) { $image_id = absint( get_post_meta( $compound->ID, 'compound_image_id', true ) ) ?: get_post_thumbnail_id( $compound->ID ); if ( $this->valid_image_id( $image_id ) ) { $image_source = 'compound-image'; } }
 			if ( ! $image_source ) { $image_id = 0; $image_source = 'local-placeholder'; }
 			$image_url = $image_id ? $this->image_url( $image_id, 'large' ) : plugins_url( 'assets/images/neutral-vial.svg', PEPSELECT_COA_ARCHIVE_FILE );
@@ -200,7 +200,7 @@ final class Frontend_View_Model {
 		$model['all_reported_successful'] = $model['reported_category_count'] > 0 && $model['reported_category_count'] === $model['successful_category_count'];
 		$model['is_full_qc_documented'] = 'approved' === $model['coa_status'] && 7 === $model['reported_category_count'] && 7 === $model['successful_category_count'];
 		$model['history_report_type'] = $this->history_report_type( $model );
-		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Full-QC testing passed.', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'QC testing passed.', 'pepselect-coa-archive' ) : __( 'QC testing results.', 'pepselect-coa-archive' ) );
+		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : __( 'Testing results', 'pepselect-coa-archive' ) );
 		$model['history_qc_summary'] = sprintf( __( '%1$d of 7 laboratory categories reported. %2$s', 'pepselect-coa-archive' ), $model['reported_category_count'], 'failed' === $model['coa_status'] ? __( 'Release review did not pass.', 'pepselect-coa-archive' ) : __( 'Independent documentation on file.', 'pepselect-coa-archive' ) );
 		$model['history_status_label'] = 'failed' === $model['coa_status'] ? __( 'Did not pass release review', 'pepselect-coa-archive' ) : ( $model['is_full_qc_documented'] ? __( 'Full-QC documented', 'pepselect-coa-archive' ) : __( 'QC documented', 'pepselect-coa-archive' ) );
 		$model['history_context'] = 'failed' === $model['coa_status'] ? __( 'This batch did not pass release review and was not released for sale.', 'pepselect-coa-archive' ) : __( 'Independent testing record with published batch documentation.', 'pepselect-coa-archive' );
@@ -286,6 +286,7 @@ final class Frontend_View_Model {
 	/** Returns full public report data including validated attachments. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @return array */
 	public function report( $test, $compound ) {
 		$model = $this->test_summary( $test, $compound );
+		$model['compound_id'] = (int) $compound->ID;
 		$laboratory_logo = $model['laboratory'] ? $this->laboratory_logo( $test, get_post_meta( $test->ID, 'testing_lab', true ), get_post_meta( $test->ID, 'other_testing_lab', true ) ) : $this->empty_laboratory_logo();
 		$model['laboratory_logo_id'] = $laboratory_logo['attachment_id']; $model['laboratory_logo_url'] = $laboratory_logo['url'];
 		$model['laboratory_logo_source'] = $laboratory_logo['source']; $model['laboratory_logo_alt'] = $laboratory_logo['alt'];
@@ -295,10 +296,15 @@ final class Frontend_View_Model {
 		$model['heavy_metals_summary'] = $results ? (string) get_post_meta( $test->ID, 'heavy_metals_summary', true ) : '';
 		$model['sterility_result'] = $results ? (string) get_post_meta( $test->ID, 'sterility_result', true ) : '';
 		$fentanyl_status = $results ? sanitize_key( (string) get_post_meta( $test->ID, 'fentanyl_status', true ) ) : '';
-		$fentanyl_saved = in_array( $fentanyl_status, array( 'pass', 'fail', 'not-tested' ), true );
-		$model['fentanyl_result'] = 'pass' === $fentanyl_status ? 'Not detected' : ( 'fail' === $fentanyl_status ? 'Detected' : '' );
-		$model['fentanyl_method'] = $fentanyl_saved ? 'Immunoassay' : '';
-		$model['fentanyl_specification'] = $fentanyl_saved ? '50 ng/mL cutoff' : '';
+		$fentanyl_evidence = Report_Evidence::fentanyl(
+			$fentanyl_status,
+			get_post_meta( $test->ID, 'fentanyl_method', true ),
+			get_post_meta( $test->ID, 'fentanyl_specification', true ),
+			get_post_meta( $test->ID, 'fentanyl_result', true )
+		);
+		$model['fentanyl_result'] = $fentanyl_evidence['result'];
+		$model['fentanyl_method'] = $fentanyl_evidence['method'];
+		$model['fentanyl_specification'] = $fentanyl_evidence['specification'];
 		$model['fentanyl_status'] = $this->status( $fentanyl_status );
 		$model['certificate_version'] = $complete ? (string) get_post_meta( $test->ID, 'certificate_version', true ) : '';
 		$model['report_notes'] = $complete ? (string) get_post_meta( $test->ID, 'report_notes', true ) : '';
@@ -307,16 +313,16 @@ final class Frontend_View_Model {
 		$model['page_images'] = $complete ? $this->gallery( get_post_meta( $test->ID, 'coa_page_images', true ), $compound->post_title, 'certificate page' ) : array();
 		$model['batch_identity_photos'] = $complete ? $this->gallery( get_post_meta( $test->ID, 'batch_identity_photos', true ), $compound->post_title, 'batch identity photo' ) : array();
 		$model['result_rows'] = $results ? $this->result_rows( $test, $model ) : array();
-		$model['has_summary_metrics'] = '' !== $model['purity_percentage_display'] || '' !== $model['average_net_content_display'] || '' !== $model['claimed_content_display'] || '' !== $model['vials_tested_display'];
+		$model['has_summary_metrics'] = '' !== $model['purity_percentage_display'] || '' !== $model['average_net_content_display'] || '' !== $model['claimed_content_display'];
 		$model['qc_strip_rows'] = $this->qc_strip_rows( $model['result_rows'], $model );
 		$model['qc_category_count'] = count( $model['qc_strip_rows'] );
 		$model['reported_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ); } ) );
 		$model['qc_success_category_count'] = count( array_filter( $model['qc_strip_rows'], static function ( $row ) { return ! empty( $row['reported'] ) && ! empty( $row['status']['success'] ); } ) );
 		$model['qc_all_reported_successful'] = $model['reported_category_count'] > 0 && $model['reported_category_count'] === $model['qc_success_category_count'];
 		$model['is_full_qc_documented'] = 'publish' === $test->post_status && 'approved' === $model['coa_status'] && 'complete' === $model['workflow_stage'] && 7 === $model['reported_category_count'] && 7 === $model['qc_success_category_count'];
-		$model['qc_strip_title'] = $model['is_full_qc_documented'] ? __( 'Full-QC Testing Passed', 'pepselect-coa-archive' ) : ( $model['qc_all_reported_successful'] ? __( 'QC Testing Passed', 'pepselect-coa-archive' ) : __( 'QC Testing Results', 'pepselect-coa-archive' ) );
+		$model['qc_strip_title'] = $model['is_full_qc_documented'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( $model['qc_all_reported_successful'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : __( 'Testing results', 'pepselect-coa-archive' ) );
 		$model['qc_strip_summary'] = $model['qc_all_reported_successful'] ? __( 'All reported tests met the laboratory specifications listed below.', 'pepselect-coa-archive' ) : __( 'Review the reported category results below.', 'pepselect-coa-archive' );
-		$model['show_qc_strip'] = 'approved' === $model['coa_status'] && $model['reported_category_count'] > 0;
+		$model['show_qc_strip'] = in_array( $model['coa_status'], array( 'approved', 'failed' ), true ) && $model['reported_category_count'] > 0;
 		$model['lab_report_host'] = $model['lab_report_url'] ? (string) wp_parse_url( $model['lab_report_url'], PHP_URL_HOST ) : '';
 		$model['outcome_points'] = array();
 		if ( 'approved' === $model['coa_status'] ) {
@@ -338,6 +344,8 @@ final class Frontend_View_Model {
 	/** Returns semantic status data with an explicit approved-report success override. @param string $stored Stored value. @param bool $success_override Green icon without relabeling. @return array */
 	public function status( $stored, $success_override = false ) {
 		$stored = sanitize_key( str_replace( '_', '-', (string) $stored ) );
+		// A report-only result never inherits the batch release status.
+		if ( 'reported' === $stored ) { $success_override = false; }
 		$labels = array( 'approved' => 'Approved', 'failed' => 'Failed', 'in-testing' => 'In Testing', 'vendor-vetting' => 'Vendor Vetting', 'pass' => 'Pass', 'fail' => 'Fail', 'pending' => 'Pending', 'not-tested' => 'Not Tested', 'not-applicable' => 'Not Applicable', 'reported' => 'Reported' );
 		$value = isset( $labels[ $stored ] ) ? $stored : '';
 		$class = $value ? 'ps-coa-status--' . $value : 'ps-coa-status--empty';
@@ -393,13 +401,13 @@ final class Frontend_View_Model {
 		if ( '' !== $model['average_net_content_display'] ) {
 			$range = ( '' !== $model['minimum_net_content_display'] || '' !== $model['maximum_net_content_display'] ) ? trim( $model['minimum_net_content_display'] . '–' . $model['maximum_net_content_display'] . ' ' . $unit ) : '';
 			$result = trim( $model['average_net_content_display'] . ' ' . $unit . ( $range ? ' (' . $range . ')' : '' ) );
-			$this->add_result_row( $rows, 'net-content', __( 'Average Net Content', 'pepselect-coa-archive' ), '', '', $result, $this->status( 'reported', 'approved' === $model['coa_status'] ), __( 'Net Content', 'pepselect-coa-archive' ) );
+			$this->add_result_row( $rows, 'net-content', __( 'Measured content', 'pepselect-coa-archive' ), '', '', $result, $this->status( 'reported', 'approved' === $model['coa_status'] ), __( 'Net Content', 'pepselect-coa-archive' ) );
 		}
 		$this->add_result_row( $rows, 'heavy-metals', __( 'Heavy Metals', 'pepselect-coa-archive' ), '', '', $model['heavy_metals_summary'], $model['heavy_metals_status'] );
 		$this->add_result_row( $rows, 'sterility', __( 'Sterility', 'pepselect-coa-archive' ), '', '', $model['sterility_result'], $model['sterility_status'] );
 		$endotoxin_result = trim( (string) $model['endotoxin_result'] );
 		$endotoxin_unit = trim( (string) $model['endotoxin_unit'] );
-		if ( $endotoxin_unit && false === stripos( $endotoxin_result, $endotoxin_unit ) ) { $endotoxin_result = trim( $endotoxin_result . ' ' . $endotoxin_unit ); }
+		if ( '' !== $endotoxin_result && $endotoxin_unit && false === stripos( $endotoxin_result, $endotoxin_unit ) ) { $endotoxin_result = trim( $endotoxin_result . ' ' . $endotoxin_unit ); }
 		$this->add_result_row( $rows, 'endotoxins', __( 'Endotoxins', 'pepselect-coa-archive' ), '', '', $endotoxin_result, $model['endotoxin_status'] );
 		$this->add_result_row( $rows, 'fentanyl', __( 'Fentanyl Screen', 'pepselect-coa-archive' ), $model['fentanyl_method'], $model['fentanyl_specification'], $model['fentanyl_result'], $model['fentanyl_status'] );
 		return $rows;
@@ -410,11 +418,11 @@ final class Frontend_View_Model {
 		$definitions = array(
 			'identity' => __( 'Identity', 'pepselect-coa-archive' ),
 			'purity' => __( 'Purity', 'pepselect-coa-archive' ),
-			'net-content' => __( 'Net Content', 'pepselect-coa-archive' ),
-			'heavy-metals' => __( 'Heavy Metals', 'pepselect-coa-archive' ),
+			'net-content' => __( 'Measured content', 'pepselect-coa-archive' ),
 			'sterility' => __( 'Sterility', 'pepselect-coa-archive' ),
+			'fentanyl' => __( 'Fentanyl screening', 'pepselect-coa-archive' ),
+			'heavy-metals' => __( 'Heavy metals', 'pepselect-coa-archive' ),
 			'endotoxins' => __( 'Endotoxins', 'pepselect-coa-archive' ),
-			'fentanyl' => __( 'Fentanyl Screen', 'pepselect-coa-archive' ),
 		);
 		$by_key = array();
 		foreach ( $result_rows as $row ) { $by_key[ $row['key'] ] = $row; }
@@ -424,6 +432,7 @@ final class Frontend_View_Model {
 			$reported = $this->qc_category_is_reported( $row );
 			if ( ! $reported ) { $row['status'] = $this->status( '' ); $row['detail'] = '--'; }
 			else { $row['detail'] = $this->qc_strip_detail( $row, $model ); }
+			$row['short_label'] = $label;
 			$row['reported'] = $reported;
 			$rows[] = $row;
 		}
@@ -463,6 +472,8 @@ final class Frontend_View_Model {
 	/** Resolves a safe reusable laboratory logo without remote requests. @return array */
 	private function laboratory_logo( $test, $stored_lab, $other_lab ) {
 		$name = $this->laboratory_name( $stored_lab, $other_lab );
+		$url = $this->http_url( get_post_meta( $test->ID, 'laboratory_logo_url', true ) );
+		if ( $url ) { return array( 'attachment_id' => 0, 'url' => $url, 'source' => 'external-url', 'alt' => sprintf( __( '%s logo', 'pepselect-coa-archive' ), $name ) ); }
 		$id = absint( get_post_meta( $test->ID, 'laboratory_logo', true ) );
 		if ( ! $this->valid_laboratory_logo_id( $id ) ) { $id = $this->reusable_laboratory_logo_id( $stored_lab, $other_lab, $test->ID ); }
 		if ( $this->valid_laboratory_logo_id( $id ) ) {
@@ -499,19 +510,33 @@ final class Frontend_View_Model {
 
 	/** Adds a row only when at least one stored field is public. @param array $rows Rows. @return void */
 	private function add_result_row( &$rows, $key, $label, $method, $specification, $result, $status, $short_label = '' ) {
+		if ( 'not-tested' === ( $status['value'] ?? '' ) ) { return; }
 		if ( '' === trim( (string) $method ) && '' === trim( (string) $specification ) && '' === trim( (string) $result ) && empty( $status['value'] ) ) { return; }
 		$rows[] = array( 'key' => $key, 'label' => $label, 'short_label' => $short_label ?: $label, 'method' => trim( (string) $method ), 'specification' => trim( (string) $specification ), 'result' => trim( (string) $result ), 'status' => $status );
 	}
 
 	private function date_label( $value ) {
-		$digits = preg_replace( '/\D/', '', (string) $value );
-		if ( 8 !== strlen( $digits ) ) { return ''; }
-		$time = strtotime( substr( $digits, 0, 4 ) . '-' . substr( $digits, 4, 2 ) . '-' . substr( $digits, 6, 2 ) . ' 00:00:00' );
-		return $time ? wp_date( get_option( 'date_format' ), $time ) : '';
+		// These are calendar dates, not UTC instants. Use the same site-local
+		// parser as the admin list so a US timezone cannot move them back a day.
+		$date = COA_Admin_Workflow::parse_date( $value );
+		return $date ? wp_date( get_option( 'date_format' ), $date->getTimestamp(), wp_timezone() ) : '';
 	}
 
 	private function http_url( $url ) { $url = trim( (string) $url ); return $url && wp_http_validate_url( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : ''; }
 	private function product_url( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'product' === $post->post_type && 'publish' === $post->post_status ? get_permalink( $post ) : ''; }
+	/** Read the current product image, not a snapshot taken before its photo was uploaded. */
+	private function product_image_id( $compound_id ) {
+		$product_id = absint( get_post_meta( $compound_id, Product_Matching::PRODUCT_ID_META, true ) );
+		$product = $product_id ? get_post( $product_id ) : null;
+		if ( $product && 'product' === $product->post_type && 'trash' !== $product->post_status ) {
+			$image_id = absint( get_post_thumbnail_id( $product_id ) );
+			return $this->valid_image_id( $image_id ) ? $image_id : 0;
+		}
+		// Preserve older archives whose original product is no longer available.
+		$image_id = absint( get_post_meta( $compound_id, Product_Matching::PRODUCT_IMAGE_META, true ) );
+		return $this->valid_image_id( $image_id ) ? $image_id : 0;
+	}
+
 	private function valid_image_id( $id ) { $post = $id ? get_post( $id ) : null; return $post && 'attachment' === $post->post_type && 'inherit' === $post->post_status && wp_attachment_is_image( $id ); }
 	private function valid_laboratory_logo_id( $id ) {
 		$post = $id ? get_post( $id ) : null; if ( ! $post || 'attachment' !== $post->post_type || 'inherit' !== $post->post_status ) { return false; }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.19 - 2026-09-25
+
+- Resolve the current linked WooCommerce product image for compound cards and history pages, even when the image was added after Ops created the compound. Do not depend on a stale image snapshot.
+- Keep uploaded batch vial photos on batch detail pages, using the current product image while a batch photo is unavailable. No batch images are copied onto compound records.
+
 ## 0.7.8 - 2026-09-05
 
 - Permanently redirect the approved NAD URL typo `nd50026205jp` and the older printed `progress-1269` QR path directly to `nd50026205js`. Both trailing-slash forms work; unrelated routes and stored COA records remain unchanged.

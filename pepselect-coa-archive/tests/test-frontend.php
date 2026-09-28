@@ -8,6 +8,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		$this->set_permalink_structure( '/%postname%/' );
 		unset( $_GET['coa_search'] );
 		do_action( 'init' );
 		$this->visibility = new PepSelect\COAArchive\Frontend_Visibility();
@@ -17,6 +18,26 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function tear_down() { unset( $_GET['coa_search'] ); parent::tear_down(); }
+
+	public function test_public_calendar_dates_match_admin_in_site_timezone() {
+		$original_zone = get_option( 'timezone_string' );
+		$original_format = get_option( 'date_format' );
+		$method = new ReflectionMethod( $this->view_model, 'date_label' );
+		$method->setAccessible( true );
+		try {
+			update_option( 'date_format', 'F j, Y' );
+			foreach ( array( 'America/New_York', 'America/Los_Angeles', 'UTC', 'Asia/Tokyo' ) as $zone ) {
+				update_option( 'timezone_string', $zone );
+				foreach ( array( '20260925', '2026-09-25' ) as $date ) {
+					$this->assertSame( 'September 25, 2026', $method->invoke( $this->view_model, $date ), $zone );
+				}
+				$this->assertSame( '', $method->invoke( $this->view_model, '20260230' ) );
+			}
+		} finally {
+			update_option( 'timezone_string', $original_zone );
+			update_option( 'date_format', $original_format );
+		}
+	}
 
 	public function test_archive_search_request_normalization_treats_absent_empty_whitespace_and_invalid_values_as_no_search() {
 		$query = new PepSelect\COAArchive\Frontend_Query();
@@ -31,18 +52,18 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function test_query_variables_and_three_routes_are_registered() {
 		$rewrites = new PepSelect\COAArchive\Rewrites();
+		$rewrites->register();
 		$vars = $rewrites->register_query_vars( array() );
 		foreach ( array( 'ps_coa_view', 'ps_compound_slug', 'ps_batch_slug' ) as $name ) { $this->assertContains( $name, $vars ); }
 		global $wp_rewrite; $rules = $wp_rewrite->rewrite_rules();
-		$this->assertArrayHasKey( 'testing/?$', $rules );
-		$this->assertArrayHasKey( 'testing/([^/]+)/?$', $rules );
-		$this->assertArrayHasKey( 'testing/([^/]+)/([^/]+)/?$', $rules );
-		$this->assertSame( 'index.php?ps_coa_view=archive', $rules['testing/?$'] );
-		$this->assertStringContainsString( 'ps_coa_view=compound', $rules['testing/([^/]+)/?$'] );
-		$this->assertStringContainsString( 'ps_coa_view=report', $rules['testing/([^/]+)/([^/]+)/?$'] );
-		$keys = array_keys( $rules );
-		$this->assertLessThan( array_search( 'testing/([^/]+)/?$', $keys, true ), array_search( 'testing/([^/]+)/([^/]+)/?$', $keys, true ) );
-		$this->assertLessThan( array_search( 'testing/?$', $keys, true ), array_search( 'testing/([^/]+)/?$', $keys, true ) );
+		$this->assertArrayHasKey( '^testing/?$', $rules );
+		$this->assertArrayHasKey( '^testing/([^/]+)/?$', $rules );
+		$this->assertArrayHasKey( '^testing/([^/]+)/([^/]+)/?$', $rules );
+		$this->assertSame( 'index.php?ps_coa_view=archive', $rules['^testing/?$'] );
+		$this->assertStringContainsString( 'ps_coa_view=compound', $rules['^testing/([^/]+)/?$'] );
+		$this->assertStringContainsString( 'ps_coa_view=report', $rules['^testing/([^/]+)/([^/]+)/?$'] );
+		$this->assertSame( 0, preg_match( '~^testing/?$~', 'testing/compound/batch/' ) );
+		$this->assertSame( 0, preg_match( '~^testing/([^/]+)/?$~', 'testing/compound/batch/' ) );
 		$this->assertFalse( get_post_type_object( 'ps_compound' )->has_archive );
 	}
 
@@ -72,7 +93,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$loader = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
 		$this->assertStringNotContainsString( 'pagename=testing', $rewrites );
 		$this->assertStringNotContainsString( 'wp_redirect', $router );
-		$this->assertStringNotContainsString( 'wp_safe_redirect', $router );
+		$this->assertStringContainsString( "wp_safe_redirect( \$context['canonical'], 301 )", $router );
+		$this->assertStringContainsString( '$this->build_report_by_ids( $compound_id, $test->ID )', $router );
 		$this->assertStringNotContainsString( "add_filter( 'the_content'", $loader );
 		$this->assertStringContainsString( "return \$this->locate( \$context['template'] )", $loader );
 	}
@@ -287,7 +309,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	public function test_laboratory_and_status_values_are_not_reinterpreted() {
 		$this->assertSame( 'ILS Labs', $this->view_model->laboratory_name( 'ils-labs' ) );
 		$this->assertSame( 'Janoshik Analytical', $this->view_model->laboratory_name( 'janoshik' ) );
-		$this->assertSame( 'MZ Biolabs', $this->view_model->laboratory_name( 'mz-biotech' ) );
+		$this->assertSame( 'Mz Biotech', $this->view_model->laboratory_name( 'mz-biotech' ) );
 		$this->assertSame( 'Custom Lab', $this->view_model->laboratory_name( 'other', 'Custom Lab' ) );
 		$this->assertSame( 'Reported', $this->view_model->status( 'reported' )['label'] );
 		$this->assertSame( 'Not Tested', $this->view_model->status( 'not-tested' )['label'] );
@@ -306,21 +328,19 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_access_codes_and_verification_urls_are_not_registered_as_public_rest_meta() {
-		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-fields.php' );
-		preg_match( '/\$safe = array\( (.*?) \);/s', $source, $matches );
-		$this->assertNotEmpty( $matches );
-		$this->assertStringNotContainsString( 'verification_code', $matches[1] );
-		$this->assertStringNotContainsString( 'lab_verification_url', $matches[1] );
+		( new PepSelect\COAArchive\COA_Test_Fields( new PepSelect\COAArchive\Dependencies() ) )->register_rest_meta();
+		$keys = get_registered_meta_keys( 'post', 'ps_coa_test' );
+		foreach ( array( 'verification_code', 'lab_verification_url' ) as $key ) { $this->assertSame( array( 'edit' ), $keys[ $key ]['show_in_rest']['schema']['context'] ); }
 	}
 
 	public function test_public_documentation_uses_exact_report_url_and_hides_verification_metadata() {
 		$compound = $this->compound(); $test = $this->test_record( $compound, 'approved', 'publish', 'LINKS' );
-		$url = 'https://lab.example/reports/exact?id=42';
+		$url = 'https://example.org/reports/exact?id=42';
 		update_post_meta( $test, 'lab_report_url', $url );
 		update_post_meta( $test, 'lab_verification_url', 'https://lab.example/verify' );
 		update_post_meta( $test, 'verification_code', 'PRIVATE-CODE' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
-		$this->assertStringContainsString( 'View Verified Lab Report', $html );
+		$this->assertStringContainsString( 'View lab report', $html );
 		$this->assertStringContainsString( esc_url( $url ), $html );
 		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
 		$this->assertStringNotContainsString( 'lab.example/verify', $html );
@@ -335,8 +355,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		update_post_meta( $test, 'pending_lab_url', $url ); update_post_meta( $test, 'expected_coa_date', '20260730' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
 		$this->assertStringContainsString( 'Verification in Progress', $html );
-		$this->assertStringContainsString( 'View Lab Progress', $html );
-		$this->assertStringContainsString( esc_url( $url ), $html );
+		$this->assertStringNotContainsString( 'View Lab Progress', $html );
+		$this->assertStringNotContainsString( esc_url( $url ), $html );
 		$this->assertStringNotContainsString( 'Summary Metrics', $html );
 		$this->assertStringNotContainsString( 'Full-QC Results', $html );
 	}
@@ -344,8 +364,11 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	public function test_failed_report_remains_inspectable_and_discloses_non_release() {
 		$compound = $this->compound(); $test = $this->test_record( $compound, 'failed', 'publish', 'FAILED-LOT' );
 		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
-		$this->assertStringContainsString( 'Did Not Pass Release Review', $html );
+		$this->assertStringContainsString( 'Testing failed', $html );
 		$this->assertStringContainsString( 'This batch was not released for sale.', $html );
+		$this->assertStringNotContainsString( 'Measured values', $html );
+		update_post_meta( $test, 'purity_percentage', '70.10' );
+		$html = do_shortcode( '[pepselect_coa_report compound_id="' . $compound . '" test_id="' . $test . '"]' );
 		$this->assertStringContainsString( 'Measured values', $html );
 	}
 
@@ -355,6 +378,8 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 		$first = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'image/jpeg', 'guid' => 'https://example.org/first.jpg' ) );
 		$second = self::factory()->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_mime_type' => 'image/png', 'guid' => 'https://example.org/second.png' ) );
 		$image_urls = array( $first => 'https://example.org/first.jpg', $second => 'https://example.org/second.png' );
+		update_post_meta( $first, '_wp_attached_file', '2026/09/first.jpg' );
+		update_post_meta( $second, '_wp_attached_file', '2026/09/second.png' );
 		$downsize = static function ( $value, $id ) use ( $image_urls ) { return isset( $image_urls[ $id ] ) ? array( $image_urls[ $id ], 800, 1000, true ) : $value; };
 		add_filter( 'image_downsize', $downsize, 10, 2 );
 		update_post_meta( $test, 'coa_pdf_id', $pdf ); update_post_meta( $test, 'coa_page_images', array( $second, $first ) );
@@ -383,6 +408,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function test_upgrade_flushes_only_when_installed_version_changes() {
+		do_action( 'wp_loaded' );
 		$calls = 0; $listener = static function () use ( &$calls ) { $calls++; };
 		add_action( 'generate_rewrite_rules', $listener );
 		update_option( PepSelect\COAArchive\Upgrade::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION );
@@ -408,7 +434,7 @@ class PepSelect_COA_Archive_Frontend_Test extends WP_UnitTestCase {
 
 	public function test_templates_render_compact_cards_metrics_statuses_and_accessible_gallery_controls() {
 		$archive = file_get_contents( dirname( __DIR__ ) . '/templates/partials/compound-card.php' );
-		$archive_page = file_get_contents( dirname( __DIR__ ) . '/templates/archive-testing.php' );
+		$archive_page = file_get_contents( dirname( __DIR__ ) . '/templates/archive-testing.php' ) . file_get_contents( dirname( __DIR__ ) . '/templates/partials/archive-hero.php' );
 		$report = file_get_contents( dirname( __DIR__ ) . '/templates/single-coa-report.php' );
 		$gallery = file_get_contents( dirname( __DIR__ ) . '/templates/partials/certificate-pages.php' ) . file_get_contents( dirname( __DIR__ ) . '/templates/partials/gallery-lightbox.php' );
 		$status = file_get_contents( dirname( __DIR__ ) . '/templates/partials/status-indicator.php' );
