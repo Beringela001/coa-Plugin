@@ -124,10 +124,18 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 		$submitted = get_post( $this->record( $compound_id, 'SUBMITTED-SECRET', '', array( 'coa_status' => 'pending', 'workflow_stage' => 'submitted-to-lab', 'expected_coa_date' => '2099-08-03' ) ) );
 		$testing = get_post( $this->record( $compound_id, 'TESTING-PUBLIC', '', array( 'coa_status' => 'pending', 'workflow_stage' => 'in-testing', 'expected_coa_date' => '2099-08-04' ) ) );
 		$vendor_model = $this->view_model->product_carousel_incoming( $vendor, $compound ); $waiting_model = $this->view_model->product_carousel_incoming( $waiting, $compound ); $submitted_model = $this->view_model->product_carousel_incoming( $submitted, $compound ); $testing_model = $this->view_model->product_carousel_incoming( $testing, $compound );
-		$this->assertSame( 'Vendor Vetting', $vendor_model['workflow_stage_label'] ); $this->assertSame( '', $vendor_model['expected_coa_date_label'] ); $this->assertSame( '', $vendor_model['batch_number'] ); $this->assertSame( '', $vendor_model['laboratory'] );
+		$this->assertSame( 'Vetting Vendor', $vendor_model['workflow_stage_label'] ); $this->assertSame( '', $vendor_model['expected_coa_date_label'] ); $this->assertSame( '', $vendor_model['batch_number'] ); $this->assertSame( '', $vendor_model['laboratory'] );
 		$this->assertSame( 'Waiting on Vendor', $waiting_model['workflow_stage_label'] ); $this->assertNotSame( '', $waiting_model['expected_coa_date_label'] ); $this->assertSame( '', $waiting_model['batch_number'] ); $this->assertSame( '', $waiting_model['laboratory'] );
 		$this->assertSame( 'Submitted to Laboratory', $submitted_model['workflow_stage_label'] ); $this->assertNotSame( '', $submitted_model['expected_coa_date_label'] ); $this->assertSame( '', $submitted_model['batch_number'] ); $this->assertSame( '', $submitted_model['laboratory'] );
 		$this->assertSame( 'Verification in Progress', $testing_model['workflow_stage_label'] ); $this->assertSame( 'TESTING-PUBLIC', $testing_model['batch_number'] ); $this->assertSame( 'ILS Labs', $testing_model['laboratory'] );
+		update_option( PepSelect\COAArchive\Design_Settings::OPTION, array( 'waiting_vendor_label' => 'New batch coming', 'waiting_vendor_copy' => 'A new batch is on its way to us.' ) );
+		PepSelect\COAArchive\Design_Settings::clear_cache();
+		$waiting_model = $this->view_model->product_carousel_incoming( $waiting, $compound );
+		$history_model = $this->view_model->test_summary( $waiting, $compound );
+		$this->assertSame( 'New batch coming', $waiting_model['workflow_stage_label'] );
+		$this->assertSame( $history_model['public_status_label'], $waiting_model['workflow_stage_label'] );
+		$this->assertSame( $history_model['public_status_copy'], $waiting_model['supporting_copy'] );
+		$this->assertStringContainsString( 'New batch coming', $waiting_model['accessible_label'] );
 	}
 
 	public function test_incoming_only_has_no_fake_documented_card_and_transitions_without_elementor_changes() {

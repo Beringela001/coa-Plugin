@@ -265,26 +265,21 @@ final class Frontend_View_Model {
 		$model = $this->test_summary( $test, $compound, false );
 		$stage = $model['workflow_stage'];
 		if ( 'pending' !== $model['coa_status'] || ! COA_Workflow::is_incoming_stage( $stage ) ) { return array(); }
-		$copy = array(
-			'vendor-vetting' => array( __( 'Vendor Vetting', 'pepselect-coa-archive' ), __( 'We are currently vetting vendors for this compound.', 'pepselect-coa-archive' ) ),
-			'waiting-on-vendor' => array( __( 'Waiting on Vendor', 'pepselect-coa-archive' ), __( 'We are currently waiting on a new batch from our vendor.', 'pepselect-coa-archive' ) ),
-			'submitted-to-lab' => array( __( 'Submitted to Laboratory', 'pepselect-coa-archive' ), __( 'Samples have been shipped to the testing laboratory.', 'pepselect-coa-archive' ) ),
-			'in-testing' => array( __( 'Verification in Progress', 'pepselect-coa-archive' ), __( 'Independent testing is underway.', 'pepselect-coa-archive' ) ),
-		);
-		if ( ! isset( $copy[ $stage ] ) ) { return array(); }
+		// Share the saved public wording with the compound history card.
+		$copy = $this->public_status( $model['coa_status'], $stage, false );
 		$compound_model = $this->compound( $compound );
 		return array(
 			'test_id' => $model['test_id'],
 			'role' => 'incoming',
 			'role_label' => __( 'Incoming', 'pepselect-coa-archive' ),
 			'workflow_stage' => $stage,
-			'workflow_stage_label' => $copy[ $stage ][0],
-			'supporting_copy' => $copy[ $stage ][1],
+			'workflow_stage_label' => $copy['label'],
+			'supporting_copy' => $copy['copy'],
 			'expected_coa_date_label' => $model['expected_coa_date_label'],
 			'batch_number' => $model['batch_number'],
 			'laboratory' => $model['laboratory'],
 			'detail_url' => $this->compound_url( $compound ),
-			'accessible_label' => sprintf( __( 'View %1$s vetting status: %2$s', 'pepselect-coa-archive' ), $compound_model['display_name'], $copy[ $stage ][0] ),
+			'accessible_label' => sprintf( __( 'View %1$s vetting status: %2$s', 'pepselect-coa-archive' ), $compound_model['display_name'], $copy['label'] ),
 		);
 	}
 

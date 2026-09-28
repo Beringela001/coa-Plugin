@@ -2,7 +2,7 @@
 <article class="ps-coa-card ps-coa-compound-card">
 	<div class="ps-coa-compound-card__media">
 		<?php if ( $compound['compound_image_id'] ) : ?>
-			<?php echo wp_get_attachment_image( $compound['compound_image_id'], 'medium', false, array( 'alt' => $compound['compound_image_alt'], 'loading' => 'lazy', 'sizes' => $compound['compound_image_sizes'] ?: '(max-width: 640px) 100vw, 33vw' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core returns escaped attachment markup. ?>
+			<?php echo wp_get_attachment_image( $compound['compound_image_id'], 'large', false, array( 'alt' => $compound['compound_image_alt'], 'loading' => 'lazy', 'sizes' => '(max-width: 640px) calc(100vw - 32px), (max-width: 1023px) 50vw, 33vw' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core returns escaped attachment markup. ?>
 		<?php elseif ( $compound['compound_image_url'] ) : ?>
 			<img src="<?php echo esc_url( $compound['compound_image_url'] ); ?>"<?php if ( $compound['compound_image_srcset'] ) : ?> srcset="<?php echo esc_attr( $compound['compound_image_srcset'] ); ?>"<?php endif; ?><?php if ( $compound['compound_image_sizes'] ) : ?> sizes="<?php echo esc_attr( $compound['compound_image_sizes'] ); ?>"<?php endif; ?> alt="<?php echo esc_attr( $compound['compound_image_alt'] ); ?>" loading="lazy">
 		<?php else : ?>
