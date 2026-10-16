@@ -1,6 +1,6 @@
 # COA mobile search correction — October 16, 2026
 
-Target: COA Archive `0.7.21`. Source verified locally; deployment subsequently authorized and package built. Not installed on staging or Live; hosting/staging sign-ins must be restored. See [release record](release.md).
+COA Archive `0.7.21` is deployed and verified on staging and Live. See the [release record](release.md) for backups, package identity and actual browser checks.
 
 The mobile search controls change to a flex column while the input retained an 18rem row-width basis. This made the field approximately 288px tall. Reset its mobile basis to auto, retain a 50px archive input and 16px entered text, and adjust the placeholder size. The visible label is **Looking for a COA**; the placeholder is **Type the batch number or compound here**. The versioned migration replaces known legacy defaults while preserving custom values for inspection during release.
 
