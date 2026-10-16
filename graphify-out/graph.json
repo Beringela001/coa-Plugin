@@ -1,7 +1,18 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {},
+  "graph": {
+    "performance_refresh": {
+      "date": "2026-10-16",
+      "method": "Scoped Graphify AST replacement",
+      "files": [
+        "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+        "pepselect-coa-archive/includes/class-design-settings.php",
+        "pepselect-coa-archive/includes/class-upgrade.php",
+        "pepselect-coa-archive/templates/partials/archive-hero.php"
+      ]
+    }
+  },
   "nodes": [
     {
       "label": "evidence.mjs",
@@ -867,7 +878,7 @@
       "label": "close()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L46",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_close",
       "community": 71,
@@ -877,7 +888,7 @@
       "label": "go()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L54",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_go",
       "community": 71,
@@ -887,7 +898,7 @@
       "label": "render()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L60",
+      "source_location": "L68",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_render",
       "community": 71,
@@ -897,7 +908,7 @@
       "label": "escapeHtml()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L112",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_escapehtml",
       "community": 71,
@@ -907,7 +918,7 @@
       "label": "search()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L118",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_search",
       "community": 71,
@@ -917,7 +928,7 @@
       "label": "setActive()",
       "file_type": "code",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L175",
+      "source_location": "L193",
       "_origin": "ast",
       "id": "js_pepselect_coa_search_setactive",
       "community": 71,
@@ -15574,14 +15585,14 @@
       "norm_label": "coa-overview-review-2026-09-08.md"
     },
     {
-      "label": "COA follow-up \u2014 awaiting visual/data approval",
+      "label": "COA follow-up — awaiting visual/data approval",
       "file_type": "document",
       "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_coa_overview_review_2026_09_08_coa_follow_up_awaiting_visual_data_approval",
       "community": 81,
-      "norm_label": "coa follow-up \u2014 awaiting visual/data approval"
+      "norm_label": "coa follow-up — awaiting visual/data approval"
     },
     {
       "label": "Prepared source change",
@@ -15594,14 +15605,14 @@
       "norm_label": "prepared source change"
     },
     {
-      "label": "Proposed data correction \u2014 preview only",
+      "label": "Proposed data correction — preview only",
       "file_type": "document",
       "source_file": "docs/COA-OVERVIEW-REVIEW-2026-09-08.md",
       "source_location": "L11",
       "_origin": "ast",
       "id": "docs_coa_overview_review_2026_09_08_proposed_data_correction_preview_only",
       "community": 81,
-      "norm_label": "proposed data correction \u2014 preview only"
+      "norm_label": "proposed data correction — preview only"
     },
     {
       "label": "Preview and validation",
@@ -15624,14 +15635,14 @@
       "norm_label": "coa-pending-copy-2026-09-15.md"
     },
     {
-      "label": "COA 0.7.17 \u2014 consistent pending wording",
+      "label": "COA 0.7.17 — consistent pending wording",
       "file_type": "document",
       "source_file": "docs/COA-PENDING-COPY-2026-09-15.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_coa_pending_copy_2026_09_15_coa_0_7_17_consistent_pending_wording",
       "community": 162,
-      "norm_label": "coa 0.7.17 \u2014 consistent pending wording"
+      "norm_label": "coa 0.7.17 — consistent pending wording"
     },
     {
       "label": "COA-PUBLIC-AUDIT-2026-09-10.md",
@@ -15694,14 +15705,14 @@
       "norm_label": "coa-redesign-audit-2026-09-08.md"
     },
     {
-      "label": "COA evidence and redesign review \u2014 September 8, 2026",
+      "label": "COA evidence and redesign review — September 8, 2026",
       "file_type": "document",
       "source_file": "docs/COA-REDESIGN-AUDIT-2026-09-08.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_coa_redesign_audit_2026_09_08_coa_evidence_and_redesign_review_september_8_2026",
       "community": 63,
-      "norm_label": "coa evidence and redesign review \u2014 september 8, 2026"
+      "norm_label": "coa evidence and redesign review — september 8, 2026"
     },
     {
       "label": "Release state",
@@ -15774,14 +15785,14 @@
       "norm_label": "coa_0715_evidence_release.md"
     },
     {
-      "label": "COA 0.7.15 \u2014 saved evidence and untested rows",
+      "label": "COA 0.7.15 — saved evidence and untested rows",
       "file_type": "document",
       "source_file": "docs/COA_0715_EVIDENCE_RELEASE.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_coa_0715_evidence_release_coa_0_7_15_saved_evidence_and_untested_rows",
       "community": 93,
-      "norm_label": "coa 0.7.15 \u2014 saved evidence and untested rows"
+      "norm_label": "coa 0.7.15 — saved evidence and untested rows"
     },
     {
       "label": "LIVE-NAD-QR-0.7.8-2026-09-05.md",
@@ -15794,14 +15805,14 @@
       "norm_label": "live-nad-qr-0.7.8-2026-09-05.md"
     },
     {
-      "label": "COA Archive 0.7.8 Live release \u2014 2026-09-05",
+      "label": "COA Archive 0.7.8 Live release — 2026-09-05",
       "file_type": "document",
       "source_file": "docs/LIVE-NAD-QR-0.7.8-2026-09-05.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_live_nad_qr_0_7_8_2026_09_05_coa_archive_0_7_8_live_release_2026_09_05",
       "community": 95,
-      "norm_label": "coa archive 0.7.8 live release \u2014 2026-09-05"
+      "norm_label": "coa archive 0.7.8 live release — 2026-09-05"
     },
     {
       "label": "PRE-EXISTING-TEST-FAILURES.md",
@@ -15834,54 +15845,54 @@
       "norm_label": "read this before deciding anything"
     },
     {
-      "label": "A. Harness \u2014 unbuilt WordPress core (18 errors)",
+      "label": "A. Harness — unbuilt WordPress core (18 errors)",
       "file_type": "document",
       "source_file": "docs/PRE-EXISTING-TEST-FAILURES.md",
       "source_location": "L32",
       "_origin": "ast",
       "id": "docs_pre_existing_test_failures_a_harness_unbuilt_wordpress_core_18_errors",
       "community": 53,
-      "norm_label": "a. harness \u2014 unbuilt wordpress core (18 errors)"
+      "norm_label": "a. harness — unbuilt wordpress core (18 errors)"
     },
     {
-      "label": "B. Harness \u2014 attachment fixtures without files (12)",
+      "label": "B. Harness — attachment fixtures without files (12)",
       "file_type": "document",
       "source_file": "docs/PRE-EXISTING-TEST-FAILURES.md",
       "source_location": "L59",
       "_origin": "ast",
       "id": "docs_pre_existing_test_failures_b_harness_attachment_fixtures_without_files_12",
       "community": 53,
-      "norm_label": "b. harness \u2014 attachment fixtures without files (12)"
+      "norm_label": "b. harness — attachment fixtures without files (12)"
     },
     {
-      "label": "C. Harness \u2014 rewrite rules not registered (2)",
+      "label": "C. Harness — rewrite rules not registered (2)",
       "file_type": "document",
       "source_file": "docs/PRE-EXISTING-TEST-FAILURES.md",
       "source_location": "L83",
       "_origin": "ast",
       "id": "docs_pre_existing_test_failures_c_harness_rewrite_rules_not_registered_2",
       "community": 53,
-      "norm_label": "c. harness \u2014 rewrite rules not registered (2)"
+      "norm_label": "c. harness — rewrite rules not registered (2)"
     },
     {
-      "label": "D. Structurally brittle \u2014 source-text and file-size assertions (14)",
+      "label": "D. Structurally brittle — source-text and file-size assertions (14)",
       "file_type": "document",
       "source_file": "docs/PRE-EXISTING-TEST-FAILURES.md",
       "source_location": "L95",
       "_origin": "ast",
       "id": "docs_pre_existing_test_failures_d_structurally_brittle_source_text_and_file_size_assertions_14",
       "community": 53,
-      "norm_label": "d. structurally brittle \u2014 source-text and file-size assertions (14)"
+      "norm_label": "d. structurally brittle — source-text and file-size assertions (14)"
     },
     {
-      "label": "E. Genuinely stale \u2014 the code deliberately changed (19)",
+      "label": "E. Genuinely stale — the code deliberately changed (19)",
       "file_type": "document",
       "source_file": "docs/PRE-EXISTING-TEST-FAILURES.md",
       "source_location": "L120",
       "_origin": "ast",
       "id": "docs_pre_existing_test_failures_e_genuinely_stale_the_code_deliberately_changed_19",
       "community": 53,
-      "norm_label": "e. genuinely stale \u2014 the code deliberately changed (19)"
+      "norm_label": "e. genuinely stale — the code deliberately changed (19)"
     },
     {
       "label": "E1. Tests that encode a REST policy the plugin intentionally reversed",
@@ -15974,14 +15985,14 @@
       "norm_label": "readme.md"
     },
     {
-      "label": "Original-layout COA refinement \u2014 September 8, 2026",
+      "label": "Original-layout COA refinement — September 8, 2026",
       "file_type": "document",
       "source_file": "docs/coa-refinement/README.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "coa_refinement_readme_original_layout_coa_refinement_september_8_2026",
       "community": 74,
-      "norm_label": "original-layout coa refinement \u2014 september 8, 2026"
+      "norm_label": "original-layout coa refinement — september 8, 2026"
     },
     {
       "label": "Review previews",
@@ -16394,14 +16405,14 @@
       "norm_label": "handoff.md"
     },
     {
-      "label": "Pep Select COA Archive \u2014 Developer Handoff",
+      "label": "Pep Select COA Archive — Developer Handoff",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/HANDOFF.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "pepselect_coa_archive_handoff_pep_select_coa_archive_developer_handoff",
       "community": 15,
-      "norm_label": "pep select coa archive \u2014 developer handoff"
+      "norm_label": "pep select coa archive — developer handoff"
     },
     {
       "label": "Snapshot",
@@ -16424,44 +16435,44 @@
       "norm_label": "roadmap after 0.4.0"
     },
     {
-      "label": "0.5 \u2014 Data operations and laboratory integration",
+      "label": "0.5 — Data operations and laboratory integration",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/HANDOFF.md",
       "source_location": "L25",
       "_origin": "ast",
       "id": "pepselect_coa_archive_handoff_0_5_data_operations_and_laboratory_integration",
       "community": 15,
-      "norm_label": "0.5 \u2014 data operations and laboratory integration"
+      "norm_label": "0.5 — data operations and laboratory integration"
     },
     {
-      "label": "0.6 \u2014 Native editor/site integrations",
+      "label": "0.6 — Native editor/site integrations",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/HANDOFF.md",
       "source_location": "L44",
       "_origin": "ast",
       "id": "pepselect_coa_archive_handoff_0_6_native_editor_site_integrations",
       "community": 15,
-      "norm_label": "0.6 \u2014 native editor/site integrations"
+      "norm_label": "0.6 — native editor/site integrations"
     },
     {
-      "label": "0.7 \u2014 Reporting and data-quality operations",
+      "label": "0.7 — Reporting and data-quality operations",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/HANDOFF.md",
       "source_location": "L54",
       "_origin": "ast",
       "id": "pepselect_coa_archive_handoff_0_7_reporting_and_data_quality_operations",
       "community": 15,
-      "norm_label": "0.7 \u2014 reporting and data-quality operations"
+      "norm_label": "0.7 — reporting and data-quality operations"
     },
     {
-      "label": "1.0 and later \u2014 Platform hardening",
+      "label": "1.0 and later — Platform hardening",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/HANDOFF.md",
       "source_location": "L61",
       "_origin": "ast",
       "id": "pepselect_coa_archive_handoff_1_0_and_later_platform_hardening",
       "community": 15,
-      "norm_label": "1.0 and later \u2014 platform hardening"
+      "norm_label": "1.0 and later — platform hardening"
     },
     {
       "label": "Open bugs and known limitations",
@@ -17184,14 +17195,14 @@
       "norm_label": "responsive behavior"
     },
     {
-      "label": "Manual visual QA \u2014 beta.11",
+      "label": "Manual visual QA — beta.11",
       "file_type": "document",
       "source_file": "pepselect-coa-archive/README.md",
       "source_location": "L394",
       "_origin": "ast",
       "id": "pepselect_coa_archive_readme_manual_visual_qa_beta_11",
       "community": 29,
-      "norm_label": "manual visual qa \u2014 beta.11"
+      "norm_label": "manual visual qa — beta.11"
     }
   ],
   "links": [
@@ -17539,17 +17550,6 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L75",
-      "weight": 1.0,
-      "source": "includes_class_design_settings_design_settings_get",
-      "target": "coa_refinement_render_get_option"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/includes/class-frontend-view-model.php",
       "source_location": "L527",
       "weight": 1.0,
@@ -17565,28 +17565,6 @@
       "source_location": "L156",
       "weight": 1.0,
       "source": "includes_class_product_matching_product_matching_create_and_connect",
-      "target": "coa_refinement_render_get_option"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_maybe_upgrade",
-      "target": "coa_refinement_render_get_option"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L43",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
       "target": "coa_refinement_render_get_option"
     },
     {
@@ -17610,17 +17588,6 @@
       "weight": 1.0,
       "source": "tests_test_frontend_pepselect_coa_archive_frontend_test_test_public_calendar_dates_match_admin_in_site_timezone",
       "target": "coa_refinement_render_get_option"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L91",
-      "weight": 1.0,
-      "source": "includes_class_design_settings_design_settings_sanitize",
-      "target": "coa_refinement_render_sanitize_hex_color"
     },
     {
       "relation": "calls",
@@ -17664,17 +17631,6 @@
       "source_location": "L117",
       "weight": 1.0,
       "source": "includes_class_compound_validation_compound_validation_validate_duplicate",
-      "target": "coa_refinement_render_sanitize_text_field"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L96",
-      "weight": 1.0,
-      "source": "includes_class_design_settings_design_settings_sanitize",
       "target": "coa_refinement_render_sanitize_text_field"
     },
     {
@@ -18533,17 +18489,6 @@
       "source_location": "L89",
       "weight": 1.0,
       "source": "includes_class_design_editor_design_editor_preview",
-      "target": "coa_refinement_render_absint"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L93",
-      "weight": 1.0,
-      "source": "includes_class_design_settings_design_settings_sanitize",
       "target": "coa_refinement_render_absint"
     },
     {
@@ -19794,110 +19739,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L46",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_close"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L112",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_escapehtml"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L54",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_go"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L60",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_render"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L118",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_search"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L175",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search",
-      "target": "js_pepselect_coa_search_setactive"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L65",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search_render",
-      "target": "js_pepselect_coa_search_close"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L100",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search_render",
-      "target": "js_pepselect_coa_search_go"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L78",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search_render",
-      "target": "js_pepselect_coa_search_escapehtml"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
-      "source_location": "L133",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "js_pepselect_coa_search_search",
-      "target": "js_pepselect_coa_search_render"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-test-form.js",
       "source_location": "L17",
       "weight": 1.0,
@@ -20471,28 +20312,6 @@
       "source_location": "L118",
       "weight": 1.0,
       "source": "includes_class_plugin_plugin_run",
-      "target": "includes_class_archive_cache_archive_cache"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L22",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_mark_current",
-      "target": "includes_class_archive_cache_archive_cache"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_maybe_upgrade",
       "target": "includes_class_archive_cache_archive_cache"
     },
     {
@@ -26355,96 +26174,6 @@
       "target": "includes_class_design_settings_design_settings"
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings",
-      "target": "includes_class_design_settings_design_settings"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L109",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_clear_cache"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L81",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_copy"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L12",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_fields"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L73",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_get"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L131",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_hex_to_rgba"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L112",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_inline_css"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L87",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_sanitize"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L102",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_design_settings_design_settings",
-      "target": "includes_class_design_settings_design_settings_with_preview"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -26526,17 +26255,6 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L85",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
-      "target": "includes_class_design_settings_design_settings"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
       "source_file": "pepselect-coa-archive/tests/test-design-editor.php",
       "source_location": "L10",
       "weight": 1.0,
@@ -26597,17 +26315,6 @@
       "weight": 1.0,
       "source": "tests_test_design_editor_pepselect_coa_design_editor_test_test_save_merges_preserves_saved_copy_and_rejects_stale_revision",
       "target": "includes_class_design_settings_design_settings"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
-      "source_location": "L86",
-      "weight": 1.0,
-      "source": "includes_class_design_settings_design_settings_sanitize",
-      "target": "tests_report_refinement_contract_sanitize_key"
     },
     {
       "relation": "contains",
@@ -32787,67 +32494,6 @@
       "source_location": "L127",
       "weight": 1.0,
       "source": "includes_class_seo_sitemaps_seo_sitemaps_public_url",
-      "target": "tests_report_logo_url_contract_get_post_meta"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_upgrade",
-      "target": "includes_class_upgrade_upgrade"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L22",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_upgrade_upgrade",
-      "target": "includes_class_upgrade_upgrade_mark_current"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_upgrade_upgrade",
-      "target": "includes_class_upgrade_upgrade_maybe_upgrade"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L42",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_upgrade_upgrade",
-      "target": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "includes_class_upgrade_upgrade",
-      "target": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
-      "source_location": "L29",
-      "weight": 1.0,
-      "source": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug",
       "target": "tests_report_logo_url_contract_get_post_meta"
     },
     {
@@ -48452,6 +48098,237 @@
       "confidence_score": 1.0,
       "source": "pepselect_coa_archive_readme_coa_5_1_product_report_hierarchy",
       "target": "pepselect_coa_archive_readme_deployment_and_existing_elementor_placement"
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_close",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_go",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_render",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_escapehtml",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_search",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_setactive",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_close",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_escapehtml",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_go",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_search",
+      "target": "js_pepselect_coa_search_render",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings",
+      "target": "includes_class_design_settings_design_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_fields",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_get",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_copy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_sanitize",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_with_preview",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_clear_cache",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_inline_css",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_hex_to_rgba",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade",
+      "target": "includes_class_upgrade_upgrade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_maybe_upgrade",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_mark_current",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
+      "target": "includes_class_design_settings_design_settings",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L85",
+      "weight": 1.0
     }
   ],
   "hyperedges": [],
