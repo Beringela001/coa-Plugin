@@ -52,8 +52,8 @@ final class Upgrade {
 				'Every compound we’ve released keeps its full record here: the raw third-party certificate, the batch it came from, and the date it was tested. We publish these exactly as the lab returns them, and we keep them up after a batch sells out. Search a compound, or enter the batch code from your vial, to read the same report our team reads.',
 			),
 			'search_placeholder_copy' => array(
-				array( 'Search compounds...' ),
-				'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B',
+				array( 'Search compounds...', 'Search a compound or batch code — e.g. Retatrutide, RT30-0726-B' ),
+				'Type the batch number or compound here',
 			),
 			'vendor_vetting_copy' => array(
 				array( 'We are currently vetting vendors for this compound.' ),

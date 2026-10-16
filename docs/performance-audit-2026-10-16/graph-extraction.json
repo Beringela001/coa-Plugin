@@ -1,0 +1,431 @@
+{
+  "nodes": [
+    {
+      "id": "js_pepselect_coa_search",
+      "label": "pepselect-coa-search.js",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_close",
+      "label": "close()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L50",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_go",
+      "label": "go()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L62",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_render",
+      "label": "render()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L68",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_escapehtml",
+      "label": "escapeHtml()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L121",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_search",
+      "label": "search()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L127",
+      "_origin": "ast"
+    },
+    {
+      "id": "js_pepselect_coa_search_setactive",
+      "label": "setActive()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L193",
+      "_origin": "ast"
+    },
+    {
+      "id": "partials_archive_hero",
+      "label": "archive-hero.php",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/templates/partials/archive-hero.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings",
+      "label": "class-design-settings.php",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings",
+      "label": "Design_Settings",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L7",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_fields",
+      "label": ".fields()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L12",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_get",
+      "label": ".get()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L73",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_copy",
+      "label": ".copy()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L81",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_sanitize",
+      "label": ".sanitize()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L87",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_with_preview",
+      "label": ".with_preview()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L102",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_clear_cache",
+      "label": ".clear_cache()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L109",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_inline_css",
+      "label": ".inline_css()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L112",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_design_settings_design_settings_hex_to_rgba",
+      "label": ".hex_to_rgba()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L131",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade",
+      "label": "class-upgrade.php",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade_upgrade",
+      "label": "Upgrade",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L7",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade_upgrade_maybe_upgrade",
+      "label": ".maybe_upgrade()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L11",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade_upgrade_mark_current",
+      "label": ".mark_current()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L22",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug",
+      "label": ".migrate_legacy_retatrutide_slug()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L25",
+      "_origin": "ast"
+    },
+    {
+      "id": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
+      "label": ".migrate_archive_catalog_copy()",
+      "file_type": "code",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L42",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_close",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_go",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_render",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_escapehtml",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_search",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search",
+      "target": "js_pepselect_coa_search_setactive",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_close",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_escapehtml",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_render",
+      "target": "js_pepselect_coa_search_go",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "js_pepselect_coa_search_search",
+      "target": "js_pepselect_coa_search_render",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/assets/js/pepselect-coa-search.js",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings",
+      "target": "includes_class_design_settings_design_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_fields",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_get",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_copy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_sanitize",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_with_preview",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_clear_cache",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_inline_css",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_design_settings_design_settings",
+      "target": "includes_class_design_settings_design_settings_hex_to_rgba",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-design-settings.php",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade",
+      "target": "includes_class_upgrade_upgrade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_maybe_upgrade",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_mark_current",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_migrate_legacy_retatrutide_slug",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade",
+      "target": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "includes_class_upgrade_upgrade_migrate_archive_catalog_copy",
+      "target": "includes_class_design_settings_design_settings",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "pepselect-coa-archive/includes/class-upgrade.php",
+      "source_location": "L85",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

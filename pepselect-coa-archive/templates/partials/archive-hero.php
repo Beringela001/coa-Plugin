@@ -14,7 +14,7 @@ $catalog_title = 'Every batch has a permanent address.';
 			<li><span aria-hidden="true">⌁</span><?php esc_html_e( 'Published unedited', 'pepselect-coa-archive' ); ?></li>
 		</ul>
 		<form class="ps-coa-search ps-coa-archive-search" action="<?php echo esc_url( $ps_context['archive_url'] ); ?>" method="get" role="search">
-			<label class="screen-reader-text" for="ps-coa-search-input"><?php esc_html_e( 'Search compounds and public batch codes', 'pepselect-coa-archive' ); ?></label>
+			<label for="ps-coa-search-input"><?php esc_html_e( 'Looking for a COA', 'pepselect-coa-archive' ); ?></label>
 			<div class="ps-coa-search__controls">
 				<input id="ps-coa-search-input" name="coa_search" type="search" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php echo esc_attr( \PepSelect\COAArchive\Design_Settings::copy( 'search_placeholder_copy' ) ); ?>">
 				<button class="ps-coa-button ps-coa-search__button" type="submit" aria-label="<?php echo esc_attr( \PepSelect\COAArchive\Design_Settings::copy( 'search_button_copy' ) ); ?>"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'search_button_copy' ) ); ?></button>

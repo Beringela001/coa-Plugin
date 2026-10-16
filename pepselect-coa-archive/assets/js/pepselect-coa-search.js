@@ -26,6 +26,7 @@
 
 	var listbox = document.createElement( 'ul' );
 	listbox.className = 'ps-coa-typeahead';
+	listbox.id = 'ps-coa-search-suggestions';
 	listbox.setAttribute( 'role', 'listbox' );
 	listbox.hidden = true;
 
@@ -35,6 +36,7 @@
 
 	input.setAttribute( 'role', 'combobox' );
 	input.setAttribute( 'aria-autocomplete', 'list' );
+	input.setAttribute( 'aria-controls', listbox.id );
 	input.setAttribute( 'aria-expanded', 'false' );
 	input.setAttribute( 'autocomplete', 'off' );
 
@@ -42,13 +44,19 @@
 	var active = -1;
 	var controller = null;
 	var debounce;
+	var revision = 0;
+	var cache = new Map();
 
 	function close() {
+		revision++;
+		window.clearTimeout( debounce );
+		if ( controller ) { controller.abort(); }
 		listbox.hidden = true;
 		listbox.innerHTML = '';
 		items = [];
 		active = -1;
 		input.setAttribute( 'aria-expanded', 'false' );
+		input.removeAttribute( 'aria-activedescendant' );
 	}
 
 	function go( url ) {
@@ -58,6 +66,7 @@
 	}
 
 	function render( results ) {
+		input.removeAttribute( 'aria-activedescendant' );
 		listbox.innerHTML = '';
 		items = [];
 
@@ -95,7 +104,7 @@
 					( meta ? '<span class="ps-coa-typeahead__meta-group">' + meta + '</span>' : '' );
 			}
 
-			li.addEventListener( 'mousedown', function ( event ) {
+			li.addEventListener( 'click', function ( event ) {
 				event.preventDefault();
 				go( result.url );
 			} );
@@ -121,6 +130,7 @@
 		}
 
 		controller = new AbortController();
+		var requestRevision = revision;
 
 		fetch( endpoint + '?q=' + encodeURIComponent( term ), {
 			signal: controller.signal,
@@ -130,26 +140,34 @@
 				return response.ok ? response.json() : { results: [] };
 			} )
 			.then( function ( data ) {
-				render( ( data && data.results ) || [] );
+				if ( requestRevision !== revision || term !== input.value.trim() ) { return; }
+				var results = ( data && Array.isArray( data.results ) ) ? data.results : [];
+				if ( results.length ) {
+					if ( cache.size >= 30 ) { cache.delete( cache.keys().next().value ); }
+					cache.set( term.toLowerCase(), results );
+				}
+				render( results );
 			} )
 			.catch( function () {} );
 	}
 
 	input.addEventListener( 'input', function () {
 		var term = input.value.trim();
-		window.clearTimeout( debounce );
+		close();
 
 		if ( term.length < 2 ) {
 			close();
 			return;
 		}
 
+		if ( cache.has( term.toLowerCase() ) ) { render( cache.get( term.toLowerCase() ) ); return; }
 		debounce = window.setTimeout( function () {
 			search( term );
-		}, 220 );
+		}, 100 );
 	} );
 
 	input.addEventListener( 'keydown', function ( event ) {
+		if ( 'Escape' === event.key ) { close(); return; }
 		if ( listbox.hidden ) {
 			return;
 		}
