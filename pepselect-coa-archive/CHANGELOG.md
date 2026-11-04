@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.22 - 2026-11-03
+
+- Routed report and compound history pages now apply the underlying post's own Yoast robots choices (noindex, nofollow, noarchive, nosnippet, noimageindex). Previously Yoast fell back to the blog-home indexable on these virtual routes, so per-post noindex never reached the page.
+- Reports that have not passed (any stage before a complete, approved outcome) are noindex by default. An explicit per-post Yoast choice (noindex or index) always wins; passed reports follow the per-post or post-type default.
+
 ## 0.7.19 - 2026-09-25
 
 - Resolve the current linked WooCommerce product image for compound cards and history pages, even when the image was added after Ops created the compound. Do not depend on a stale image snapshot.

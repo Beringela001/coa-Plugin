@@ -25,6 +25,8 @@ final class Frontend_Template_Loader {
 		add_filter( 'wpseo_schema_graph', array( $this, 'filter_schema_graph' ), 20, 2 );
 		add_action( 'wp_head', array( $this, 'output_fallback_seo' ), 2 );
 		add_filter( 'wpseo_canonical', array( $this, 'filter_canonical' ) );
+		add_filter( 'wpseo_robots_array', array( $this, 'filter_yoast_robots' ), 20 );
+		add_filter( 'wp_robots', array( $this, 'filter_wp_robots' ), 20 );
 		add_filter( 'rank_math/frontend/canonical', array( $this, 'filter_canonical' ) );
 		add_filter( 'seopress_titles_canonical', array( $this, 'filter_canonical' ) );
 		add_shortcode( 'pepselect_coa_archive', array( $this, 'archive_shortcode' ) );
@@ -82,6 +84,61 @@ final class Frontend_Template_Loader {
 
 	public function filter_canonical( $canonical ) { $url = $this->router->canonical_url(); return $url ?: $canonical; }
 	public function filter_redirect_canonical( $redirect_url, $requested_url ) { unset( $requested_url ); return $this->router->is_route() ? false : $redirect_url; }
+
+	/** Returns the ps_coa_test / ps_compound post behind a routed report or history page. @return int */
+	private function routed_post_id() {
+		if ( ! $this->router->is_route() || $this->router->is_404() ) { return 0; }
+		$context = $this->router->context();
+		if ( isset( $context['view'] ) && 'report' === $context['view'] && ! empty( $context['test']['test_id'] ) ) { return absint( $context['test']['test_id'] ); }
+		if ( isset( $context['view'] ) && 'compound' === $context['view'] && ! empty( $context['compound']['compound_id'] ) ) { return absint( $context['compound']['compound_id'] ); }
+		return 0;
+	}
+
+	/** True on a routed report whose test has not passed (anything other than a complete, approved outcome). @return bool */
+	private function is_unpassed_report() {
+		$context = $this->router->context();
+		if ( ! isset( $context['view'] ) || 'report' !== $context['view'] || empty( $context['test'] ) ) { return false; }
+		$stage  = isset( $context['test']['workflow_stage'] ) ? (string) $context['test']['workflow_stage'] : '';
+		$status = isset( $context['test']['coa_status'] ) ? (string) $context['test']['coa_status'] : '';
+		return ! ( 'complete' === $stage && 'approved' === $status );
+	}
+
+	/** Reads the routed post's Yoast robots choices (per-post meta, then post-type default). @return array{noindex:bool,nofollow:bool,adv:string[]}|array */
+	private function routed_robots() {
+		$post_id = $this->routed_post_id();
+		if ( ! $post_id ) { return array(); }
+		$noindex_meta = (string) get_post_meta( $post_id, '_yoast_wpseo_meta-robots-noindex', true ); // '1' noindex, '2' index, '' / '0' post-type default.
+		if ( '1' === $noindex_meta ) { $noindex = true; }
+		elseif ( '2' === $noindex_meta ) { $noindex = false; }
+		elseif ( $this->is_unpassed_report() ) { $noindex = true; } // Reports that have not passed stay out of search until they do.
+		else { $noindex = class_exists( 'WPSEO_Options' ) && (bool) \WPSEO_Options::get( 'noindex-' . get_post_type( $post_id ), false ); }
+		$adv = array_filter( array_map( 'trim', explode( ',', (string) get_post_meta( $post_id, '_yoast_wpseo_meta-robots-adv', true ) ) ) );
+		return array(
+			'noindex'  => $noindex,
+			'nofollow' => '1' === (string) get_post_meta( $post_id, '_yoast_wpseo_meta-robots-nofollow', true ),
+			'adv'      => array_values( array_intersect( $adv, array( 'noarchive', 'nosnippet', 'noimageindex' ) ) ),
+		);
+	}
+
+	/** Yoast builds robots from the blog-home indexable on routed pages; apply the routed post's own choices. @param array $robots Yoast robots. @return array */
+	public function filter_yoast_robots( $robots ) {
+		$own = $this->routed_robots();
+		if ( ! $own || ! is_array( $robots ) ) { return $robots; }
+		if ( $own['noindex'] ) { $robots['index'] = 'noindex'; unset( $robots['max-snippet'], $robots['max-image-preview'], $robots['max-video-preview'] ); }
+		if ( $own['nofollow'] ) { $robots['follow'] = 'nofollow'; }
+		foreach ( $own['adv'] as $directive ) { $robots[ $directive ] = $directive; }
+		return $robots;
+	}
+
+	/** Same choices for core wp_robots (no SEO plugin, or merged by Yoast's wp_robots integration). @param array $robots Core robots. @return array */
+	public function filter_wp_robots( $robots ) {
+		$own = $this->routed_robots();
+		if ( ! $own || ! is_array( $robots ) ) { return $robots; }
+		if ( $own['noindex'] ) { unset( $robots['index'], $robots['max-image-preview'], $robots['max-snippet'], $robots['max-video-preview'] ); $robots['noindex'] = true; }
+		if ( $own['nofollow'] ) { unset( $robots['follow'] ); $robots['nofollow'] = true; }
+		foreach ( $own['adv'] as $directive ) { $robots[ $directive ] = true; }
+		return $robots;
+	}
 
 	/** Supplies route-aware titles without changing any visible archive copy. */
 	public function filter_title( $title ) {
