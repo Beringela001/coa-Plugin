@@ -15,7 +15,34 @@ final class Upgrade {
 		( new Product_Matching( new Dependencies() ) )->backfill_existing_links();
 		Archive_Cache::invalidate();
 		flush_rewrite_rules( false );
+		self::refresh_coa_test_indexables();
 		update_option( self::VERSION_OPTION, PEPSELECT_COA_ARCHIVE_VERSION, false );
+	}
+
+	/**
+	 * Rebuilds Yoast indexables for published COA Tests once per version so the
+	 * unpassed-report rule reaches Yoast's stored is_public, then asks Yoast to
+	 * regenerate llms.txt in about five minutes. Bounded to this post type; no-op
+	 * without Yoast.
+	 *
+	 * @return void
+	 */
+	private static function refresh_coa_test_indexables() {
+		if ( ! function_exists( 'YoastSEO' ) || ! class_exists( 'Yoast\\WP\\SEO\\Integrations\\Watchers\\Indexable_Post_Watcher' ) ) { return; }
+		try {
+			$ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => 'publish', 'posts_per_page' => 500, 'fields' => 'ids', 'no_found_rows' => true ) );
+			$watcher = YoastSEO()->classes->get( 'Yoast\\WP\\SEO\\Integrations\\Watchers\\Indexable_Post_Watcher' );
+			foreach ( $ids as $id ) { $watcher->build_indexable( absint( $id ) ); }
+			// Same as Yoast's own quick population: the existing weekly llms.txt event, re-armed to run in five minutes.
+			if ( class_exists( 'WPSEO_Options' ) && true === \WPSEO_Options::get( 'enable_llms_txt', false ) ) {
+				wp_clear_scheduled_hook( 'wpseo_llms_txt_population' );
+				wp_schedule_event( time() + 5 * MINUTE_IN_SECONDS, 'weekly', 'wpseo_llms_txt_population' );
+			}
+		} catch ( \Throwable $error ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->warning( 'indexable_refresh_failed', array( 'source' => 'pepselect-coa-archive', 'version' => PEPSELECT_COA_ARCHIVE_VERSION, 'operation' => 'upgrade', 'reason' => get_class( $error ) ) );
+			}
+		}
 	}
 
 	/** Records activation after the activation transaction has flushed rules. @return void */

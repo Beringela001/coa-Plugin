@@ -25,6 +25,26 @@ final class SEO_Sitemaps {
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'exclude_unroutable_posts' ) );
 		add_filter( 'wpseo_xml_sitemap_post_url', array( $this, 'filter_post_url' ), 10, 2 );
 		add_filter( 'wpseo_sitemap_post_type_first_links', array( $this, 'add_archive_url' ), 10, 2 );
+		// Yoast's llms.txt lists posts whose stored indexable is public; keep unpassed reports out of it.
+		add_filter( 'wpseo_should_save_indexable', array( $this, 'mark_unpassed_indexable_private' ), 10, 2 );
+	}
+
+	/**
+	 * Marks a not-yet-passed COA Test indexable as non-public just before Yoast stores it.
+	 *
+	 * Only is_public changes; the per-post Yoast robots fields and the save decision
+	 * are untouched. Yoast's llms.txt automatic lists (and other indexable-based
+	 * public lists) read is_public, so unpassed reports drop out of them.
+	 *
+	 * @param bool  $intend_to_save Yoast's own decision, returned unchanged.
+	 * @param mixed $indexable      Yoast indexable model.
+	 * @return bool
+	 */
+	public function mark_unpassed_indexable_private( $intend_to_save, $indexable = null ) {
+		if ( ! is_object( $indexable ) || ! isset( $indexable->object_type, $indexable->object_sub_type, $indexable->object_id ) ) { return $intend_to_save; }
+		if ( 'post' !== $indexable->object_type || Post_Types::COA_TEST !== $indexable->object_sub_type ) { return $intend_to_save; }
+		if ( self::is_unpassed_test( absint( $indexable->object_id ) ) ) { $indexable->is_public = false; }
+		return $intend_to_save;
 	}
 
 	/**
@@ -53,7 +73,7 @@ final class SEO_Sitemaps {
 		foreach ( $ids as $post_id ) {
 			if ( '' === $this->public_url( $post_id ) ) {
 				$excluded[] = absint( $post_id );
-			} elseif ( Post_Types::COA_TEST === get_post_type( $post_id ) && $this->is_unpassed_test( $post_id ) ) {
+			} elseif ( Post_Types::COA_TEST === get_post_type( $post_id ) && self::is_unpassed_test( $post_id ) ) {
 				// Matches the routed-page default: reports that have not passed are noindex, so keep them out of the sitemap too.
 				$excluded[] = absint( $post_id );
 			}
@@ -63,7 +83,7 @@ final class SEO_Sitemaps {
 	}
 
 	/** True when a test has not passed and carries no explicit per-post Yoast "index" choice. @param int $post_id Test. @return bool */
-	private function is_unpassed_test( $post_id ) {
+	public static function is_unpassed_test( $post_id ) {
 		if ( '2' === (string) get_post_meta( $post_id, '_yoast_wpseo_meta-robots-noindex', true ) ) { return false; }
 		$passed = 'complete' === COA_Workflow::stage( $post_id ) && 'approved' === COA_Workflow::outcome( $post_id );
 		return ! $passed;

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.23 - 2026-11-03
+
+- Keep COA Tests that have not passed (same rule as the 0.7.22 robots default; an explicit per-post Yoast "index" wins) out of Yoast's llms.txt by marking their Yoast indexable non-public at save time (`wpseo_should_save_indexable`). Per-post Yoast fields are not changed.
+- On upgrade, rebuild Yoast indexables for published COA Tests once and schedule Yoast's llms.txt regeneration (about five minutes later).
+
 ## 0.7.22 - 2026-11-03
 
 - Routed report and compound history pages now apply the underlying post's own Yoast robots choices (noindex, nofollow, noarchive, nosnippet, noimageindex). Previously Yoast fell back to the blog-home indexable on these virtual routes, so per-post noindex never reached the page.
