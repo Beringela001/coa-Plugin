@@ -4,6 +4,7 @@
 
 - Routed report and compound history pages now apply the underlying post's own Yoast robots choices (noindex, nofollow, noarchive, nosnippet, noimageindex). Previously Yoast fell back to the blog-home indexable on these virtual routes, so per-post noindex never reached the page.
 - Reports that have not passed (any stage before a complete, approved outcome) are noindex by default. An explicit per-post Yoast choice (noindex or index) always wins; passed reports follow the per-post or post-type default.
+- The Yoast COA sitemap leaves out reports that have not passed (unless a per-post Yoast "index" is set), matching the page default.
 
 ## 0.7.19 - 2026-09-25
 

@@ -53,10 +53,20 @@ final class SEO_Sitemaps {
 		foreach ( $ids as $post_id ) {
 			if ( '' === $this->public_url( $post_id ) ) {
 				$excluded[] = absint( $post_id );
+			} elseif ( Post_Types::COA_TEST === get_post_type( $post_id ) && $this->is_unpassed_test( $post_id ) ) {
+				// Matches the routed-page default: reports that have not passed are noindex, so keep them out of the sitemap too.
+				$excluded[] = absint( $post_id );
 			}
 		}
 
 		return array_values( array_unique( array_filter( $excluded ) ) );
+	}
+
+	/** True when a test has not passed and carries no explicit per-post Yoast "index" choice. @param int $post_id Test. @return bool */
+	private function is_unpassed_test( $post_id ) {
+		if ( '2' === (string) get_post_meta( $post_id, '_yoast_wpseo_meta-robots-noindex', true ) ) { return false; }
+		$passed = 'complete' === COA_Workflow::stage( $post_id ) && 'approved' === COA_Workflow::outcome( $post_id );
+		return ! $passed;
 	}
 
 	/**
