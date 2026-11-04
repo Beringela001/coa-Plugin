@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.24 - 2026-11-03
+
+- Also exclude unpassed COA Tests from Yoast's llms.txt when Yoast builds the list without indexables (all non-production environments such as staging use `get_posts()` there). Only Yoast's exact llms.txt query shape for `ps_coa_test` is changed.
+
 ## 0.7.23 - 2026-11-03
 
 - Keep COA Tests that have not passed (same rule as the 0.7.22 robots default; an explicit per-post Yoast "index" wins) out of Yoast's llms.txt by marking their Yoast indexable non-public at save time (`wpseo_should_save_indexable`). Per-post Yoast fields are not changed.

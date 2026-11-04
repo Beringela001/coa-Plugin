@@ -27,6 +27,29 @@ final class SEO_Sitemaps {
 		add_filter( 'wpseo_sitemap_post_type_first_links', array( $this, 'add_archive_url' ), 10, 2 );
 		// Yoast's llms.txt lists posts whose stored indexable is public; keep unpassed reports out of it.
 		add_filter( 'wpseo_should_save_indexable', array( $this, 'mark_unpassed_indexable_private' ), 10, 2 );
+		// Without indexables (any non-production environment, e.g. staging) Yoast builds the list with get_posts() instead.
+		add_action( 'pre_get_posts', array( $this, 'exclude_unpassed_from_llms_txt_query' ) );
+	}
+
+	/**
+	 * Excludes unpassed COA Tests from Yoast's llms.txt fallback query.
+	 *
+	 * Yoast's Automatic_Post_Collection::get_recently_modified_posts_wp_query()
+	 * runs get_posts() with post_type, orderby=modified, post_status=publish and
+	 * has_password=false. Only that exact shape for ps_coa_test is touched; the
+	 * plugin's own queries never set has_password.
+	 *
+	 * @param \WP_Query $query Query.
+	 * @return void
+	 */
+	public function exclude_unpassed_from_llms_txt_query( $query ) {
+		if ( ! is_object( $query ) || ! method_exists( $query, 'get' ) ) { return; }
+		if ( Post_Types::COA_TEST !== $query->get( 'post_type' ) || 'modified' !== $query->get( 'orderby' ) || 'publish' !== $query->get( 'post_status' ) || false !== $query->get( 'has_password' ) ) { return; }
+		$ids = get_posts( array( 'post_type' => Post_Types::COA_TEST, 'post_status' => 'publish', 'posts_per_page' => 500, 'fields' => 'ids', 'no_found_rows' => true ) );
+		$unpassed = array_values( array_filter( array_map( 'absint', $ids ), array( __CLASS__, 'is_unpassed_test' ) ) );
+		if ( ! $unpassed ) { return; }
+		$existing = array_filter( array_map( 'absint', (array) $query->get( 'post__not_in' ) ) );
+		$query->set( 'post__not_in', array_values( array_unique( array_merge( $existing, $unpassed ) ) ) );
 	}
 
 	/**
