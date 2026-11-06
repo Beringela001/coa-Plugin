@@ -68,6 +68,7 @@ final class Frontend_View_Model {
 		$strength_unit = (string) get_post_meta( $compound->ID, 'strength_unit', true );
 		$strength_pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $strength_unit );
 		$public_name = trim( $compound_name ) ?: $display_name;
+		$listing_name = trim( (string) $display_name );
 		return array(
 			'compound_id' => $compound->ID,
 			'title' => $compound->post_title,
@@ -75,8 +76,8 @@ final class Frontend_View_Model {
 			'display_name' => $display_name,
 			'compound_name' => $compound_name,
 			'public_name' => $public_name,
-			'listing_name' => $public_name,
-			'live_listing_name' => $public_name,
+			'listing_name' => $listing_name,
+			'live_listing_name' => $listing_name,
 			'display_strength_separately' => '' !== trim( $compound_name ) || '' === $strength_pattern || false === stripos( preg_replace( '/\s+/', '', $display_name ), preg_replace( '/\s+/', '', $strength_pattern ) ),
 			'short_name' => (string) get_post_meta( $compound->ID, 'short_name', true ),
 			'strength_value' => $strength,
@@ -287,10 +288,11 @@ final class Frontend_View_Model {
 	}
 
 	/**
-	 * Keeps a completed report on the name it was issued under.
+	 * Records the name a completed report was issued under.
 	 *
-	 * Archive cards, compound history, and incoming tests keep the live family
-	 * name. Strength, slug, photos, and measurements are not copied or changed.
+	 * Listing headings keep the current approved display name. The issued name
+	 * stays on the report record and is not copied onto the title, breadcrumb,
+	 * or hero. Strength, slug, photos, and measurements are not changed.
 	 *
 	 * @param array    $model Compound view.
 	 * @param \WP_Post $test  Report being rendered.
@@ -305,18 +307,8 @@ final class Frontend_View_Model {
 		if ( '' === $display && '' === $base ) {
 			return $model;
 		}
-		if ( '' === $display ) {
-			$display = (string) $model['display_name'];
-		}
-		$public = '' !== $base ? $base : $display;
-		$strength = isset( $model['strength_value'] ) ? (string) $model['strength_value'] : '';
-		$unit = isset( $model['strength_unit'] ) ? (string) $model['strength_unit'] : '';
-		$pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $unit );
-		$model['display_name'] = $display;
-		$model['compound_name'] = $base;
-		$model['public_name'] = $public;
-		$model['listing_name'] = $public;
-		$model['display_strength_separately'] = '' !== $base || '' === $pattern || false === stripos( preg_replace( '/\s+/', '', $display ), preg_replace( '/\s+/', '', $pattern ) );
+		$model['issued_display_name'] = $display;
+		$model['issued_compound_name'] = $base;
 		return $model;
 	}
 

@@ -318,9 +318,12 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 
 		$live = $this->view_model->compound( get_post( 1690 ) );
 		$report = $this->router->build_report( 'ps-31-10', 'ss1026233gx' );
-		$this->assertSame( 'PS-31', $live['listing_name'] );
-		$this->assertSame( 'SS-31', $report['compound']['listing_name'] );
-		$this->assertSame( 'PS-31', $report['compound']['live_listing_name'] );
+		$this->assertSame( 'PS-31 10', $live['listing_name'] );
+		$this->assertSame( 'PS-31', $live['public_name'] );
+		$this->assertSame( 'PS-31 10', $report['compound']['listing_name'] );
+		$this->assertSame( 'PS-31', $report['compound']['public_name'] );
+		$this->assertSame( 'SS-31 10 mg', $report['compound']['issued_display_name'] );
+		$this->assertSame( 'SS-31', $report['compound']['issued_compound_name'] );
 		$this->assertSame( 'ss1026233gx', $report['test']['slug'] );
 
 		set_query_var( 'ps_coa_view', 'compound' );
@@ -329,9 +332,9 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$router = $this->fresh_router();
 		$router->resolve();
 		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
-		$this->assertStringContainsString( 'PS-31 COAs', $loader->filter_title( '' ) );
+		$this->assertSame( 'PS-31 10 COAs & Batch History | ' . get_bloginfo( 'name' ), $loader->filter_title( '' ) );
 		$graph = $loader->filter_schema_graph( array() );
-		$this->assertStringContainsString( 'PS-31', $graph[1]['itemListElement'][2]['name'] );
+		$this->assertSame( 'PS-31 10', $graph[1]['itemListElement'][2]['name'] );
 
 		set_query_var( 'ps_coa_view', 'report' );
 		set_query_var( 'ps_compound_slug', 'ps-31-10' );
@@ -339,8 +342,8 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$report_router = $this->fresh_router();
 		$report_router->resolve();
 		$report_loader = new PepSelect\COAArchive\Frontend_Template_Loader( $report_router );
-		$this->assertStringContainsString( 'SS-31 Batch SS1026233GX', $report_loader->filter_title( '' ) );
-		$this->assertStringNotContainsString( 'PS-31', $report_loader->filter_title( '' ) );
+		$this->assertSame( 'PS-31 10 Batch SS1026233GX Lab Report | ' . get_bloginfo( 'name' ), $report_loader->filter_title( '' ) );
+		$this->assertStringNotContainsString( 'SS-31', $report_loader->filter_title( '' ) );
 		set_query_var( 'ps_coa_view', '' );
 		set_query_var( 'ps_compound_slug', '' );
 		set_query_var( 'ps_batch_slug', '' );
@@ -438,6 +441,60 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'bpc157-10' ) );
 		$this->assertSame( 'bpc-157-10-mg', get_post( $compound )->post_name );
 		$this->assertSame( 'BP1026232JP', get_post_meta( $batch, 'batch_number', true ) );
+	}
+
+	public function test_listing_titles_keep_each_approved_strength_once() {
+		$cases = array(
+			array( '3g-rt-10', '3G-RT 10', '3G-RT', '10' ),
+			array( '3g-rt-20', '3G-RT 20', '3G-RT', '20' ),
+			array( '3g-rt-30', '3G-RT 30', '3G-RT', '30' ),
+			array( '2g-tz-20', '2G-TZ 20', '2G-TZ', '20' ),
+			array( '1g-sm-20', '1G-SM 20', '1G-SM', '20' ),
+			array( 'tesa-10', 'TESA 10', 'TESA', '10' ),
+			array( 'ps-141-10', 'PS-141 10', 'PS-141', '10' ),
+			array( 'ps-31-10', 'PS-31 10', 'PS-31', '10' ),
+			array( 'cag-10', 'CAG 10', 'CAG', '10' ),
+			array( 'bpc157-tb500-10', 'BPC157/TB500 10', 'BPC157/TB500', '10' ),
+		);
+		$loader_source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
+		$this->assertStringContainsString( "add_filter( 'pre_get_document_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
+		$this->assertStringContainsString( "add_filter( 'wpseo_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
+		$this->assertStringContainsString( "add_filter( 'wpseo_opengraph_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
+		$this->assertStringContainsString( "add_filter( 'wpseo_twitter_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
+		$titles = array();
+		foreach ( $cases as $case ) {
+			list( $slug, $display, $base, $strength ) = $case;
+			$id = $this->compound( $slug );
+			update_post_meta( $id, 'display_name', $display );
+			update_post_meta( $id, 'compound_name', $base );
+			update_post_meta( $id, 'short_name', $base );
+			update_post_meta( $id, 'strength_value', $strength );
+			update_post_meta( $id, 'strength_unit', 'mg' );
+			$this->approved( $id, 'BATCH-' . strtoupper( $slug ), 'batch-' . $slug );
+			$model = $this->view_model->compound( get_post( $id ) );
+			$this->assertSame( $base, $model['public_name'], $slug );
+			$this->assertSame( $display, $model['listing_name'], $slug );
+			$this->assertSame( $strength, $model['strength_value_display'], $slug );
+			set_query_var( 'ps_coa_view', 'compound' );
+			set_query_var( 'ps_compound_slug', $slug );
+			set_query_var( 'ps_batch_slug', '' );
+			$router = $this->fresh_router();
+			$router->resolve();
+			$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+			$expected = $display . ' COAs & Batch History | ' . get_bloginfo( 'name' );
+			$title = $loader->filter_title( 'Theme title' );
+			$this->assertSame( $expected, $title, $slug );
+			$this->assertSame( $expected, $loader->filter_title( 'Theme title' ), $slug );
+			$this->assertStringContainsString( 'for ' . $display . '.', $loader->filter_description( 'Theme description' ), $slug );
+			$graph = $loader->filter_schema_graph( array() );
+			$this->assertSame( $expected, $graph[0]['name'], $slug );
+			$this->assertSame( $display, $graph[1]['itemListElement'][2]['name'], $slug );
+			$this->assertStringNotContainsString( $strength . ' mg', $title, $slug );
+			$titles[ $slug ] = $title;
+		}
+		$this->assertNotSame( $titles['3g-rt-20'], $titles['3g-rt-30'] );
+		$this->assertSame( '3G-RT 20 COAs & Batch History | ' . get_bloginfo( 'name' ), $titles['3g-rt-20'] );
+		$this->assertSame( '3G-RT 30 COAs & Batch History | ' . get_bloginfo( 'name' ), $titles['3g-rt-30'] );
 	}
 
 	private function compound( $slug ) {

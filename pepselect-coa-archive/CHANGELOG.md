@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.27 - 2026-11-06
+
+- Testing titles, social titles, schema names, and breadcrumbs use the compound's saved display name, so `3G-RT 20` and `3G-RT 30` no longer share one title. The visible hero and archive card still show the base name with the strength beside it. A completed report keeps its issued name on the report record; that old name is not substituted into the current listing heading.
+
 ## 0.7.26 - 2026-11-06
 
 - Retired testing slugs and printed numeric compound IDs for the eight rename families redirect to that compound's current permalink. The editor saves the new permalink. This plugin does not invent a slug from the display name and does not write strength.
