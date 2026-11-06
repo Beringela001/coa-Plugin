@@ -68,7 +68,7 @@ final class Frontend_View_Model {
 		$strength_unit = (string) get_post_meta( $compound->ID, 'strength_unit', true );
 		$strength_pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $strength_unit );
 		$public_name = trim( $compound_name ) ?: $display_name;
-		$listing_name = trim( (string) $display_name );
+		$listing_name = in_array( (int) $compound->ID, Frontend_Redirects::approved_rename_ids(), true ) ? trim( (string) $display_name ) : $public_name;
 		return array(
 			'compound_id' => $compound->ID,
 			'title' => $compound->post_title,
@@ -290,9 +290,9 @@ final class Frontend_View_Model {
 	/**
 	 * Records the name a completed report was issued under.
 	 *
-	 * Listing headings keep the current approved display name. The issued name
-	 * stays on the report record and is not copied onto the title, breadcrumb,
-	 * or hero. Strength, slug, photos, and measurements are not changed.
+	 * The ten approved rename compounds keep that name off the current listing
+	 * heading. Every other compound keeps the 0.7.26 heading substitution.
+	 * Stored fields, photos, and measurements are not changed.
 	 *
 	 * @param array    $model Compound view.
 	 * @param \WP_Post $test  Report being rendered.
@@ -307,8 +307,24 @@ final class Frontend_View_Model {
 		if ( '' === $display && '' === $base ) {
 			return $model;
 		}
-		$model['issued_display_name'] = $display;
-		$model['issued_compound_name'] = $base;
+		$compound_id = isset( $model['compound_id'] ) ? absint( $model['compound_id'] ) : 0;
+		if ( in_array( $compound_id, Frontend_Redirects::approved_rename_ids(), true ) ) {
+			$model['issued_display_name']  = $display;
+			$model['issued_compound_name'] = $base;
+			return $model;
+		}
+		if ( '' === $display ) {
+			$display = (string) $model['display_name'];
+		}
+		$public = '' !== $base ? $base : $display;
+		$strength = isset( $model['strength_value'] ) ? (string) $model['strength_value'] : '';
+		$unit = isset( $model['strength_unit'] ) ? (string) $model['strength_unit'] : '';
+		$pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $unit );
+		$model['display_name'] = $display;
+		$model['compound_name'] = $base;
+		$model['public_name'] = $public;
+		$model['listing_name'] = $public;
+		$model['display_strength_separately'] = '' !== $base || '' === $pattern || false === stripos( preg_replace( '/\s+/', '', $display ), preg_replace( '/\s+/', '', $pattern ) );
 		return $model;
 	}
 

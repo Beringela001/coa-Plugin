@@ -331,10 +331,10 @@ final class Frontend_Template_Loader {
 		$variables[] = $variable;
 	}
 
-	/** Uses the approved display name, which already includes its strength once. @param array $context Route context. @return string */
+	/** Uses the listing name already chosen for this compound. @param array $context Route context. @return string */
 	private function route_name( $context ) {
 		$compound = isset( $context['compound'] ) && is_array( $context['compound'] ) ? $context['compound'] : array();
-		foreach ( array( 'listing_name', 'display_name', 'public_name' ) as $key ) {
+		foreach ( array( 'listing_name', 'public_name', 'display_name' ) as $key ) {
 			if ( isset( $compound[ $key ] ) && '' !== trim( (string) $compound[ $key ] ) ) {
 				return trim( (string) $compound[ $key ] );
 			}

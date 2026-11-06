@@ -444,17 +444,21 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 	}
 
 	public function test_listing_titles_keep_each_approved_strength_once() {
+		$this->assertSame(
+			array( 961, 885, 883, 2062, 2724, 974, 984, 1690, 1684, 2324 ),
+			PepSelect\COAArchive\Frontend_Redirects::approved_rename_ids()
+		);
 		$cases = array(
-			array( '3g-rt-10', '3G-RT 10', '3G-RT', '10' ),
-			array( '3g-rt-20', '3G-RT 20', '3G-RT', '20' ),
-			array( '3g-rt-30', '3G-RT 30', '3G-RT', '30' ),
-			array( '2g-tz-20', '2G-TZ 20', '2G-TZ', '20' ),
-			array( '1g-sm-20', '1G-SM 20', '1G-SM', '20' ),
-			array( 'tesa-10', 'TESA 10', 'TESA', '10' ),
-			array( 'ps-141-10', 'PS-141 10', 'PS-141', '10' ),
-			array( 'ps-31-10', 'PS-31 10', 'PS-31', '10' ),
-			array( 'cag-10', 'CAG 10', 'CAG', '10' ),
-			array( 'bpc157-tb500-10', 'BPC157/TB500 10', 'BPC157/TB500', '10' ),
+			array( 961, '3g-rt-10', '3G-RT 10', '3G-RT', '10' ),
+			array( 885, '3g-rt-20', '3G-RT 20', '3G-RT', '20' ),
+			array( 883, '3g-rt-30', '3G-RT 30', '3G-RT', '30' ),
+			array( 2062, '2g-tz-20', '2G-TZ 20', '2G-TZ', '20' ),
+			array( 2724, '1g-sm-20', '1G-SM 20', '1G-SM', '20' ),
+			array( 974, 'tesa-10', 'TESA 10', 'TESA', '10' ),
+			array( 984, 'ps-141-10', 'PS-141 10', 'PS-141', '10' ),
+			array( 1690, 'ps-31-10', 'PS-31 10', 'PS-31', '10' ),
+			array( 1684, 'cag-10', 'CAG 10', 'CAG', '10' ),
+			array( 2324, 'bpc157-tb500-10', 'BPC157/TB500 10', 'BPC157/TB500', '10' ),
 		);
 		$loader_source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-template-loader.php' );
 		$this->assertStringContainsString( "add_filter( 'pre_get_document_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
@@ -463,8 +467,8 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( "add_filter( 'wpseo_twitter_title', array( \$this, 'filter_title' ), 20 )", $loader_source );
 		$titles = array();
 		foreach ( $cases as $case ) {
-			list( $slug, $display, $base, $strength ) = $case;
-			$id = $this->compound( $slug );
+			list( $id, $slug, $display, $base, $strength ) = $case;
+			$this->compound_at( $id, $slug );
 			update_post_meta( $id, 'display_name', $display );
 			update_post_meta( $id, 'compound_name', $base );
 			update_post_meta( $id, 'short_name', $base );
@@ -495,6 +499,101 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$this->assertNotSame( $titles['3g-rt-20'], $titles['3g-rt-30'] );
 		$this->assertSame( '3G-RT 20 COAs & Batch History | ' . get_bloginfo( 'name' ), $titles['3g-rt-20'] );
 		$this->assertSame( '3G-RT 30 COAs & Batch History | ' . get_bloginfo( 'name' ), $titles['3g-rt-30'] );
+		$this->assertSame( '20', get_post_meta( 885, 'strength_value', true ) );
+		$this->assertSame( '3G-RT 20', get_post_meta( 885, 'display_name', true ) );
+		$this->assertSame( '3G-RT', get_post_meta( 885, 'compound_name', true ) );
+	}
+
+	public function test_nad_cjc_and_description_only_listings_keep_the_prior_name() {
+		$kept = array(
+			array( 972, 'ghk-cu-50-mg', 'GHK-Cu 50', 'GHK-Cu', '50' ),
+			array( 1686, 'kpv-10-mg', 'KPV 10', 'KPV', '10' ),
+			array( 1901, 'selank-10-mg', 'Selank 10', 'Selank', '10' ),
+			array( 1904, 'semax-10-mg', 'Semax 10', 'Semax', '10' ),
+			array( 970, 'bpc-157-10-mg', 'BPC-157 10', 'BPC-157', '10' ),
+			array( 979, 'tb-500-10-mg', 'TB-500 10', 'TB-500', '10' ),
+			array( 1688, 'mots-c-10-mg', 'MOTS-c 10', 'MOTS-c', '10' ),
+			array( 988, 'glutathione-600-mg', 'Glutathione 600', 'Glutathione', '600' ),
+			array( 1501, 'nad-500-mg', 'NAD+ 500 mg', 'NAD+', '500' ),
+			array( 2318, 'cjc-1295-no-dac-ipamorelin', 'CJC-1295 no DAC / Ipamorelin', 'CJC-1295/Ipamorelin', '10' ),
+		);
+		foreach ( $kept as $case ) {
+			list( $id, $slug, $display, $base, $strength ) = $case;
+			$this->assertNotContains( $id, PepSelect\COAArchive\Frontend_Redirects::approved_rename_ids() );
+			$this->compound_at( $id, $slug );
+			update_post_meta( $id, 'display_name', $display );
+			update_post_meta( $id, 'compound_name', $base );
+			update_post_meta( $id, 'short_name', $base );
+			update_post_meta( $id, 'strength_value', $strength );
+			update_post_meta( $id, 'strength_unit', 'mg' );
+			$this->approved( $id, 'KEEP-' . $id, 'keep-' . $id );
+			$model = $this->view_model->compound( get_post( $id ) );
+			$this->assertSame( $base, $model['public_name'], $slug );
+			$this->assertSame( $base, $model['listing_name'], $slug );
+			$this->assertNotSame( $display, $model['listing_name'], $slug );
+			set_query_var( 'ps_coa_view', 'compound' );
+			set_query_var( 'ps_compound_slug', $slug );
+			set_query_var( 'ps_batch_slug', '' );
+			$router = $this->fresh_router();
+			$router->resolve();
+			$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+			$expected = $base . ' COAs & Batch History | ' . get_bloginfo( 'name' );
+			$this->assertSame( $expected, $loader->filter_title( 'Theme title' ), $slug );
+			$this->assertStringContainsString( 'for ' . $base . '.', $loader->filter_description( 'Theme description' ), $slug );
+			$graph = $loader->filter_schema_graph( array() );
+			$this->assertSame( $expected, $graph[0]['name'], $slug );
+			$this->assertSame( $base, $graph[1]['itemListElement'][2]['name'], $slug );
+			$this->assertSame( $display, get_post_meta( $id, 'display_name', true ), $slug );
+			$this->assertSame( $strength, get_post_meta( $id, 'strength_value', true ), $slug );
+		}
+
+		update_post_meta( $this->tests_for( 1501 ), PepSelect\COAArchive\COA_Test_Service::ISSUED_DISPLAY_NAME, 'NAD+ 500 mg' );
+		update_post_meta( $this->tests_for( 1501 ), PepSelect\COAArchive\COA_Test_Service::ISSUED_COMPOUND_NAME, 'NAD+ Historical' );
+		$nad = $this->router->build_report( 'nad-500-mg', 'keep-1501' );
+		$this->assertSame( 'NAD+ Historical', $nad['compound']['listing_name'] );
+		$this->assertSame( 'NAD+ Historical', $nad['compound']['public_name'] );
+		$this->assertArrayNotHasKey( 'issued_display_name', $nad['compound'] );
+		$this->assertSame( 'NAD+', get_post_meta( 1501, 'compound_name', true ) );
+
+		$this->compound_at( 885, '3g-rt-20' );
+		update_post_meta( 885, 'display_name', '3G-RT 20' );
+		update_post_meta( 885, 'compound_name', '3G-RT' );
+		update_post_meta( 885, 'strength_value', '20' );
+		update_post_meta( 885, 'strength_unit', 'mg' );
+		$issued = $this->approved( 885, 'RT2026233GX', 'rt2026233gx' );
+		update_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_DISPLAY_NAME, 'Retatrutide 20mg' );
+		update_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_COMPOUND_NAME, 'Retatrutide' );
+		$renamed = $this->router->build_report( '3g-rt-20', 'rt2026233gx' );
+		$this->assertSame( '3G-RT 20', $renamed['compound']['listing_name'] );
+		$this->assertSame( '3G-RT', $renamed['compound']['public_name'] );
+		$this->assertSame( 'Retatrutide 20mg', $renamed['compound']['issued_display_name'] );
+		$this->assertSame( '20', get_post_meta( 885, 'strength_value', true ) );
+		$this->assertSame( '3G-RT 20', get_post_meta( 885, 'display_name', true ) );
+
+		add_filter(
+			'pepselect_coa_compound_slug_aliases',
+			static function ( $aliases ) {
+				$aliases['nad-500-mg'] = 1501;
+				return $aliases;
+			}
+		);
+		$filtered = $this->view_model->compound( get_post( 1501 ) );
+		$this->assertSame( 'NAD+', $filtered['listing_name'] );
+	}
+
+	private function tests_for( $compound_id ) {
+		$ids = get_posts(
+			array(
+				'post_type' => 'ps_coa_test',
+				'post_status' => 'publish',
+				'posts_per_page' => 1,
+				'fields' => 'ids',
+				'meta_key' => 'compound_id',
+				'meta_value' => $compound_id,
+			)
+		);
+		$this->assertNotEmpty( $ids );
+		return (int) $ids[0];
 	}
 
 	private function compound( $slug ) {

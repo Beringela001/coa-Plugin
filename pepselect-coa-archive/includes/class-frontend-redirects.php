@@ -54,6 +54,18 @@ final class Frontend_Redirects {
 	}
 
 	/**
+	 * Compounds whose current listing title may use the saved display name.
+	 *
+	 * Every other compound keeps the 0.7.26 listing name. A filtered alias
+	 * cannot add a compound to this list.
+	 *
+	 * @return int[]
+	 */
+	public static function approved_rename_ids() {
+		return array( 961, 885, 883, 2062, 2724, 974, 984, 1690, 1684, 2324 );
+	}
+
+	/**
 	 * Retired public slugs and printed numeric IDs, each pinned to one compound.
 	 *
 	 * The value is the compound post ID. The redirect reads that post's current

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.28 - 2026-11-06
+
+- The distinct display-name listing title applies only to the ten approved rename compounds: 961, 885, 883, 2062, 2724, 974, 984, 1690, 1684, and 2324. NAD, CJC-1295/Ipamorelin, and the description-only compounds keep the 0.7.26 listing name. No stored name, strength, or slug is written.
+
 ## 0.7.27 - 2026-11-06
 
 - Testing titles, social titles, schema names, and breadcrumbs use the compound's saved display name, so `3G-RT 20` and `3G-RT 30` no longer share one title. The visible hero and archive card still show the base name with the strength beside it. A completed report keeps its issued name on the report record; that old name is not substituted into the current listing heading.
