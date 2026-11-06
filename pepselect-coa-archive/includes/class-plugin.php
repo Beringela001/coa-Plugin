@@ -56,6 +56,9 @@ final class Plugin {
 	/** @var Frontend_Router */
 	private $frontend_router;
 
+	/** @var Frontend_Redirects */
+	private $frontend_redirects;
+
 	/** @var Frontend_Template_Loader */
 	private $frontend_templates;
 	private $archive_search;
@@ -99,7 +102,9 @@ final class Plugin {
 		$compound_repository        = new Compound_Repository( $frontend_visibility );
 		$coa_test_repository        = new COA_Test_Repository( $frontend_visibility );
 		$frontend_view_model        = new Frontend_View_Model();
-		$this->frontend_router      = new Frontend_Router( new Frontend_Query(), $compound_repository, $coa_test_repository, $frontend_view_model );
+		$frontend_query             = new Frontend_Query();
+		$this->frontend_router      = new Frontend_Router( $frontend_query, $compound_repository, $coa_test_repository, $frontend_view_model );
+		$this->frontend_redirects   = new Frontend_Redirects( $this->frontend_router, $frontend_query, $compound_repository, $coa_test_repository, $frontend_view_model );
 		$this->frontend_templates   = new Frontend_Template_Loader( $this->frontend_router );
 		$this->archive_search       = new Archive_Search_Endpoint( $frontend_view_model, $frontend_visibility, $coa_test_repository );
 		$this->archive_search->register();
@@ -129,6 +134,7 @@ final class Plugin {
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
 		add_filter( 'query_vars', array( $this->rewrites, 'register_query_vars' ) );
 		add_action( 'init', array( 'PepSelect\\COAArchive\\Upgrade', 'maybe_upgrade' ), 99 );
+		$this->frontend_redirects->register_hooks();
 		add_action( 'wp', array( $this->frontend_router, 'resolve' ) );
 		add_action( 'template_redirect', array( $this->frontend_router, 'protect_legacy_routes' ), 1 );
 		$this->frontend_templates->register_hooks();

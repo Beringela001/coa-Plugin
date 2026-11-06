@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.1 - 2026-11-06
+
+- Retired `/testing/{compound}/` and `/testing/{compound}/{batch}/` URLs 301 to the compound's current slug. Query strings are kept. Trailing-slash variants share one target, built with the same `user_trailingslashit` form as the public links.
+- Compound 961's historical slugs `961` and `retatrutide-10mg` are an explicit alias map. Both go directly to that compound's current permalink, with no hop through each other.
+- A published compound slug change stores `_ps_coa_former_slug`. Lookup also reads WordPress `_wp_old_slug`. A URL that already resolves is left alone, and a target that does not resolve is not redirected to.
+- `progress-{test ID}` redirects only when `batch_slug()` for the current stage is no longer `progress-{ID}` and that batch URL resolves. Submitted to Laboratory stays on `progress-{ID}`, so a stored batch number is not published in the URL.
+- Not in this release: `internal_notes` and `verification_code` are still exposed on public `GET /wp/v2/ps_coa_test` reads. That needs its own change.
+
 ## 0.6.0 - 2026-08-05
 
 **Breaking for REST integrations.** Direct `wp/v2` writes to `ps_coa_test` and `ps_compound` now return `403 pepselect_coa_write_route_required`. Reads are untouched. Minor rather than patch because an existing write path stops working the moment the plugin updates.

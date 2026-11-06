@@ -4,7 +4,7 @@ Tags: certificate of analysis, laboratory testing, quality documentation
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,11 @@ Private access/verification metadata and internal product relationship fields re
 5. Visit `/testing/` after publishing an eligible record.
 
 == Changelog ==
+
+= 0.6.1 =
+* Redirects retired /testing/ compound slugs, including the hardcoded 961 and retatrutide-10mg aliases, straight to that compound's current slug.
+* Records a published compound's previous slug when its permalink changes.
+* Redirects a progress-ID only after that stage's public batch slug is no longer progress-ID and the batch URL resolves. Submitted-to-laboratory progress URLs stay as they are.
 
 = 0.4.0 =
 * Promoted the verified COA-7 release candidate to the stable 0.4.0 release without adding features or changing approved public/admin behavior.
