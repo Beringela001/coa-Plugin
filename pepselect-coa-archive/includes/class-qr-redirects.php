@@ -24,6 +24,8 @@ final class QR_Redirects {
 		$path        = wp_parse_url( $request_uri, PHP_URL_PATH );
 		$destination = $this->destination_for_path( $path );
 		if ( ! $destination ) { return; }
+		$query = wp_parse_url( $request_uri, PHP_URL_QUERY );
+		if ( is_string( $query ) && '' !== $query ) { $destination .= '?' . $query; }
 		wp_safe_redirect( $destination, 301, 'Pep Select COA URL correction' );
 		exit;
 	}
@@ -34,9 +36,42 @@ final class QR_Redirects {
 		foreach ( self::REDIRECTS as $source => $destination ) {
 			$source_path = wp_parse_url( home_url( $source ), PHP_URL_PATH );
 			if ( is_string( $source_path ) && untrailingslashit( $path ) === untrailingslashit( $source_path ) ) {
-				return home_url( $destination );
+				return $this->current_961_destination( $source, $destination );
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Sends the printed /testing/961 paths to compound 961's current slug.
+	 *
+	 * While that slug is still retatrutide-10mg the stored fallback is returned
+	 * unchanged. After the permalink becomes 3g-rt-10 the same request goes
+	 * there directly and does not hop through retatrutide-10mg. NAD paths are
+	 * not rewritten.
+	 *
+	 * @param string $source   Map key.
+	 * @param string $fallback Path stored in the map.
+	 * @return string
+	 */
+	private function current_961_destination( $source, $fallback ) {
+		if ( '/testing/961/' !== $source && '/testing/961/rt2026205jp/' !== $source ) {
+			return home_url( $fallback );
+		}
+		if ( ! function_exists( 'get_post' ) ) {
+			return home_url( $fallback );
+		}
+		$compound = get_post( 961 );
+		if ( ! $compound || 'ps_compound' !== $compound->post_type ) {
+			return home_url( $fallback );
+		}
+		$slug = (string) $compound->post_name;
+		if ( '' === $slug || '961' === $slug || 'retatrutide-10mg' === $slug ) {
+			return home_url( $fallback );
+		}
+		if ( '/testing/961/' === $source ) {
+			return home_url( '/testing/' . $slug . '/' );
+		}
+		return home_url( '/testing/' . $slug . '/rt2026205jp/' );
 	}
 }

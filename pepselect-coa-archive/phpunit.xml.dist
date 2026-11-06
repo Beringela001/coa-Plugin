@@ -7,6 +7,7 @@
       <exclude>tests/test-report-notes-standalone.php</exclude>
       <!-- Standalone contracts define WordPress stubs; run them separately. -->
       <exclude>tests/qr-correction-contract.php</exclude>
+      <exclude>tests/llms-txt-exclusion-contract.php</exclude>
       <exclude>tests/report-evidence-contract.php</exclude>
       <exclude>tests/report-logo-url-contract.php</exclude>
       <exclude>tests/report-navigation-render-contract.php</exclude>

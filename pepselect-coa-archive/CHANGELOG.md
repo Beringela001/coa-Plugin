@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.25 - 2026-11-06
+
+- Retired `/testing/{compound}/` paths 301 to that compound's current slug, including batch paths. Query strings are kept. A URL that already resolves is not redirected, and a target that would 404 is not used.
+- The printed `/testing/961/` and `/testing/961/rt2026205jp/` entries follow compound 961's current permalink, so after it becomes `3g-rt-10` they do not hop through `retatrutide-10mg`. Until that permalink changes they still land on `retatrutide-10mg`. The NAD500 QR entries are unchanged.
+- A published compound permalink change stores `_ps_coa_former_slug`. `progress-{ID}` redirects only when that stage's `batch_slug()` is no longer `progress-{ID}` and the batch URL resolves. Submitted to Laboratory, including test 2729, stays on its progress URL.
+
 ## 0.7.24 - 2026-11-03
 
 - Also exclude unpassed COA Tests from Yoast's llms.txt when Yoast builds the list without indexables (all non-production environments such as staging use `get_posts()` there). Only Yoast's exact llms.txt query shape for `ps_coa_test` is changed.
