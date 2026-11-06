@@ -6,7 +6,7 @@ $compound = $ps_context['compound'];
 if ( ! $ps_embedded ) { get_header(); }
 ?>
 <main class="ps-coa ps-coa-app ps-coa-history ps-coa-history--mockup-layout" id="ps-coa-main">
-	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li aria-current="page"><?php echo esc_html( $compound['display_name'] ); ?></li></ol></nav>
+	<nav class="ps-coa-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'pepselect-coa-archive' ); ?>"><ol><li><a href="<?php echo esc_url( $ps_context['archive_url'] ); ?>"><?php esc_html_e( 'Testing & Documentation', 'pepselect-coa-archive' ); ?></a></li><li aria-current="page"><?php echo esc_html( $compound['listing_name'] ); ?></li></ol></nav>
 	<?php include pepselect_coa_template_path( 'partials/history-hero.php' ); ?>
 	<section class="ps-coa-history-section" aria-labelledby="ps-history-latest">
 		<header class="ps-coa-history-section__heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Current documented release', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-latest"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'latest_label' ) ); ?></h2></header>

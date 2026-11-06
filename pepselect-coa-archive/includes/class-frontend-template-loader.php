@@ -200,7 +200,7 @@ final class Frontend_Template_Loader {
 				'breadcrumbs' => array( $archive_label ),
 			);
 		}
-		$name = isset( $context['compound']['display_name'] ) ? trim( (string) $context['compound']['display_name'] ) : '';
+		$name = $this->route_name( $context );
 		if ( ! $name ) { return array(); }
 		if ( 'compound' === $context['view'] ) {
 			return array(
@@ -269,7 +269,7 @@ final class Frontend_Template_Loader {
 		}
 
 		$test  = $context['test'];
-		$name  = isset( $context['compound']['display_name'] ) ? trim( (string) $context['compound']['display_name'] ) : '';
+		$name  = $this->route_name( $context );
 		$batch = isset( $test['batch_number'] ) ? trim( (string) $test['batch_number'] ) : '';
 		if ( ! $name || ! $batch ) { return array(); }
 
@@ -329,6 +329,17 @@ final class Frontend_Template_Loader {
 		$variable = array( '@type' => 'PropertyValue', 'name' => $name, 'value' => $value );
 		if ( '' !== trim( (string) $unit ) ) { $variable['unitText'] = trim( (string) $unit ); }
 		$variables[] = $variable;
+	}
+
+	/** Uses the same family name as the visible heading. Issued reports supply their own. @param array $context Route context. @return string */
+	private function route_name( $context ) {
+		$compound = isset( $context['compound'] ) && is_array( $context['compound'] ) ? $context['compound'] : array();
+		foreach ( array( 'listing_name', 'public_name', 'display_name' ) as $key ) {
+			if ( isset( $compound[ $key ] ) && '' !== trim( (string) $compound[ $key ] ) ) {
+				return trim( (string) $compound[ $key ] );
+			}
+		}
+		return '';
 	}
 
 	/** Normalizes the plugin's supported report-date shapes for Schema.org. */

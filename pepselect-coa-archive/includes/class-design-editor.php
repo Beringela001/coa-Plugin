@@ -73,8 +73,9 @@ final class Design_Editor {
 			$context = $router->build_report_by_ids( $compound_id, $post->ID );
 			if ( ! $context ) { continue; }
 			$name = $context['compound']['display_name']; $test = $context['test'];
+			$history_name = isset( $context['compound']['live_listing_name'] ) ? $context['compound']['live_listing_name'] : $name;
 			$choices[] = array( 'view' => 'report', 'id' => $post->ID, 'label' => $name . ' — ' . ( $test['batch_number'] ?: 'Upcoming batch' ) . ' — ' . $test['workflow_stage_label'] . ' / ' . $test['coa_status'] );
-			if ( ! isset( $seen[ $compound_id ] ) ) { $choices[] = array( 'view' => 'compound', 'id' => $compound_id, 'label' => $name . ' — batch history' ); $seen[ $compound_id ] = true; }
+			if ( ! isset( $seen[ $compound_id ] ) ) { $choices[] = array( 'view' => 'compound', 'id' => $compound_id, 'label' => $history_name . ' — batch history' ); $seen[ $compound_id ] = true; }
 		}
 		return $choices;
 	}

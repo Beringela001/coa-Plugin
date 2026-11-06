@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /** Applies post-save COA invariants without changing scientific status. */
 final class COA_Test_Service {
+	const ISSUED_DISPLAY_NAME  = '_ps_coa_issued_display_name';
+	const ISSUED_COMPOUND_NAME = '_ps_coa_issued_compound_name';
+
 	/** @var bool */
 	private $running = false;
 
@@ -13,6 +16,9 @@ final class COA_Test_Service {
 		$post_id = absint( $post_id );
 		if ( ! $post_id || $this->running || Post_Types::COA_TEST !== get_post_type( $post_id ) || wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) { return; }
 		$this->running = true;
+		if ( 'complete' === COA_Workflow::stage( $post_id ) ) {
+			$this->snapshot_issued_names( absint( get_post_meta( $post_id, 'compound_id', true ) ) );
+		}
 		$this->synchronize_title( $post_id );
 		$this->apply_ils_verification_default( $post_id );
 		if ( get_post_meta( $post_id, 'is_current', true ) ) { $this->clear_other_current_tests( $post_id, absint( get_post_meta( $post_id, 'compound_id', true ) ) ); }
@@ -72,15 +78,81 @@ final class COA_Test_Service {
 		foreach ( $others as $other_id ) { update_post_meta( $other_id, 'is_current', 0 ); }
 	}
 
+	/**
+	 * Copies the current family name onto completed tests before that name changes.
+	 *
+	 * Returning the original check leaves the metadata write itself unchanged.
+	 *
+	 * @param mixed  $check      Short-circuit value.
+	 * @param int    $object_id  Post ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value Incoming value.
+	 * @return mixed
+	 */
+	public function preserve_issued_identity( $check, $object_id, $meta_key, $meta_value ) {
+		if ( self::ISSUED_DISPLAY_NAME === $meta_key || self::ISSUED_COMPOUND_NAME === $meta_key ) {
+			return $check;
+		}
+		if ( ! in_array( (string) $meta_key, array( 'display_name', 'compound_name' ), true ) ) {
+			return $check;
+		}
+		$object_id = absint( $object_id );
+		if ( ! $object_id || Post_Types::COMPOUND !== get_post_type( $object_id ) ) {
+			return $check;
+		}
+		if ( (string) get_post_meta( $object_id, $meta_key, true ) === (string) $meta_value ) {
+			return $check;
+		}
+		$this->snapshot_issued_names( $object_id );
+		return $check;
+	}
+
+	/** Records the family name a completed test already has. Later renames do not replace it. @param int $compound_id Compound. @return void */
+	private function snapshot_issued_names( $compound_id ) {
+		$compound_id = absint( $compound_id );
+		if ( ! $compound_id || Post_Types::COMPOUND !== get_post_type( $compound_id ) ) {
+			return;
+		}
+		$display = trim( (string) get_post_meta( $compound_id, 'display_name', true ) );
+		$base    = trim( (string) get_post_meta( $compound_id, 'compound_name', true ) );
+		if ( '' === $display && '' === $base ) {
+			return;
+		}
+		$test_ids = get_posts(
+			array(
+				'post_type'      => Post_Types::COA_TEST,
+				'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_key'       => 'compound_id',
+				'meta_value'     => $compound_id,
+			)
+		);
+		foreach ( $test_ids as $test_id ) {
+			if ( 'complete' !== COA_Workflow::stage( $test_id ) ) {
+				continue;
+			}
+			if ( '' !== trim( (string) get_post_meta( $test_id, self::ISSUED_DISPLAY_NAME, true ) ) || '' !== trim( (string) get_post_meta( $test_id, self::ISSUED_COMPOUND_NAME, true ) ) ) {
+				continue;
+			}
+			if ( '' !== $display ) {
+				update_post_meta( $test_id, self::ISSUED_DISPLAY_NAME, $display );
+			}
+			update_post_meta( $test_id, self::ISSUED_COMPOUND_NAME, $base );
+		}
+	}
+
 	/** Maintains the visible title without changing a published report slug. @param int $post_id Test ID. @return void */
 	private function synchronize_title( $post_id ) {
 		$post = get_post( $post_id ); if ( ! $post || Post_Types::COA_TEST !== $post->post_type ) { return; }
 		$compound_id = absint( get_post_meta( $post_id, 'compound_id', true ) );
 		if ( ! $compound_id || Post_Types::COMPOUND !== get_post_type( $compound_id ) ) { return; }
-		$name = trim( (string) get_post_meta( $compound_id, 'display_name', true ) );
+		$stage = COA_Workflow::stage( $post_id );
+		$issued = 'complete' === $stage ? trim( (string) get_post_meta( $post_id, self::ISSUED_DISPLAY_NAME, true ) ) : '';
+		$name = '' !== $issued ? $issued : trim( (string) get_post_meta( $compound_id, 'display_name', true ) );
 		if ( '' === $name ) { $name = trim( (string) get_the_title( $compound_id ) ); }
 		if ( '' === $name ) { return; }
-		$stage = COA_Workflow::stage( $post_id );
 		$batch = trim( (string) get_post_meta( $post_id, 'batch_number', true ) );
 		$title = in_array( $stage, array( 'in-testing', 'complete' ), true ) && '' !== $batch ? sprintf( __( '%1$s — Batch %2$s', 'pepselect-coa-archive' ), $name, $batch ) : $name;
 		if ( $title === $post->post_title ) { return; }

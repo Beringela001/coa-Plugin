@@ -67,13 +67,16 @@ final class Frontend_View_Model {
 		$strength = (string) get_post_meta( $compound->ID, 'strength_value', true );
 		$strength_unit = (string) get_post_meta( $compound->ID, 'strength_unit', true );
 		$strength_pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $strength_unit );
+		$public_name = trim( $compound_name ) ?: $display_name;
 		return array(
 			'compound_id' => $compound->ID,
 			'title' => $compound->post_title,
 			'slug' => $compound->post_name,
 			'display_name' => $display_name,
 			'compound_name' => $compound_name,
-			'public_name' => trim( $compound_name ) ?: $display_name,
+			'public_name' => $public_name,
+			'listing_name' => $public_name,
+			'live_listing_name' => $public_name,
 			'display_strength_separately' => '' !== trim( $compound_name ) || '' === $strength_pattern || false === stripos( preg_replace( '/\s+/', '', $display_name ), preg_replace( '/\s+/', '', $strength_pattern ) ),
 			'short_name' => (string) get_post_meta( $compound->ID, 'short_name', true ),
 			'strength_value' => $strength,
@@ -279,8 +282,42 @@ final class Frontend_View_Model {
 			'batch_number' => $model['batch_number'],
 			'laboratory' => $model['laboratory'],
 			'detail_url' => $this->compound_url( $compound ),
-			'accessible_label' => sprintf( __( 'View %1$s vetting status: %2$s', 'pepselect-coa-archive' ), $compound_model['display_name'], $copy['label'] ),
+			'accessible_label' => sprintf( __( 'View %1$s vetting status: %2$s', 'pepselect-coa-archive' ), $compound_model['listing_name'], $copy['label'] ),
 		);
+	}
+
+	/**
+	 * Keeps a completed report on the name it was issued under.
+	 *
+	 * Archive cards, compound history, and incoming tests keep the live family
+	 * name. Strength, slug, photos, and measurements are not copied or changed.
+	 *
+	 * @param array    $model Compound view.
+	 * @param \WP_Post $test  Report being rendered.
+	 * @return array
+	 */
+	public function with_issued_identity( array $model, $test ) {
+		if ( ! $test instanceof \WP_Post || 'complete' !== COA_Workflow::stage( $test ) ) {
+			return $model;
+		}
+		$display = trim( (string) get_post_meta( $test->ID, COA_Test_Service::ISSUED_DISPLAY_NAME, true ) );
+		$base    = trim( (string) get_post_meta( $test->ID, COA_Test_Service::ISSUED_COMPOUND_NAME, true ) );
+		if ( '' === $display && '' === $base ) {
+			return $model;
+		}
+		if ( '' === $display ) {
+			$display = (string) $model['display_name'];
+		}
+		$public = '' !== $base ? $base : $display;
+		$strength = isset( $model['strength_value'] ) ? (string) $model['strength_value'] : '';
+		$unit = isset( $model['strength_unit'] ) ? (string) $model['strength_unit'] : '';
+		$pattern = trim( pepselect_coa_format_number( $strength ) . ' ' . $unit );
+		$model['display_name'] = $display;
+		$model['compound_name'] = $base;
+		$model['public_name'] = $public;
+		$model['listing_name'] = $public;
+		$model['display_strength_separately'] = '' !== $base || '' === $pattern || false === stripos( preg_replace( '/\s+/', '', $display ), preg_replace( '/\s+/', '', $pattern ) );
+		return $model;
 	}
 
 	/** Returns full public report data including validated attachments. @param \WP_Post $test Test. @param \WP_Post $compound Compound. @return array */

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.26 - 2026-11-06
+
+- Retired testing slugs and printed numeric compound IDs for the eight rename families redirect to that compound's current permalink. The editor saves the new permalink. This plugin does not invent a slug from the display name and does not write strength.
+- Covered old slugs: `retatrutide-10mg`, `retatrutide-20mg`, `retatrutide-30mg`, `glp-2t-20-mg`, `glp-1-s-20-mg`, `tesamorelin-10-mg`, `pt-141-10-mg`, `ss-31-10-mg`, `cagrilintide-10-mg`, and `wolverine-bpc-157-tb-500-10-mg`, plus the matching numeric IDs 961, 885, 883, 2062, 2724, 974, 984, 1690, 1684, and 2324. `s31` and `s31-10` are not redirects. Description-only compounds are not in the registry.
+- A `progress-{ID}` URL under a renamed parent moves once to the same progress ID on the new parent while that stage still publishes `progress-{ID}`. It does not jump to the batch number. Tests 2729, 2533, and 2639 follow that rule. Test 2642 stays on its current BPC parent until its own stage publishes a batch slug.
+- Archive cards, testing titles, social tags, schema, and breadcrumbs share one listing name. A completed report keeps the family name it had when it was issued. Incoming titles use the current family name. PDFs, batch IDs, results, report notes, and photos are not rewritten.
+- The NAD QR map, robots filters, sitemap exclusion, and llms.txt exclusion are unchanged.
+
 ## 0.7.25 - 2026-11-06
 
 - Retired `/testing/{compound}/` paths 301 to that compound's current slug, including batch paths. Query strings are kept. A URL that already resolves is not redirected, and a target that would 404 is not used.

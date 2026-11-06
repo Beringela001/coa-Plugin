@@ -23,6 +23,9 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 	public function tear_down() {
 		remove_all_filters( 'pepselect_coa_compound_slug_aliases' );
 		unset( $_GET['utm'] );
+		set_query_var( 'ps_coa_view', '' );
+		set_query_var( 'ps_compound_slug', '' );
+		set_query_var( 'ps_batch_slug', '' );
 		parent::tear_down();
 	}
 
@@ -197,6 +200,246 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( '$this->seo_sitemaps->register_hooks()', $plugin );
 	}
 
+	public function test_registry_lists_retired_slugs_and_skips_s31_and_description_only_compounds() {
+		$map = PepSelect\COAArchive\Frontend_Redirects::explicit_aliases();
+		$expected = array(
+			'961' => 961,
+			'retatrutide-10mg' => 961,
+			'885' => 885,
+			'retatrutide-20mg' => 885,
+			'883' => 883,
+			'retatrutide-30mg' => 883,
+			'2062' => 2062,
+			'glp-2t-20-mg' => 2062,
+			'2724' => 2724,
+			'glp-1-s-20-mg' => 2724,
+			'974' => 974,
+			'tesamorelin-10-mg' => 974,
+			'984' => 984,
+			'pt-141-10-mg' => 984,
+			'1690' => 1690,
+			'ss-31-10-mg' => 1690,
+			'1684' => 1684,
+			'cagrilintide-10-mg' => 1684,
+			'2324' => 2324,
+			'wolverine-bpc-157-tb-500-10-mg' => 2324,
+		);
+		foreach ( $expected as $slug => $id ) {
+			$this->assertSame( $id, $map[ $slug ] );
+		}
+		foreach ( array( 's31', 's31-10', 'ps-31-10', '3g-rt-10', '3g-rt-20', '3g-rt-30', '2g-tz-20', '1g-sm-20', 'tesa-10', 'ps-141-10', 'cag-10', 'bpc157-tb500-10' ) as $absent ) {
+			$this->assertArrayNotHasKey( $absent, $map );
+		}
+		$ids = array_map( 'intval', array_values( $map ) );
+		foreach ( array( 972, 1686, 1901, 1904, 970, 979, 1688, 988 ) as $left_alone ) {
+			$this->assertNotContains( $left_alone, $ids );
+		}
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-frontend-redirects.php' );
+		$this->assertStringNotContainsString( "'s31-10'", $source );
+		$this->assertStringNotContainsString( "'ps-31-10'", $source );
+		$this->assertStringNotContainsString( 'strength_value', $source );
+	}
+
+	public function test_each_renamed_family_sends_old_and_numeric_paths_straight_to_the_saved_slug() {
+		$families = array(
+			array( 961, 'retatrutide-10mg', '3g-rt-10', 'RT1026258JP' ),
+			array( 885, 'retatrutide-20mg', '3g-rt-20', 'RT2026233GX' ),
+			array( 883, 'retatrutide-30mg', '3g-rt-30', 'RT3026233GX' ),
+			array( 2062, 'glp-2t-20-mg', '2g-tz-20', 'TZ2026258JP' ),
+			array( 2724, 'glp-1-s-20-mg', '1g-sm-20', 'SG2026295JP' ),
+			array( 974, 'tesamorelin-10-mg', 'tesa-10', 'TS1026264GX' ),
+			array( 984, 'pt-141-10-mg', 'ps-141-10', 'PSPT14162926JP' ),
+			array( 1690, 'ss-31-10-mg', 'ps-31-10', 'SS1026233GX' ),
+			array( 1684, 'cagrilintide-10-mg', 'cag-10', 'CG1026233GX' ),
+			array( 2324, 'wolverine-bpc-157-tb-500-10-mg', 'bpc157-tb500-10', 'WV1026263JP' ),
+		);
+		foreach ( $families as $family ) {
+			list( $id, $old, $new, $batch ) = $family;
+			$this->compound_at( $id, $old );
+			$test = $this->approved( $id, $batch, sanitize_title( $batch ) );
+			update_post_meta( $test, 'coa_pdf_id', 1000 + $id );
+			wp_update_post( array( 'ID' => $id, 'post_name' => $new ) );
+
+			$compound_url = $this->testing_url( $new );
+			$batch_url = $this->testing_url( $new, sanitize_title( $batch ) );
+			$this->assertSame( $compound_url, $this->redirects->redirect_target( 'compound', $old ), $old );
+			$this->assertSame( $compound_url, $this->redirects->redirect_target( 'compound', (string) $id ), $id );
+			$this->assertSame( $batch_url, $this->redirects->redirect_target( 'report', $old, sanitize_title( $batch ) ), $old );
+			$this->assertSame( $batch_url, $this->redirects->redirect_target( 'report', (string) $id, sanitize_title( $batch ) ), $id );
+			$this->assertSame( '', $this->redirects->redirect_target( 'compound', $new ), $new );
+			$this->assertSame( '', $this->redirects->redirect_target( 'report', $new, sanitize_title( $batch ) ), $new );
+			$this->assertStringNotContainsString( '/testing/' . $old . '/', $this->redirects->redirect_target( 'compound', (string) $id ) );
+			$this->assertSame( $batch, get_post_meta( $test, 'batch_number', true ) );
+			$this->assertSame( 1000 + $id, absint( get_post_meta( $test, 'coa_pdf_id', true ) ) );
+			$this->assertSame( '10', get_post_meta( $id, 'strength_value', true ) );
+		}
+	}
+
+	public function test_ps31_follows_the_saved_slug_without_an_s31_hop() {
+		$this->compound_at( 1690, 'ss-31-10-mg' );
+		update_post_meta( 1690, 'display_name', 'SS-31 10 mg' );
+		update_post_meta( 1690, 'compound_name', 'SS-31' );
+		update_post_meta( 1690, 'short_name', 'SS-31' );
+		$issued = $this->approved( 1690, 'SS1026233GX', 'ss1026233gx' );
+		update_post_meta( $issued, 'coa_pdf_id', 1895 );
+		update_post_meta( $issued, 'purity_percentage', '99.1' );
+		update_post_meta( $issued, 'report_notes', 'issued note stays' );
+
+		update_post_meta( 1690, 'display_name', 'PS-31 10' );
+		update_post_meta( 1690, 'compound_name', 'PS-31' );
+		update_post_meta( 1690, 'short_name', 'PS-31' );
+
+		$this->assertSame( 'ss-31-10-mg', get_post( 1690 )->post_name );
+		$this->assertSame( '10', get_post_meta( 1690, 'strength_value', true ) );
+		$this->assertSame( 'mg', get_post_meta( 1690, 'strength_unit', true ) );
+		$this->assertSame( 'SS1026233GX', get_post_meta( $issued, 'batch_number', true ) );
+		$this->assertSame( 1895, absint( get_post_meta( $issued, 'coa_pdf_id', true ) ) );
+		$this->assertSame( '99.1', get_post_meta( $issued, 'purity_percentage', true ) );
+		$this->assertSame( 'issued note stays', get_post_meta( $issued, 'report_notes', true ) );
+		$this->assertSame( 'SS-31 10 mg', get_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_DISPLAY_NAME, true ) );
+		$this->assertSame( 'SS-31', get_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_COMPOUND_NAME, true ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 's31' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 's31-10' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'ps-31-10' ) );
+
+		wp_update_post( array( 'ID' => 1690, 'post_name' => 'ps-31-10' ) );
+		$_GET['utm'] = 'family';
+		$compound_target = $this->redirects->redirect_target( 'compound', 'ss-31-10-mg' );
+		$numeric_target = $this->redirects->redirect_target( 'compound', '1690' );
+		$batch_target = $this->redirects->redirect_target( 'report', 'ss-31-10-mg', 'ss1026233gx' );
+		$this->assertSame( $this->testing_url( 'ps-31-10' ), remove_query_arg( 'utm', $compound_target ) );
+		$this->assertSame( $this->testing_url( 'ps-31-10' ), remove_query_arg( 'utm', $numeric_target ) );
+		$this->assertSame( $this->testing_url( 'ps-31-10', 'ss1026233gx' ), remove_query_arg( 'utm', $batch_target ) );
+		$this->assertStringContainsString( 'utm=family', $compound_target );
+		$this->assertStringNotContainsString( 's31-10', $compound_target );
+		$this->assertSame( wp_parse_url( home_url( '/' ), PHP_URL_HOST ), wp_parse_url( $compound_target, PHP_URL_HOST ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'ps-31-10' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 's31-10' ) );
+
+		$live = $this->view_model->compound( get_post( 1690 ) );
+		$report = $this->router->build_report( 'ps-31-10', 'ss1026233gx' );
+		$this->assertSame( 'PS-31', $live['listing_name'] );
+		$this->assertSame( 'SS-31', $report['compound']['listing_name'] );
+		$this->assertSame( 'PS-31', $report['compound']['live_listing_name'] );
+		$this->assertSame( 'ss1026233gx', $report['test']['slug'] );
+
+		set_query_var( 'ps_coa_view', 'compound' );
+		set_query_var( 'ps_compound_slug', 'ps-31-10' );
+		set_query_var( 'ps_batch_slug', '' );
+		$router = $this->fresh_router();
+		$router->resolve();
+		$loader = new PepSelect\COAArchive\Frontend_Template_Loader( $router );
+		$this->assertStringContainsString( 'PS-31 COAs', $loader->filter_title( '' ) );
+		$graph = $loader->filter_schema_graph( array() );
+		$this->assertStringContainsString( 'PS-31', $graph[1]['itemListElement'][2]['name'] );
+
+		set_query_var( 'ps_coa_view', 'report' );
+		set_query_var( 'ps_compound_slug', 'ps-31-10' );
+		set_query_var( 'ps_batch_slug', 'ss1026233gx' );
+		$report_router = $this->fresh_router();
+		$report_router->resolve();
+		$report_loader = new PepSelect\COAArchive\Frontend_Template_Loader( $report_router );
+		$this->assertStringContainsString( 'SS-31 Batch SS1026233GX', $report_loader->filter_title( '' ) );
+		$this->assertStringNotContainsString( 'PS-31', $report_loader->filter_title( '' ) );
+		set_query_var( 'ps_coa_view', '' );
+		set_query_var( 'ps_compound_slug', '' );
+		set_query_var( 'ps_batch_slug', '' );
+	}
+
+	public function test_progress_parents_move_with_the_compound_and_keep_the_progress_id() {
+		$cases = array(
+			array( 2724, 'glp-1-s-20-mg', '1g-sm-20', 2729, 'SG2026295JP' ),
+			array( 885, 'retatrutide-20mg', '3g-rt-20', 2533, 'RT2026233GX' ),
+			array( 883, 'retatrutide-30mg', '3g-rt-30', 2639, 'RT3026233GX' ),
+		);
+		foreach ( $cases as $case ) {
+			list( $compound_id, $old, $new, $test_id, $batch ) = $case;
+			$this->compound_at( $compound_id, $old );
+			$this->progress_at( $test_id, $compound_id, $batch );
+			wp_update_post( array( 'ID' => $compound_id, 'post_name' => $new ) );
+
+			$progress = 'progress-' . $test_id;
+			$target = $this->redirects->redirect_target( 'report', $old, $progress );
+			$this->assertSame( $this->testing_url( $new, $progress ), $target, $old );
+			$this->assertSame( $this->testing_url( $new, $progress ), $this->redirects->redirect_target( 'report', (string) $compound_id, $progress ), (string) $compound_id );
+			$this->assertSame( '', $this->redirects->redirect_target( 'report', $new, $progress ), $new );
+			$this->assertSame( '', $this->redirects->redirect_target( 'report', $old, sanitize_title( $batch ) ), $batch );
+			$this->assertSame( '', $this->redirects->redirect_target( 'report', $new, sanitize_title( $batch ) ), $batch );
+			$this->assertNotEmpty( $this->router->build_report( $new, $progress ) );
+			$this->assertSame( '', $this->view_model->test_summary( get_post( $test_id ), get_post( $compound_id ) )['batch_number'] );
+		}
+
+		update_post_meta( 2533, 'workflow_stage', 'in-testing' );
+		update_post_meta( 2533, 'testing_lab', 'ils-labs' );
+		$published = $this->redirects->redirect_target( 'report', 'retatrutide-20mg', 'progress-2533' );
+		$this->assertSame( $this->testing_url( '3g-rt-20', 'rt2026233gx' ), $published );
+		$this->assertStringNotContainsString( 'progress-', $published );
+		$this->assertStringNotContainsString( 'retatrutide-20mg', $published );
+	}
+
+	public function test_unrenamed_bpc_progress_2642_stays_on_its_parent_until_the_stage_changes() {
+		$this->compound_at( 970, 'bpc-157-10-mg' );
+		$this->progress_at( 2642, 970, 'BP1026232JP' );
+		$this->compound_at( 2724, '1g-sm-20' );
+
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', 'bpc-157-10-mg', 'progress-2642' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', 'bpc-157-10-mg', 'bp1026232jp' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', 'glp-1-s-20-mg', 'progress-2642' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', '1g-sm-20', 'progress-2642' ) );
+		$this->assertNotContains( 970, array_map( 'intval', array_values( PepSelect\COAArchive\Frontend_Redirects::explicit_aliases() ) ) );
+
+		update_post_meta( 2642, 'workflow_stage', 'in-testing' );
+		update_post_meta( 2642, 'testing_lab', 'ils-labs' );
+		$target = $this->redirects->redirect_target( 'report', 'bpc-157-10-mg', 'progress-2642' );
+		$this->assertSame( $this->testing_url( 'bpc-157-10-mg', 'bp1026232jp' ), $target );
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', 'bpc-157-10-mg', 'bp1026232jp' ) );
+	}
+
+	public function test_repeated_renames_unknown_slugs_and_offsite_input_stay_on_this_site() {
+		$this->compound_at( 885, 'retatrutide-20mg' );
+		$this->approved( 885, 'RT2026233GX', 'rt2026233gx' );
+		wp_update_post( array( 'ID' => 885, 'post_name' => '3g-rt-20' ) );
+		wp_update_post( array( 'ID' => 885, 'post_name' => '3g-rt-20-b' ) );
+
+		$this->assertContains( 'retatrutide-20mg', get_post_meta( 885, PepSelect\COAArchive\Frontend_Redirects::FORMER_SLUG_META, false ) );
+		$this->assertContains( '3g-rt-20', get_post_meta( 885, PepSelect\COAArchive\Frontend_Redirects::FORMER_SLUG_META, false ) );
+		$this->assertSame( $this->testing_url( '3g-rt-20-b' ), $this->redirects->redirect_target( 'compound', 'retatrutide-20mg' ) );
+		$this->assertSame( $this->testing_url( '3g-rt-20-b' ), $this->redirects->redirect_target( 'compound', '3g-rt-20' ) );
+		$this->assertSame( $this->testing_url( '3g-rt-20-b' ), $this->redirects->redirect_target( 'compound', '885' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', '3g-rt-20-b' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'not-a-real-compound' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'https://evil.example/testing/ps-31-10' ) );
+		$this->assertSame( '', $this->redirects->redirect_target( 'report', '//evil.example', 'progress-1' ) );
+		$this->assertSame( '10', get_post_meta( 885, 'strength_value', true ) );
+	}
+
+	public function test_linked_product_permalink_changes_without_a_testing_rewrite() {
+		if ( ! post_type_exists( 'product' ) ) {
+			register_post_type( 'product', array( 'public' => true ) );
+		}
+		$product = self::factory()->post->create(
+			array(
+				'post_type' => 'product',
+				'post_status' => 'publish',
+				'post_title' => 'BPC-157 10',
+				'post_name' => 'bpc157-10',
+			)
+		);
+		$compound = $this->compound( 'bpc-157-10-mg' );
+		update_post_meta( $compound, 'woocommerce_product_id', $product );
+		$batch = $this->approved( $compound, 'BP1026232JP', 'bp1026232jp' );
+
+		$before = $this->view_model->compound( get_post( $compound ) )['woocommerce_product_url'];
+		$this->assertStringContainsString( 'bpc157-10', $before );
+		wp_update_post( array( 'ID' => $product, 'post_name' => 'bpc-157-10' ) );
+		$after = $this->view_model->compound( get_post( $compound ) )['woocommerce_product_url'];
+		$this->assertStringContainsString( 'bpc-157-10', $after );
+		$this->assertStringNotContainsString( 'bpc157-10', $after );
+		$this->assertSame( '', $this->redirects->redirect_target( 'compound', 'bpc157-10' ) );
+		$this->assertSame( 'bpc-157-10-mg', get_post( $compound )->post_name );
+		$this->assertSame( 'BP1026232JP', get_post_meta( $batch, 'batch_number', true ) );
+	}
+
 	private function compound( $slug ) {
 		$id = self::factory()->post->create(
 			array(
@@ -254,5 +497,64 @@ class PepSelect_COA_Archive_Frontend_Redirects_Test extends WP_UnitTestCase {
 			update_post_meta( $id, $key, $value );
 		}
 		return $id;
+	}
+
+	private function compound_at( $id, $slug ) {
+		$created = wp_insert_post(
+			array(
+				'import_id' => $id,
+				'post_type' => 'ps_compound',
+				'post_status' => 'publish',
+				'post_title' => $slug,
+				'post_name' => $slug,
+			),
+			true
+		);
+		$this->assertSame( $id, $created );
+		update_post_meta( $id, 'is_active', 1 );
+		update_post_meta( $id, 'display_name', $slug );
+		update_post_meta( $id, 'strength_value', '10' );
+		update_post_meta( $id, 'strength_unit', 'mg' );
+		return $id;
+	}
+
+	private function progress_at( $id, $compound, $batch ) {
+		$created = wp_insert_post(
+			array(
+				'import_id' => $id,
+				'post_type' => 'ps_coa_test',
+				'post_status' => 'publish',
+				'post_title' => 'Progress ' . $id,
+				'post_name' => 'lot-' . $id,
+			),
+			true
+		);
+		$this->assertSame( $id, $created );
+		foreach ( array(
+			'compound_id' => $compound,
+			'workflow_stage' => 'submitted-to-lab',
+			'coa_status' => 'pending',
+			'batch_number' => $batch,
+			'expected_coa_date' => '20261110',
+			'is_current' => 0,
+		) as $key => $value ) {
+			update_post_meta( $id, $key, $value );
+		}
+		return $id;
+	}
+
+	private function testing_url( $compound_slug, $batch_slug = '' ) {
+		$path = 'testing/' . $compound_slug;
+		if ( '' !== $batch_slug ) {
+			$path .= '/' . $batch_slug;
+		}
+		return home_url( user_trailingslashit( $path ) );
+	}
+
+	private function fresh_router() {
+		$visibility = new PepSelect\COAArchive\Frontend_Visibility();
+		$compounds = new PepSelect\COAArchive\Compound_Repository( $visibility );
+		$tests = new PepSelect\COAArchive\COA_Test_Repository( $visibility );
+		return new PepSelect\COAArchive\Frontend_Router( new PepSelect\COAArchive\Frontend_Query(), $compounds, $tests, new PepSelect\COAArchive\Frontend_View_Model() );
 	}
 }

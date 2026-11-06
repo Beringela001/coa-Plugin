@@ -138,7 +138,7 @@ final class Frontend_Router {
 			if ( absint( get_post_meta( $candidate->ID, 'is_current', true ) ) ) { $reports[] = $this->view_model->report( $candidate, $compound ); }
 		}
 		$current = Report_Evidence::current_report( $compound->ID, $reports );
-		$compound_model = $this->view_model->compound( $compound );
+		$compound_model = $this->view_model->with_issued_identity( $this->view_model->compound( $compound ), $test );
 		$product_url = '';
 		// Product ID only. A duplicate public relationship suppresses the product CTA.
 		if ( $current && $compound_model['woocommerce_product_id'] && $compound_model['woocommerce_product_url'] ) {

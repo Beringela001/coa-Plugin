@@ -105,12 +105,46 @@ class PepSelect_COA_Archive_COA_5B_1_Test extends WP_UnitTestCase {
 		$this->assertSame( 'preserved', get_post_meta( $testing, 'sentinel_scientific_data', true ) );
 	}
 
+	public function test_issued_title_stays_while_incoming_title_follows_the_new_family() {
+		$compound = $this->compound( 'SS-31 10 mg' );
+		update_post_meta( $compound, 'compound_name', 'SS-31' );
+		update_post_meta( $compound, 'strength_value', '10' );
+		update_post_meta( $compound, 'strength_unit', 'mg' );
+		$issued = $this->test_record( $compound, 'complete', 'SS1026233GX', 'approved', 'publish' );
+		$incoming = $this->test_record( $compound, 'submitted-to-lab', 'HIDDEN', 'pending', 'publish' );
+		update_post_meta( $issued, 'coa_pdf_id', 1895 );
+		update_post_meta( $issued, 'purity_percentage', '99.1' );
+		update_post_meta( $issued, 'report_notes', 'keep this note' );
+		$this->service->after_save( $issued );
+		$this->service->after_save( $incoming );
+		$slug = get_post( $compound )->post_name;
+
+		update_post_meta( $compound, 'display_name', 'PS-31 10' );
+		update_post_meta( $compound, 'compound_name', 'PS-31' );
+		update_post_meta( $compound, 'short_name', 'PS-31' );
+		$this->service->after_compound_save( $compound );
+
+		$this->assertSame( 'SS-31 10 mg — Batch SS1026233GX', get_post( $issued )->post_title );
+		$this->assertSame( 'PS-31 10', get_post( $incoming )->post_title );
+		$this->assertSame( $slug, get_post( $compound )->post_name );
+		$this->assertSame( '10', get_post_meta( $compound, 'strength_value', true ) );
+		$this->assertSame( 'mg', get_post_meta( $compound, 'strength_unit', true ) );
+		$this->assertSame( 'SS1026233GX', get_post_meta( $issued, 'batch_number', true ) );
+		$this->assertSame( '1895', (string) get_post_meta( $issued, 'coa_pdf_id', true ) );
+		$this->assertSame( '99.1', get_post_meta( $issued, 'purity_percentage', true ) );
+		$this->assertSame( 'keep this note', get_post_meta( $issued, 'report_notes', true ) );
+		$this->assertSame( 'SS-31 10 mg', get_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_DISPLAY_NAME, true ) );
+		$this->assertSame( 'SS-31', get_post_meta( $issued, PepSelect\COAArchive\COA_Test_Service::ISSUED_COMPOUND_NAME, true ) );
+		$this->assertSame( '', (string) get_post_meta( $incoming, PepSelect\COAArchive\COA_Test_Service::ISSUED_DISPLAY_NAME, true ) );
+	}
+
 	public function test_title_sync_hook_and_csv_normal_save_contract_are_declared() {
 		$plugin = file_get_contents( dirname( __DIR__ ) . '/includes/class-plugin.php' );
 		$service = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-service.php' );
 		$importer = file_get_contents( dirname( __DIR__ ) . '/includes/class-coa-test-importer.php' );
 		$this->assertStringContainsString( "add_action( 'acf/save_post', array( \$this->coa_test_service, 'after_save' ), 30 )", $plugin );
 		$this->assertStringContainsString( "add_action( 'acf/save_post', array( \$this->coa_test_service, 'after_compound_save' ), 35 )", $plugin );
+		$this->assertStringContainsString( "add_filter( 'update_post_metadata', array( \$this->coa_test_service, 'preserve_issued_identity' ), 10, 4 )", $plugin );
 		$this->assertStringContainsString( "if ( \$title === \$post->post_title ) { return; }", $service );
 		$this->assertStringContainsString( "\$update['post_name'] = \$post->post_name", $service );
 		$this->assertStringContainsString( 'Nothing is saved or published until you use the normal WordPress controls.', $importer );

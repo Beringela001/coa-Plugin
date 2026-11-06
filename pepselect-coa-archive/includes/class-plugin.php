@@ -135,6 +135,7 @@ final class Plugin {
 		add_action( 'acf/init', array( $this->coa_test_validation, 'register_hooks' ), 10 );
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_save' ), 30 );
 		add_action( 'acf/save_post', array( $this->coa_test_service, 'after_compound_save' ), 35 );
+		add_filter( 'update_post_metadata', array( $this->coa_test_service, 'preserve_issued_identity' ), 10, 4 );
 		add_filter( 'acf/load_value/key=field_ps_coa_test_lab_verification_url', array( $this->coa_test_service, 'load_verification_url' ), 10, 3 );
 		add_action( 'init', array( $this->rewrites, 'register' ), 10 );
 		add_filter( 'query_vars', array( $this->rewrites, 'register_query_vars' ) );

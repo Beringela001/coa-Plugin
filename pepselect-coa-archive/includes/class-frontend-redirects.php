@@ -54,18 +54,38 @@ final class Frontend_Redirects {
 	}
 
 	/**
-	 * Hardcoded slug aliases that must resolve to one compound's current slug.
+	 * Retired public slugs and printed numeric IDs, each pinned to one compound.
 	 *
-	 * Compound 961 was publicly addressed as the numeric slug 961 and then as
-	 * retatrutide-10mg. Both point at the post ID, and the redirect uses that
-	 * post's current name, so neither alias hops through the other.
+	 * The value is the compound post ID. The redirect reads that post's current
+	 * permalink, which is saved from the editor. This registry does not store
+	 * the replacement slug, does not derive one from a display name, and does
+	 * not write strength. s31 and s31-10 were never public, so they are absent.
+	 * Description-only compounds are absent too.
 	 *
 	 * @return array<string,int>
 	 */
 	public static function explicit_aliases() {
 		$aliases = array(
-			'961'               => 961,
-			'retatrutide-10mg'  => 961,
+			'961'              => 961,
+			'retatrutide-10mg' => 961,
+			'885'              => 885,
+			'retatrutide-20mg' => 885,
+			'883'              => 883,
+			'retatrutide-30mg' => 883,
+			'2062'             => 2062,
+			'glp-2t-20-mg'     => 2062,
+			'2724'             => 2724,
+			'glp-1-s-20-mg'    => 2724,
+			'974'              => 974,
+			'tesamorelin-10-mg' => 974,
+			'984'              => 984,
+			'pt-141-10-mg'     => 984,
+			'1690'             => 1690,
+			'ss-31-10-mg'      => 1690,
+			'1684'             => 1684,
+			'cagrilintide-10-mg' => 1684,
+			'2324'             => 2324,
+			'wolverine-bpc-157-tb-500-10-mg' => 2324,
 		);
 		$filtered = apply_filters( 'pepselect_coa_compound_slug_aliases', $aliases );
 		if ( ! is_array( $filtered ) ) {
