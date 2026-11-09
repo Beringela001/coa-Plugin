@@ -1,6 +1,6 @@
 # Upcoming batches
 
-Reviewed 2026-11-09. Candidate 0.7.29 builds on 729f3ff (0.7.28), verified installed on Staging and Live before packaging. Deployment pending.
+Reviewed 2026-11-09. Plugin 0.7.29, source d58a55cf6239787103df7200e9673c48c49362c4, deployed Staging then Live. Builds on 729f3ff (0.7.28), verified installed in both environments before packaging, preserving intervening redirects/search/robots changes.
 
 Control owns FIFO. New `is_upcoming` metadata identifies passed, released, non-current lots with inventory. Uploading a newer report cannot choose the sales batch. On a FIFO switch Control clears the old current flag, recalculates waiting lots and marks the selected lot current with upcoming cleared. Existing read-back verification and unresolved-switch handling remain.
 
@@ -8,4 +8,16 @@ Plugin renders waiting approved reports under Upcoming Batches with Testing pass
 
 Release order: plugin Staging verification, plugin Live, then Control verified build and deployment, then resync the already-passed BPC lot. Confirm BP1026232JP stays current and BP1026295JP is upcoming. Do not consume stock or force a FIFO switch for a live test.
 
-Local verification: Control 60 test files / 1,370 tests passed. Plugin PHP syntax, carousel static and report-navigation contracts passed. Native WordPress CI and deployed website checks pending. No production records changed.
+Local verification: Control 60 test files / 1,370 tests passed. Plugin PHP syntax, carousel static and report-navigation contracts passed. Native WordPress run 42686053589 on PHP 8.1 and 8.2: 359 tests / 2,275 assertions / 5 skipped, with all three new lifecycle tests passing. Three existing copy-expectation failures remain in compact incoming, advanced incoming and design-editor contracts (expected older incoming wording); the complete suite is not green. Changed behavior covers older/newer test dates, history separation, promotion with stable URLs, legacy promotion normalization and invalid current/failed upcoming states.
+
+Package: dist/pepselect-coa-archive-0.7.29.zip. SHA-256 df78aae812865dbbb7a754aa7bc28787b2e40a838f70a8efe0f1bf621d323806. Identical saved package installed in both environments, WordPress replacement success verified.
+
+Backups: owner explicitly approved replacing only the two oldest manual backups because both environments were at 5/5. Replaced Staging “Before Election STG Nov3” and Live “Before COA 0.7.24 llms fix”. Fresh named backups: Live Nov9 2:45PM “Before Upcoming Batches COA 0.7.29 LIVE Nov9”; Staging Nov9 2:47PM “Before Upcoming Batches COA 0.7.29 STG Nov9”. Both visibly present before updates.
+
+Staging verification: temporarily exercised record2642 as approved/complete/upcoming with the actual Live test date Nov9. Compound, exact upcoming/current report navigation, product compact current card and carousel passed. Mobile390px had no horizontal overflow. Restored record2642 to submitted-to-lab/pending/upcoming off and blank test date; saved Post updated. No stock or FIFO switch performed.
+
+Control source34c6b86 deployed Live after GitHub run217 SUCCESS. Sevalla e18bcf89-0c70-4a1c-b48a-26c3e1c487b1 finished Nov9 3:20PM Eastern. Running/tested full SHA matched; database, uploads and backups were readable/writable. Its existing syncCoaPageForBatch function resynced only BP1026295JP through the verified publication path, returning SUCCESS with no warnings. Before/after batch comparisons were identical: BP1026232JP current with6available/28released; BP1026295JP non-current with38available/38released. No stock consumption, release, FIFO switch, test-result change or order/accounting mutation was performed. Both Control COA and batch screens show Upcoming Batches / Testing passed.
+
+Final Live verification after cache clear: unauthenticated requests for compound, both exact batch URLs and product returned200 with unchanged canonical URLs. Upcoming section contains BP1026295JP/Testing passed; Previous Reports excludes it; Latest Report remains BP1026232JP. Existing report destinations and measured values retained. Both original PDF URLs return identical296,653-byte PDF content, SHA256 e5f2bb82d280de25dc1ffc7efd509d0760c365eced11d0b5da1d216da5f58c02. Product compact card still opens currentBP1026232JP; its carousel also includes the upcoming card. Current-to-upcoming navigation and upcoming-to-current/product destinations verified. Desktop and390px mobile inspected; compound/document widths390/390 and product390/375, without overflow. Browser preview overrides reset. No live FIFO depletion was forced; promotion is covered by isolated tests.
+
+Evidence retained locally in outputs/live-verification.json, live-upcoming-desktop.png, live-upcoming-mobile.png, control-release-live.png and control-sync-verified.png. Graphify updated after source changes. Website theme and order-experience runtime needed no changes; plugin owns these displays and existing routes. All approved work is deployed; the three unrelated incoming-copy test failures and pre-existing Control backup-UI issue remain recorded limitations.
