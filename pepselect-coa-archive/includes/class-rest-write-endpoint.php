@@ -158,6 +158,12 @@ final class REST_Write_Endpoint {
 
 		$post_status = $request->get_param( 'status' ) ? sanitize_key( (string) $request->get_param( 'status' ) ) : ( $post_id ? (string) get_post_status( $post_id ) : 'publish' );
 		$values      = $this->merge_values( $post_type, $post_id, $submitted );
+		// Older clients move only is_current. Promotion must also clear a queued
+		// designation in the same write; failed/pending outcomes cannot stay queued.
+		if ( Post_Types::COA_TEST === $post_type && ( ! empty( $values['is_current'] ) || 'approved' !== $values['coa_status'] ) && ! array_key_exists( 'is_upcoming', $submitted ) ) {
+			$values['is_upcoming'] = 0;
+			$submitted['is_upcoming'] = 0;
+		}
 		// Older creates coerced an omitted optional count to zero, then rejected
 		// their own stored value on the next update. Repair only that pre-lab
 		// pending sentinel when the caller did not supply a count. Explicit zero
@@ -406,7 +412,7 @@ final class REST_Write_Endpoint {
 		return array(
 			'compound_id', 'batch_number', 'workflow_stage', 'coa_status', 'test_date',
 			'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number',
-			'is_current', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color',
+			'is_current', 'is_upcoming', 'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color',
 			'claimed_content', 'content_unit', 'vials_tested',
 			'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance',
 			'purity_percentage', 'purity_status', 'purity_method', 'identity_status', 'identity_method',

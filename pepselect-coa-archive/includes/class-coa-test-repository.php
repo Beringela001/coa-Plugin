@@ -20,9 +20,9 @@ final class COA_Test_Repository {
 
 	/** Returns classified public tests for one compound. @return array */
 	public function classified_for_compound( $compound_id ) {
-		$result = array( 'approved' => array(), 'incoming' => array(), 'failed' => array() );
+		$result = array( 'approved' => array(), 'upcoming' => array(), 'incoming' => array(), 'failed' => array() );
 		foreach ( $this->all_for_compound( $compound_id ) as $test ) {
-			if ( $this->visibility->is_approved( $test ) ) { $result['approved'][] = $test; }
+			if ( $this->visibility->is_approved( $test ) ) { $result[ COA_Workflow::is_upcoming( $test ) ? 'upcoming' : 'approved' ][] = $test; }
 			elseif ( $this->visibility->is_incoming( $test ) ) { $result['incoming'][] = $test; }
 			elseif ( $this->visibility->is_failed( $test ) ) { $result['failed'][] = $test; }
 		}
@@ -195,6 +195,8 @@ final class COA_Test_Repository {
 	private function compare_product_carousel( $left, $right ) {
 		$current = absint( get_post_meta( $right->ID, 'is_current', true ) ) <=> absint( get_post_meta( $left->ID, 'is_current', true ) );
 		if ( 0 !== $current ) { return $current; }
+		$upcoming = (int) COA_Workflow::is_upcoming( $right ) <=> (int) COA_Workflow::is_upcoming( $left );
+		if ( 0 !== $upcoming ) { return $upcoming; }
 		$left_date = preg_replace( '/\D/', '', (string) get_post_meta( $left->ID, 'test_date', true ) );
 		$right_date = preg_replace( '/\D/', '', (string) get_post_meta( $right->ID, 'test_date', true ) );
 		$date = strcmp( $right_date, $left_date );

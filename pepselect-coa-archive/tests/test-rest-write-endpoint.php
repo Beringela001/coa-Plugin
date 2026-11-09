@@ -270,6 +270,27 @@ class PepSelect_COA_Archive_REST_Write_Endpoint_Test extends WP_UnitTestCase {
 		}
 	}
 
+
+	public function test_upcoming_round_trip_and_legacy_promotion_clear_the_flag() {
+		$id = $this->approved_test( $this->compound(), 'UPCOMING-REST' );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'is_upcoming' => 1 ) );
+		$this->assertSame( 200, $response->get_status(), $this->explain( $response ) );
+		$this->assertTrue( PepSelect\COAArchive\COA_Workflow::is_upcoming( $id ) );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'is_current' => 1 ) );
+		$this->assertSame( 200, $response->get_status(), $this->explain( $response ) );
+		$this->assertSame( '0', (string) get_post_meta( $id, 'is_upcoming', true ) );
+		$this->assertSame( '1', (string) get_post_meta( $id, 'is_current', true ) );
+	}
+
+	public function test_upcoming_rejects_current_and_failed_records() {
+		$id = $this->approved_test( $this->compound(), 'UPCOMING-INVALID' );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'is_upcoming' => 1, 'is_current' => 1 ) );
+		$this->assertSame( 400, $response->get_status() );
+		$id = $this->failed_test( $this->compound(), 'UPCOMING-FAILED', 'Rejected.' );
+		$response = $this->dispatch( 'PATCH', '/pepselect-coa/v1/coa-test/' . $id, array( 'is_upcoming' => 1 ) );
+		$this->assertSame( 400, $response->get_status() );
+	}
+
 	/* -------------------------------------------------------- helpers */
 
 	private function dispatch( $method, $route, array $body ) {

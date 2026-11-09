@@ -262,6 +262,32 @@ class PepSelect_COA_5_Product_Carousel_Test extends WP_UnitTestCase {
 		$this->assertSame( $html, $this->button()->filter_widget_content( $html, $other ) );
 	}
 
+	public function test_upcoming_reports_are_not_history_and_fifo_promotion_preserves_links() {
+		$product = $this->product( 'BPC-157', 'BPC10' ); $compound = $this->compound( 'BPC-157 10 mg', $product );
+		$current = $this->record( $compound, 'BP1026232JP', '2026-09-03', array( 'is_current' => 1 ) );
+		$queued = $this->record( $compound, 'BP1026295JP', '2026-11-09' );
+		$earlier = $this->record( $compound, 'QUEUED-OLDER-DATE', '2026-08-01' );
+		$past = $this->record( $compound, 'HISTORICAL', '2026-07-01' );
+		foreach ( array( $queued, $earlier ) as $id ) { update_post_meta( $id, 'is_upcoming', 1 ); }
+		$classed = $this->tests->classified_for_compound( $compound );
+		$this->assertSame( array( $current, $past ), wp_list_pluck( $classed['approved'], 'ID' ) );
+		$this->assertSame( array( $queued, $earlier ), wp_list_pluck( $classed['upcoming'], 'ID' ) );
+		$url = $this->view_model->test_url( get_post( $compound ), get_post( $queued ) );
+		$this->go_to( get_permalink( $product ) );
+		$html = $this->carousel()->shortcode();
+		$this->assertSame( 2, substr_count( $html, '>Upcoming Batches<' ) );
+		$this->assertStringContainsString( 'Testing passed', $html );
+		$this->assertSame( $current, $this->button()->destination_for_product( $product )['test_id'] );
+		update_post_meta( $current, 'is_current', 0 ); update_post_meta( $queued, 'is_current', 1 );
+		// Current wins even if an older client did not explicitly clear the queue flag.
+		$this->assertFalse( PepSelect\COAArchive\COA_Workflow::is_upcoming( $queued ) );
+		$this->assertSame( array( $earlier ), wp_list_pluck( $this->tests->classified_for_compound( $compound )['upcoming'], 'ID' ) );
+		$this->assertSame( $queued, $this->button()->destination_for_product( $product )['test_id'] );
+		$this->assertSame( $url, $this->view_model->test_url( get_post( $compound ), get_post( $queued ) ) );
+		update_post_meta( $earlier, 'coa_status', 'failed' );
+		$this->assertSame( array(), $this->tests->classified_for_compound( $compound )['upcoming'] );
+	}
+
 	private function carousel() { return new PepSelect\COAArchive\Product_COA_Carousel( $this->matching, $this->compounds, $this->tests, $this->view_model ); }
 	private function button() { return new PepSelect\COAArchive\Product_COA_Button( $this->matching, $this->compounds, $this->tests, $this->view_model ); }
 	private function product( $title, $sku ) { $id = self::factory()->post->create( array( 'post_type' => 'product', 'post_status' => 'publish', 'post_title' => $title ) ); update_post_meta( $id, '_sku', $sku ); return $id; }

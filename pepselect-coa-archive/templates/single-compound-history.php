@@ -12,6 +12,12 @@ if ( ! $ps_embedded ) { get_header(); }
 		<header class="ps-coa-history-section__heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Current documented release', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-latest"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'latest_label' ) ); ?></h2></header>
 		<?php if ( $ps_context['latest_report'] ) { $report = $ps_context['latest_report']; include pepselect_coa_template_path( 'partials/history-latest-report.php' ); } else { ?><div class="ps-coa-history-empty"><strong><?php esc_html_e( 'No completed report is currently documented.', 'pepselect-coa-archive' ); ?></strong></div><?php } ?>
 	</section>
+	<?php if ( ! empty( $ps_context['upcoming_reports'] ) ) : ?>
+	<section class="ps-coa-history-section" aria-labelledby="ps-history-upcoming">
+		<header class="ps-coa-history-section__heading"><h2 id="ps-history-upcoming"><?php esc_html_e( 'Upcoming Batches', 'pepselect-coa-archive' ); ?></h2></header>
+		<div class="ps-coa-history-incoming-list"><?php foreach ( $ps_context['upcoming_reports'] as $report ) { include pepselect_coa_template_path( 'partials/history-previous-card.php' ); } ?></div>
+	</section>
+	<?php endif; ?>
 	<section class="ps-coa-history-section" aria-labelledby="ps-history-incoming">
 		<header class="ps-coa-history-section__heading"><p class="ps-coa-eyebrow"><?php esc_html_e( 'Active batch vetting', 'pepselect-coa-archive' ); ?></p><h2 id="ps-history-incoming"><?php echo esc_html( \PepSelect\COAArchive\Design_Settings::copy( 'incoming_heading' ) ); ?></h2></header>
 		<div class="ps-coa-history-incoming-list"><?php if ( $ps_context['incoming_reports'] ) { foreach ( $ps_context['incoming_reports'] as $report ) { include pepselect_coa_template_path( 'partials/history-incoming-report.php' ); } } else { include pepselect_coa_template_path( 'partials/history-incoming-empty.php' ); } ?></div>

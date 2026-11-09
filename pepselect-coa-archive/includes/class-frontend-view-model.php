@@ -120,6 +120,7 @@ final class Frontend_View_Model {
 		$reported_success = 'publish' === $test->post_status && 'approved' === $coa_status && 'reported' === $endotoxin_value && '' !== $endotoxin_result;
 		$full_qc = $this->is_full_qc_documented( $test );
 		$public_status = $this->public_status( $coa_status, $workflow_stage, $full_qc );
+		if ( COA_Workflow::is_upcoming( $test ) ) { $public_status['label'] = __( 'Upcoming Batches', 'pepselect-coa-archive' ); $public_status['copy'] = __( 'Testing passed', 'pepselect-coa-archive' ); }
 		$public_note = trim( (string) get_post_meta( $test->ID, 'public_status_note', true ) ); if ( $public_note ) { $public_status['copy'] = $public_note; }
 		$testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'testing_lab', true ) : '';
 		$other_testing_lab = $lab_public ? (string) get_post_meta( $test->ID, 'other_testing_lab', true ) : '';
@@ -148,6 +149,7 @@ final class Frontend_View_Model {
 			'coa_status' => $coa_status, 'coa_status_data' => $this->status( $coa_status ),
 			'workflow_stage' => $workflow_stage, 'workflow_stage_label' => isset( COA_Workflow::stages()[ $workflow_stage ] ) ? COA_Workflow::stages()[ $workflow_stage ] : '',
 			'public_status_label' => $public_status['label'], 'public_status_copy' => $public_status['copy'], 'public_status_tone' => $public_status['tone'],
+			'is_upcoming' => COA_Workflow::is_upcoming( $test ),
 			'is_current' => $complete && 'approved' === $coa_status && (bool) absint( get_post_meta( $test->ID, 'is_current', true ) ),
 			'claimed_content' => $claimed, 'claimed_content_display' => pepselect_coa_format_number( $claimed ),
 			'content_unit' => $content_unit,
@@ -206,7 +208,7 @@ final class Frontend_View_Model {
 		$model['history_report_type'] = $this->history_report_type( $model );
 		$model['history_qc_title'] = $model['is_full_qc_documented'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( $model['all_reported_successful'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : __( 'Testing results', 'pepselect-coa-archive' ) );
 		$model['history_qc_summary'] = sprintf( __( '%1$d of 7 laboratory categories reported. %2$s', 'pepselect-coa-archive' ), $model['reported_category_count'], 'failed' === $model['coa_status'] ? __( 'Release review did not pass.', 'pepselect-coa-archive' ) : __( 'Independent documentation on file.', 'pepselect-coa-archive' ) );
-		$model['history_status_label'] = 'failed' === $model['coa_status'] ? __( 'Did not pass release review', 'pepselect-coa-archive' ) : ( $model['is_full_qc_documented'] ? __( 'Full-QC documented', 'pepselect-coa-archive' ) : __( 'QC documented', 'pepselect-coa-archive' ) );
+		$model['history_status_label'] = $model['is_upcoming'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : ( 'failed' === $model['coa_status'] ? __( 'Did not pass release review', 'pepselect-coa-archive' ) : ( $model['is_full_qc_documented'] ? __( 'Full-QC documented', 'pepselect-coa-archive' ) : __( 'QC documented', 'pepselect-coa-archive' ) ) );
 		$model['history_context'] = 'failed' === $model['coa_status'] ? __( 'This batch did not pass release review and was not released for sale.', 'pepselect-coa-archive' ) : __( 'Independent testing record with published batch documentation.', 'pepselect-coa-archive' );
 		$model['history_claims'] = array();
 		if ( $model['laboratory'] ) { $model['history_claims'][] = __( 'Independently tested', 'pepselect-coa-archive' ); }
@@ -247,6 +249,7 @@ final class Frontend_View_Model {
 		return array(
 			'test_id' => $model['test_id'],
 			'is_current' => $model['is_current'],
+			'is_upcoming' => $model['is_upcoming'],
 			'batch_number' => $model['batch_number'],
 			'test_date' => $model['test_date'],
 			'test_date_label' => $model['test_date_label'],
@@ -255,7 +258,7 @@ final class Frontend_View_Model {
 			'purity_percentage_display' => pepselect_coa_format_number( $model['purity_percentage'], 'product-purity' ),
 			'purity_reported' => '' !== pepselect_coa_format_number( $model['purity_percentage'], 'product-purity' ),
 			'detail_url' => $model['detail_url'],
-			'status_label' => $status_label,
+			'status_label' => $model['is_upcoming'] ? __( 'Testing passed', 'pepselect-coa-archive' ) : $status_label,
 			'status_tone' => $fully_vetted || $qc_passed ? 'success' : 'neutral',
 			'is_fully_vetted' => $fully_vetted,
 			'is_qc_passed' => $qc_passed,

@@ -48,8 +48,8 @@ final class Product_COA_Carousel {
 		$reports = array();
 		if ( $documented ) {
 			$lead = array_shift( $documented );
-			$lead['role'] = 'current';
-			$lead['role_label'] = $lead['is_current'] ? __( 'Current Batch', 'pepselect-coa-archive' ) : __( 'Latest Report', 'pepselect-coa-archive' );
+			$lead['role'] = ! empty( $lead['is_upcoming'] ) ? 'upcoming' : 'current';
+			$lead['role_label'] = ! empty( $lead['is_upcoming'] ) ? __( 'Upcoming Batches', 'pepselect-coa-archive' ) : ( $lead['is_current'] ? __( 'Current Batch', 'pepselect-coa-archive' ) : __( 'Latest Report', 'pepselect-coa-archive' ) );
 			$reports[] = $lead;
 		}
 		if ( $records['incoming'] ) {
@@ -58,8 +58,8 @@ final class Product_COA_Carousel {
 		}
 		foreach ( $documented as $previous ) {
 			if ( 4 === count( $reports ) ) { break; }
-			$previous['role'] = 'previous';
-			$previous['role_label'] = __( 'Previous Report', 'pepselect-coa-archive' );
+			$previous['role'] = ! empty( $previous['is_upcoming'] ) ? 'upcoming' : 'previous';
+			$previous['role_label'] = ! empty( $previous['is_upcoming'] ) ? __( 'Upcoming Batches', 'pepselect-coa-archive' ) : __( 'Previous Report', 'pepselect-coa-archive' );
 			$reports[] = $previous;
 		}
 		if ( ! $reports ) { return ''; }

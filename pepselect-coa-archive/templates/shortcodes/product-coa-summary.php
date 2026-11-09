@@ -18,6 +18,7 @@ $ps_accessible_label = $ps_is_incoming
 			<span class="ps-coa-product-summary__icon" aria-hidden="true"><?php echo $ps_is_incoming ? '&#8635;' : '&#10003;'; ?></span>
 			<div>
 				<span class="ps-coa-product-summary__role"><?php echo esc_html( $ps_report['role_label'] ); ?></span>
+				<?php if ( ! empty( $ps_report['is_upcoming'] ) ) : ?><strong class="ps-coa-product-summary__status"><?php esc_html_e( 'Testing passed', 'pepselect-coa-archive' ); ?></strong><?php endif; ?>
 				<?php if ( $ps_is_incoming ) : ?><strong class="ps-coa-product-summary__status"><?php echo esc_html( $ps_report['workflow_stage_label'] ); ?></strong><?php endif; ?>
 			</div>
 		</div>

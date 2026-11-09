@@ -28,7 +28,7 @@ final class COA_Test_Fields {
 		$this->rest_registered = true;
 		$integer = array( 'compound_id', 'vials_tested', 'coa_pdf_id', 'batch_vial_photo' );
 		$number  = array( 'claimed_content', 'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'purity_percentage' );
-		$boolean = array( 'is_current' );
+		$boolean = array( 'is_current', 'is_upcoming' );
 		// Ops is now the single entry point (Ops Spec §16 item — mirror the COA
 		// form): the ops app owns the ENTIRE ps_coa_test field vocabulary over REST,
 		// matching class-coa-test-importer.php::field_map() so one CSV template and
@@ -38,7 +38,7 @@ final class COA_Test_Fields {
 		$safe = array(
 			'compound_id', 'batch_number', 'workflow_stage', 'coa_status', 'test_date',
 			'expected_coa_date', 'date_received', 'testing_lab', 'other_testing_lab', 'lab_accession_number',
-			'is_current',
+			'is_current', 'is_upcoming',
 			'vial_crimp_color', 'other_vial_crimp_color', 'vial_cap_color', 'other_vial_cap_color',
 			'claimed_content', 'content_unit', 'vials_tested',
 			'average_net_content', 'minimum_net_content', 'maximum_net_content', 'net_content_std_dev', 'content_variance_percent', 'sample_appearance',
@@ -94,6 +94,7 @@ final class COA_Test_Fields {
 			$this->f( 'test_date', 'Test Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Required for approved reports; record it for failed reports when available.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'date_received', 'Date Received', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1 ) ),
 			$this->f( 'is_current', 'Current COA', 'true_false', array( 'default_value' => 0, 'ui' => 1 ) ),
+			$this->f( 'is_upcoming', 'Upcoming batch', 'true_false', array( 'default_value' => 0, 'ui' => 1 ) ),
 			$this->tab( 'vetting_progress', __( 'Vetting Progress', 'pepselect-coa-archive' ) ),
 			$this->f( 'expected_coa_date', 'Expected COA Date', 'date_picker', array( 'display_format' => 'F j, Y', 'return_format' => 'Y-m-d', 'first_day' => 1, 'instructions' => __( 'Required after submission while testing or the final COA is pending.', 'pepselect-coa-archive' ) ) ),
 			$this->f( 'vendor_status_note', 'Vendor Status Note', 'text', array( 'maxlength' => 200 ) ),

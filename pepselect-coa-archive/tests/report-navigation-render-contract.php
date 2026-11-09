@@ -28,3 +28,9 @@ $context['current_report'] = $current; $context['current_report']['batch_number'
 $context['test'] = $past;
 check_render( ! str_contains( render_path( $context ), '<script>' ), 'Batch number not escaped.' );
 echo "Report navigation rendering contracts: OK\n";
+$context['test'] = $past + array( 'is_upcoming' => true );
+$context['current_product_url'] = '/product/exact/';
+$html = render_path( $context );
+check_render( str_contains( $html, 'Upcoming Batches' ) && str_contains( $html, 'Testing passed' ), 'Queued approved lot not distinguished.' );
+check_render( ! str_contains( $html, 'past batch' ) && ! str_contains( $html, 'Historical' ), 'Queued lot called historical.' );
+check_render( str_contains( $html, '/testing/exact/current/' ) && str_contains( $html, '/product/exact/' ), 'Upcoming navigation lost existing destinations.' );

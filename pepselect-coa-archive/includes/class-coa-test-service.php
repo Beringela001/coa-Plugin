@@ -21,6 +21,7 @@ final class COA_Test_Service {
 		}
 		$this->synchronize_title( $post_id );
 		$this->apply_ils_verification_default( $post_id );
+		if ( get_post_meta( $post_id, 'is_current', true ) || 'approved' !== COA_Workflow::outcome( $post_id ) ) { update_post_meta( $post_id, 'is_upcoming', 0 ); }
 		if ( get_post_meta( $post_id, 'is_current', true ) ) { $this->clear_other_current_tests( $post_id, absint( get_post_meta( $post_id, 'compound_id', true ) ) ); }
 		$this->flag_future_date( $post_id );
 		$this->flag_workflow_guidance( $post_id );

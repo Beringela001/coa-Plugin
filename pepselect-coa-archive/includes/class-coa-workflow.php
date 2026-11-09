@@ -45,6 +45,13 @@ final class COA_Workflow {
 		return in_array( $status, array( 'in-testing', 'vendor-vetting' ), true ) ? 'pending' : $status;
 	}
 
+	/** Explicit Ops inventory position, independent of laboratory and upload dates. */
+	public static function is_upcoming( $test ) {
+		$post = get_post( $test );
+		return $post && 'approved' === self::outcome( $post ) && 'complete' === self::stage( $post )
+			&& ! get_post_meta( $post->ID, 'is_current', true ) && (bool) get_post_meta( $post->ID, 'is_upcoming', true );
+	}
+
 	/** Returns whether a stage is public-incoming. @param string $stage Stage. @return bool */
 	public static function is_incoming_stage( $stage ) { return in_array( $stage, self::incoming_stages(), true ); }
 

@@ -30,8 +30,8 @@ assert.ok(!coordinator.includes('search('));
 assert.ok(!/query_posts|setup_postdata|wp_reset_postdata/.test(coordinator));
 assert.ok(coordinator.includes("if ( 4 === count( $reports ) )"));
 assert.ok(coordinator.includes("$this->tests->for_product_carousel"));
-assert.ok(coordinator.includes("$lead['role'] = 'current'"));
-assert.ok(coordinator.includes("$previous['role'] = 'previous'"));
+assert.ok(coordinator.includes("? 'upcoming' : 'current'"));
+assert.ok(coordinator.includes("? 'upcoming' : 'previous'"));
 assert.ok(coordinator.includes("$reports[] = $incoming"));
 assert.ok(coordinator.includes('$this->rendered_instances'));
 

@@ -82,7 +82,7 @@ final class Frontend_Router {
 		$compound = $id ? $this->compounds->find_public_by_id( $id ) : $this->compounds->find_public_by_slug( $slug );
 		if ( ! $compound ) { return array(); }
 		$classified = $this->tests->classified_for_compound( $compound->ID );
-		$tests = array_merge( $classified['approved'], $classified['incoming'], $classified['failed'] ); if ( ! $tests ) { return array(); }
+		$tests = array_merge( $classified['approved'], $classified['upcoming'], $classified['incoming'], $classified['failed'] ); if ( ! $tests ) { return array(); }
 		$approved = $classified['approved']; $incoming = $classified['incoming'];
 		$latest = $approved ? array_shift( $approved ) : null;
 		$previous_all = array_merge( $approved, $classified['failed'] );
@@ -90,7 +90,7 @@ final class Frontend_Router {
 		$total = count( $previous_all );
 		$previous = array_slice( $previous_all, 0, 10 );
 		$compound_model = $this->view_model->compound( $compound );
-		$compound_model['approved_test_count'] = count( $approved ) + ( $latest ? 1 : 0 );
+		$compound_model['approved_test_count'] = count( $approved ) + count( $classified['upcoming'] ) + ( $latest ? 1 : 0 );
 		$compound_model['latest_test_date'] = $latest ? get_post_meta( $latest->ID, 'test_date', true ) : '';
 		$compound_model['latest_batch_number'] = $latest ? get_post_meta( $latest->ID, 'batch_number', true ) : '';
 		$compound_model['latest_purity'] = $latest ? get_post_meta( $latest->ID, 'purity_percentage', true ) : '';
@@ -106,6 +106,7 @@ final class Frontend_Router {
 		return array(
 			'view' => 'compound', 'template' => 'single-compound-history.php', 'canonical' => $compound_model['url'], 'archive_url' => $this->view_model->archive_url(),
 			'compound' => $compound_model, 'hero_image' => $hero_image, 'current_report' => $current_model, 'latest_report' => $latest_model,
+			'upcoming_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->history_report( $test, $compound ); }, $classified['upcoming'] ),
 			'incoming_reports' => array_map( function ( $test ) use ( $compound ) { return $this->view_model->test_summary( $test, $compound ); }, $incoming ),
 			'previous_reports' => $compound_model['previous_approved_tests'], 'previous_report_total' => $total, 'previous_report_limit' => 10,
 		);
